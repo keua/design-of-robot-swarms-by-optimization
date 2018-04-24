@@ -1,0 +1,13 @@
+# Ignore the Jetbrains files
+.idea/*
+
+# Ignore images and results generated in the run
+src/image/*
+src/result/*
+
+# Ignore any venv folder and the possible venv symlink
+venv*/*
+venv
+
+# Ignore the specific config.ini file
+*/config.ini
