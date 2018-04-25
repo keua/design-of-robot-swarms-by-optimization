@@ -1,7 +1,12 @@
 from abc import ABCMeta, abstractmethod
 
-class AutoModeControllerABC:
+
+class AutoMoDeControllerABC:
     __metaclass__ = ABCMeta
+
+    # Paths needed to evaluate the controller
+    path_to_automode_executable = ""
+    scenario_file = ""
 
     @abstractmethod
     def draw(self):
@@ -21,7 +26,7 @@ class AutoModeControllerABC:
         pass
 
     def evaluate(self, seeds):
-        #TODO: Fox this method and remove it from AutoMoDeFSM
+        #TODO: Fix this method and remove it from AutoMoDeFSM
         """Run this FSM in Argos and receive a score to compute the efficiency of the FSM"""
         scores = []
         # score = 0

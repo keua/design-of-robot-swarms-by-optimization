@@ -4,13 +4,14 @@ import graphviz as gv
 import subprocess
 import statistics
 import re
+from AutoMoDeControllerABC import AutoMoDeControllerABC
 
 # TODO: Write documentation for methods and classes
 
 use_mean = False  # if False then use the median
 
 
-class FSM:
+class FSM(AutoMoDeControllerABC):
     """A finite state machine"""
 
     class State:
@@ -110,21 +111,18 @@ class FSM:
     # FSM implementation
 
     # Static variables
-    # Paths needed to evaluate the FSM
-    automode_path = ""
-    scenario = ""
     # Parameters that can be used for tuning the behavior of the local search
-    max_states = 4
-    max_transitions = float("inf")
-    max_transitions_per_state = 4
-    no_self_transition = True
-    initial_state_behavior = "Stop"
-    random_parameter_initialization = True
+    parameters = {"max_states": 4,
+                      "max_transitions": float("inf"),
+                      "max_transitions_per_state": 4,
+                      "no_self_transition": True,
+                      "initial_state_behavior": "Stop",
+                      "random_parameter_initialization": True}
 
     def __init__(self):
 
         # The empty FSM
-        stop_behavior = Behavior.get_by_name(self.initial_state_behavior)
+        stop_behavior = Behavior.get_by_name(FSM.parameters["initial_state_behavior"])
         self.initial_state = FSM.State(stop_behavior)
         self.states = [self.initial_state]
         self.transitions = []
@@ -138,7 +136,7 @@ class FSM:
         # used to find articulation points, find better place then here
         self.aputils_time = 0
 
-    def draw_graph(self, graph_name):
+    def draw(self, graph_name):
         """Draw the graph representation of the FSM with graphviz"""
         graph = gv.Digraph(format='svg')
         for s in self.states:
@@ -276,20 +274,6 @@ class FSM:
             print(stderr.decode('utf-8'))
             print(stdout.decode('utf-8'))
             raise
-
-    def evaluate(self, seeds):
-        """Run this FSM in Argos and receive a score to compute the efficiency of the FSM"""
-        scores = []
-        # score = 0
-        for seed in seeds:
-            if seed not in self.evaluated_instances:
-                self.evaluated_instances[seed] = self.evaluate_single_run(seed)
-            scores.append(self.evaluated_instances[seed])
-        if use_mean:
-            self.score = statistics.mean(scores)  # score / len(seeds)
-        else:
-            self.score = statistics.median(scores)
-        return self.score
 
     def mutate(self):
         """Apply a random mutation operator to this FSM"""

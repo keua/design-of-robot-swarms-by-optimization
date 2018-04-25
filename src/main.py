@@ -8,7 +8,7 @@ config = {}
 
 
 def run_local_search(fsm):
-    pass
+    return fsm
 
 
 def load_config():
@@ -54,8 +54,9 @@ if __name__ == "__main__":
     for i in range(0, config["num_runs"]):
         os.mkdir("run_{}".format(i))
         os.chdir("run_{}".format(i))
-        initial_FSM.draw_graph("initial")
+        initial_FSM.draw("initial")
         result = run_local_search(initial_FSM)
-        result.draw_graph("final")
+        result.draw("final")
+
         print(result.convert_to_commandline_args())
         os.chdir("..")
