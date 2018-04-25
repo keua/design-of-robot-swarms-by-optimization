@@ -2,14 +2,10 @@ from AutoModeChocolate import Behavior, Condition
 import random
 import graphviz as gv
 import subprocess
-import statistics
 import re
 from AutoMoDeControllerABC import AutoMoDeControllerABC
 
 # TODO: Write documentation for methods and classes
-
-use_mean = False  # if False then use the median
-
 
 class FSM(AutoMoDeControllerABC):
     """A finite state machine"""
@@ -113,14 +109,14 @@ class FSM(AutoMoDeControllerABC):
     # Static variables
     # Parameters that can be used for tuning the behavior of the local search
     parameters = {"max_states": 4,
-                      "max_transitions": float("inf"),
-                      "max_transitions_per_state": 4,
-                      "no_self_transition": True,
-                      "initial_state_behavior": "Stop",
-                      "random_parameter_initialization": True}
+                  "max_transitions": float("inf"),
+                  "max_transitions_per_state": 4,
+                  "no_self_transition": True,
+                  "initial_state_behavior": "Stop",
+                  "random_parameter_initialization": True}
 
     def __init__(self):
-
+        super().__init__()
         # The empty FSM
         stop_behavior = Behavior.get_by_name(FSM.parameters["initial_state_behavior"])
         self.initial_state = FSM.State(stop_behavior)
@@ -129,7 +125,6 @@ class FSM(AutoMoDeControllerABC):
 
         # parameters used to keep track of the local search
         self.mut_history = []
-        self.score = float("inf")
         self.evaluated_instances = {}
         self.id = -1
 

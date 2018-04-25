@@ -37,21 +37,23 @@ if __name__ == "__main__":
     # TODO: Set pathes for every executalbe type
     FSM.automode_path = config["path_to_AutoMoDe"]
     FSM.scenario = config["path_to_scenario"]
-    # generate initial FSM
-    if config["initial_FSM_empty"]:
-        initial_FSM = FSM()
-    else:
-        fsm_list = []
+    fsm_list = []
+    if not config["initial_FSM_empty"]:
+        # preload the possible initial controller
         with open(config["initial_FSM_file"]) as f:
-            i = 0
+            initial_count = 0
             for line in f:
                 tmp = FSM.parse_from_commandline_args(line.strip().split(" "))
-                # tmp.draw_graph("Vanilla_"+str(i))
+                # tmp.draw_graph("Vanilla_"+str(initial_count))
                 fsm_list.append(tmp)
-                i += 1
-        initial_FSM = random.choice(fsm_list)
+                initial_count += 1
     # Run local search
     for i in range(0, config["num_runs"]):
+        # generate initial FSM
+        if config["initial_FSM_empty"]:
+            initial_FSM = FSM()
+        else:
+            initial_FSM = random.choice(fsm_list)
         os.mkdir("run_{}".format(i))
         os.chdir("run_{}".format(i))
         initial_FSM.draw("initial")

@@ -1,5 +1,8 @@
 from abc import ABCMeta, abstractmethod
+import statistics
 
+#
+use_mean = False  # if False then use the median
 
 class AutoMoDeControllerABC:
     __metaclass__ = ABCMeta
@@ -7,6 +10,10 @@ class AutoMoDeControllerABC:
     # Paths needed to evaluate the controller
     path_to_automode_executable = ""
     scenario_file = ""
+
+    def __init__(self):
+        print("ABC")
+        self.score = float("inf")
 
     @abstractmethod
     def draw(self):
@@ -29,7 +36,6 @@ class AutoMoDeControllerABC:
         #TODO: Fix this method and remove it from AutoMoDeFSM
         """Run this FSM in Argos and receive a score to compute the efficiency of the FSM"""
         scores = []
-        # score = 0
         for seed in seeds:
             if seed not in self.evaluated_instances:
                 self.evaluated_instances[seed] = self.evaluate_single_run(seed)
