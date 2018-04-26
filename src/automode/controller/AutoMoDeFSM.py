@@ -1,4 +1,4 @@
-from AutoModeChocolate import Behavior, Condition
+from automode.modules.AutoModeChocolate import Behavior, Condition
 import random
 import graphviz as gv
 import subprocess
