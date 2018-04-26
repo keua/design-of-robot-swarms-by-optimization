@@ -2,7 +2,7 @@ import configparser
 import os
 from _datetime import datetime
 import random
-from AutoModeFSM import FSM
+from automode.controller.AutoMoDeFSM import FSM
 
 config = {}
 
@@ -34,7 +34,7 @@ if __name__ == "__main__":
     str_time = datetime.now().strftime("%Y%m%d-%H:%M:%S")
     os.mkdir(str_time)
     os.chdir(str_time)
-    # TODO: Set pathes for every executalbe type
+    # TODO: Set paths for every executable type
     FSM.automode_path = config["path_to_AutoMoDe"]
     FSM.scenario = config["path_to_scenario"]
     fsm_list = []

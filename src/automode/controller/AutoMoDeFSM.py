@@ -3,9 +3,10 @@ import random
 import graphviz as gv
 import subprocess
 import re
-from AutoMoDeControllerABC import AutoMoDeControllerABC
+from automode.controller.AutoMoDeControllerABC import AutoMoDeControllerABC
 
 # TODO: Write documentation for methods and classes
+
 
 class FSM(AutoMoDeControllerABC):
     """A finite state machine"""

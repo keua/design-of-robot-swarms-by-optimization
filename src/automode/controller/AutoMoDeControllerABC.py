@@ -12,7 +12,6 @@ class AutoMoDeControllerABC:
     scenario_file = ""
 
     def __init__(self):
-        print("ABC")
         self.score = float("inf")
 
     @abstractmethod
