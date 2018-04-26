@@ -4,6 +4,7 @@ import statistics
 #
 use_mean = False  # if False then use the median
 
+
 class AutoMoDeControllerABC:
     __metaclass__ = ABCMeta
 
@@ -15,7 +16,7 @@ class AutoMoDeControllerABC:
         self.score = float("inf")
 
     @abstractmethod
-    def draw(self):
+    def draw(self, graph_name):
         pass
 
     @staticmethod

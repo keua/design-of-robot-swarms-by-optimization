@@ -2,7 +2,8 @@ import configparser
 import os
 from _datetime import datetime
 import random
-from automode.controller.AutoMoDeFSM import FSM
+from automode.controller import FSM
+from automode.controller import BT
 
 config = {}
 
@@ -51,7 +52,7 @@ if __name__ == "__main__":
     for i in range(0, config["num_runs"]):
         # generate initial FSM
         if config["initial_FSM_empty"]:
-            initial_FSM = FSM()
+            initial_FSM = BT()
         else:
             initial_FSM = random.choice(fsm_list)
         os.mkdir("run_{}".format(i))
