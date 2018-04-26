@@ -98,17 +98,9 @@ class BT(AutoMoDeControllerABC):
             graph.node(self.name, shape="circle", label=self.caption())
 
         def caption(self):
-            tmp = self.action.name + "_" + str(self.id)
-            if self.action.params:
-                tmp = tmp + "\n("
-                first = True
-                for key, value in self.action.params.items():
-                    if not first:
-                        tmp = tmp + ", "
-                    first = False
-                    tmp = tmp + key + ": " + str(value)
-                tmp = tmp + ")"
-            return tmp
+            caption = self.action.name + "_" + str(self.id)
+            caption += self.action.get_parameter_for_caption()
+            return caption
 
     class ConditionNode(ABCNode):
 
@@ -127,17 +119,9 @@ class BT(AutoMoDeControllerABC):
             graph.node(self.name, shape="diamond", label=self.caption())
 
         def caption(self):
-            tmp = self.condition.name + "_" + str(self.id)
-            if self.condition.params:
-                tmp = tmp + "\n("
-                first = True
-                for key, value in self.condition.params.items():
-                    if not first:
-                        tmp = tmp + ", "
-                    first = False
-                    tmp = tmp + key + ": " + str(value)
-                tmp = tmp + ")"
-            return tmp
+            caption = self.condition.name + "_" + str(self.id)
+            caption += self.condition.get_parameter_for_caption()
+            return caption
 
     def __init__(self):
         super().__init__()

@@ -89,6 +89,19 @@ class Behavior (ABCBehavior):
     """This list contains all possible behaviors that exist in AutoMoDe Chocolate"""
     behavior_list = ["AntiPhototaxis", "Attraction", "Exploration", "Phototaxis", "Stop", "Repulsion"]
 
+    def get_parameter_for_caption(self):
+        param_list = ""
+        if self.params:
+            param_list = param_list + "\n("
+            first = True
+            for key, value in self.action.params.items():
+                if not first:
+                    param_list = param_list + ", "
+                first = False
+                param_list = param_list + key + ": " + str(value)
+                param_list = param_list + ")"
+        return param_list
+
 
 class Condition (ABCCondition):
 
@@ -181,3 +194,16 @@ class Condition (ABCCondition):
     """This list contains all possible conditions that exist in AutoMoDe Chocolate"""
     condition_list = ["BlackFloor", "FixedProbability", "GrayFloor", "InvertedNeighborsCount", "NeighborsCount",
                       "WhiteFloor"]
+
+    def get_parameter_for_caption(self):
+        param_list = ""
+        if self.params:
+            param_list = param_list + "\n("
+            first = True
+            for key, value in self.params.items():
+                if not first:
+                    param_list = param_list + ", "
+                first = False
+                param_list = param_list + key + ": " + str(value)
+                param_list = param_list + ")"
+        return param_list

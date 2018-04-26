@@ -40,17 +40,9 @@ class FSM(AutoMoDeControllerABC):
 
         def caption(self):
             """Returns a caption for the state that can be used to represent the state in graphviz"""
-            tmp = self.behavior.name + "_" + str(self.id)
-            if self.behavior.params:
-                tmp = tmp + "\n("
-                first = True
-                for key, value in self.behavior.params.items():
-                    if not first:
-                        tmp = tmp + ", "
-                    first = False
-                    tmp = tmp + key + ": " + str(value)
-                tmp = tmp + ")"
-            return tmp
+            caption = self.behavior.name + "_" + str(self.id)
+            caption += self.condition.get_parameter_for_caption()
+            return caption
 
     class Transition:
 
@@ -93,17 +85,9 @@ class FSM(AutoMoDeControllerABC):
 
         def caption(self):
             """Returns a caption for the state that can be used to represent the state in graphviz"""
-            tmp = self.condition.name + "_" + str(self.id)
-            if self.condition.params:
-                tmp = tmp + "\n("
-                first = True
-                for key, value in self.condition.params.items():
-                    if not first:
-                        tmp = tmp + ", "
-                    first = False
-                    tmp = tmp + key + ": " + str(value)
-                tmp = tmp + ")"
-            return tmp
+            caption = self.condition.name + "_" + str(self.id)
+            caption += self.condition.get_parameter_for_caption()
+            return caption
 
     # FSM implementation
 
