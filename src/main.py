@@ -52,7 +52,7 @@ if __name__ == "__main__":
     for i in range(0, config["num_runs"]):
         # generate initial FSM
         if config["initial_FSM_empty"]:
-            initial_FSM = BT()
+            initial_FSM = FSM()
         else:
             initial_FSM = random.choice(fsm_list)
         os.mkdir("run_{}".format(i))

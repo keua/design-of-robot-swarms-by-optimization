@@ -1,5 +1,5 @@
 import random
-from automode.modules.AutoModeModulesABC import ABCBehavior, ABCCondition
+from automode.modules.modulesABC import ABCBehavior, ABCCondition
 
 
 class Behavior (ABCBehavior):

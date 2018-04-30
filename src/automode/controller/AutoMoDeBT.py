@@ -2,7 +2,7 @@ from automode.controller.AutoMoDeControllerABC import AutoMoDeControllerABC
 from abc import ABCMeta, abstractmethod
 from enum import Enum
 import graphviz as gv
-from automode.modules.AutoModeChocolate import Behavior, Condition
+from automode.modules.chocolate import Behavior, Condition
 
 
 class BT(AutoMoDeControllerABC):

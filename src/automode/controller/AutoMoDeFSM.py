@@ -1,4 +1,4 @@
-from automode.modules.AutoModeChocolate import Behavior, Condition
+from automode.modules.chocolate import Behavior, Condition
 import random
 import graphviz as gv
 import subprocess
@@ -41,7 +41,7 @@ class FSM(AutoMoDeControllerABC):
         def caption(self):
             """Returns a caption for the state that can be used to represent the state in graphviz"""
             caption = self.behavior.name + "_" + str(self.id)
-            caption += self.condition.get_parameter_for_caption()
+            caption += self.behavior.get_parameter_for_caption()
             return caption
 
     class Transition:
