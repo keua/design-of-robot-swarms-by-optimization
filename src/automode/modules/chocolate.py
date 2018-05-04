@@ -94,7 +94,7 @@ class Behavior (ABCBehavior):
         if self.params:
             param_list = param_list + "\n("
             first = True
-            for key, value in self.action.params.items():
+            for key, value in self.params.items():
                 if not first:
                     param_list = param_list + ", "
                 first = False

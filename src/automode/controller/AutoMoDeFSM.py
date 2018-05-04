@@ -30,6 +30,9 @@ class FSM(AutoMoDeControllerABC):
                     pval = "%.2f" % self.behavior.params[param]
                 elif param == "rwm":
                     pval = str(self.behavior.params[param])
+                else:
+                    print("Undefined parameter")
+                    pval = 0
                 args.extend(["--" + param + str(self.ext_id), pval])
             return args
 
@@ -239,7 +242,7 @@ class FSM(AutoMoDeControllerABC):
         # print("Evaluating FSM " + str(self.id) + " on seed " + str(seed))
 
         # prepare the command line
-        args = [self.automode_path, "-n", "-c", self.scenario, "--seed", str(seed), "--fsm-config"]
+        args = [self.path_to_automode_executable, "-n", "-c", self.scenario_file, "--seed", str(seed), "--fsm-config"]
         args.extend(self.convert_to_commandline_args())
         # Run and capture output
         p = subprocess.Popen(args, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
@@ -298,12 +301,12 @@ class FSM(AutoMoDeControllerABC):
         """Adds a new state to the FSM.
         It will not exceed the maximum number of states. In case that there is no space for a new state it will
         return False. Every added state will contain one ingoing and one outgoing edge."""
-        if len(self.states) >= self.max_states:
+        if len(self.states) >= self.parameters["max_states"]:
             return False  # we exceeded the amount of allowed states
         # create a new state with a random behavior
         new_behavior = Behavior.get_by_name(random.choice(Behavior.behavior_list))
         s = FSM.State(new_behavior)
-        if self.no_self_transition:
+        if self.parameters["no_self_transition"]:
             possible_states = list(self.states)  # create a transition from an already existing state
             s_in = random.choice(self.states)  # create a transition to an already existing state
         else:
@@ -312,7 +315,7 @@ class FSM(AutoMoDeControllerABC):
         while possible_states:
             s_out = random.choice(possible_states)
             possible_states.remove(s_out)
-            if len([t for t in self.transitions if t.from_state == s_out]) < self.max_transitions_per_state:
+            if len([t for t in self.transitions if t.from_state == s_out]) < self.parameters["max_transitions_per_state"]:
                 ingoing = FSM.Transition(s_out, s,
                                          Condition.get_by_name(random.choice(Condition.condition_list)))
                 outgoing = FSM.Transition(s, s_in,
@@ -400,7 +403,7 @@ class FSM(AutoMoDeControllerABC):
 
     def add_transition(self):
         """Adds a transition to the FSM"""
-        if len(self.transitions) >= self.max_transitions:
+        if len(self.transitions) >= self.parameters["max_transitions"]:
             return False  # already all transitions used
         # choose a random state where the new transition should start
         possible_states = list(self.states)
@@ -408,7 +411,7 @@ class FSM(AutoMoDeControllerABC):
             start = random.choice(possible_states)
             possible_states.remove(start)
             # Check for this states that they don't exceed max transitions per state
-            if len([t for t in self.transitions if t.from_state == start]) < self.max_transitions_per_state:
+            if len([t for t in self.transitions if t.from_state == start]) < self.parameters["max_transitions_per_state"]:
                 # the end state needs to be different from the starting state
                 other_states = [s for s in self.states if s != start]
                 # there must be at least another state
@@ -452,7 +455,7 @@ class FSM(AutoMoDeControllerABC):
             while possible_states:
                 new_start = random.choice(possible_states)
                 possible_states.remove(new_start)
-                if len([t for t in self.transitions if t.from_state==new_start]) < self.max_transitions_per_state:
+                if len([t for t in self.transitions if t.from_state==new_start]) < self.parameters["max_transitions_per_state"]:
                     t.from_state = new_start
                     return True
         return False
