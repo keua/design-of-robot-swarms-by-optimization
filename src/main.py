@@ -8,8 +8,8 @@ from automode.controller import FSM, BT
 config = {}
 
 
-def run_local_search(fsm):
-    best = initial_FSM
+def run_local_search(controller):
+    best = controller
     if config["verbose"]:
         start_time = datetime.now()
         print("Started at " + str(start_time))
@@ -26,24 +26,24 @@ def run_local_search(fsm):
                 seed_window.pop(0)
                 seed_window.append(random.randint(0, 2147483647))
             # create a mutated FSM
-            FSM2 = copy.deepcopy(best)
+            mutated_controller = copy.deepcopy(best)
             # it is necessary to remove all evaluations from here
-            FSM2.evaluated_instances.clear()
-            FSM2.id = i
-            FSM2.mutate()
+            mutated_controller.evaluated_instances.clear()
+            mutated_controller.id = i
+            mutated_controller.mutate()
             # evaluate both FSMs on the seed_window
             best.evaluate(seed_window)
-            FSM2.evaluate(seed_window)
+            mutated_controller.evaluate(seed_window)
             # save the scores to file
-            file.write(str(best.score) + ", " + str(FSM2.score) + ", " +
-                       FSM2.mut_history[len(FSM2.mut_history) - 1].__name__ + "\n")
+            file.write(str(best.score) + ", " + str(mutated_controller.score) + ", " +
+                       mutated_controller.mut_history[len(mutated_controller.mut_history) - 1].__name__ + "\n")
             if config["verbose"]:
-                print("Best score " + str(best.score) + " and new score " + str(FSM2.score))
-            if best.score < FSM2.score:  # < for max
+                print("Best score " + str(best.score) + " and new score " + str(mutated_controller.score))
+            if best.score < mutated_controller.score:  # < for max
                 if config["verbose"]:
-                    print(FSM2.mut_history[len(FSM2.mut_history) - 1].__name__)
-                    FSM2.draw(str(i))
-                best = FSM2
+                    print(mutated_controller.mut_history[len(mutated_controller.mut_history) - 1].__name__)
+                    mutated_controller.draw(str(i))
+                best = mutated_controller
             if i % config["snapshot_frequency"] == 0:
                 best.draw(str(i))
         end_time = datetime.now()
@@ -71,15 +71,23 @@ def load_config():
     config["snapshot_frequency"] = int(config_parser["Logging"]["snapshot_frequency"])
 
 
-if __name__ == "__main__":
-    load_config()
+def create_directory():
     os.chdir(config["working_directory"])
     str_time = datetime.now().strftime("%Y%m%d-%H:%M:%S")
     os.mkdir(str_time)
     os.chdir(str_time)
+
+
+def set_executable_paths():
     # TODO: Set paths for every executable type
     FSM.path_to_automode_executable = config["path_to_AutoMoDe"]
     FSM.scenario_file = config["path_to_scenario"]
+
+
+def automode_localsearch():
+    load_config()
+    create_directory()
+    set_executable_paths()
     fsm_list = []
     if not config["initial_FSM_empty"]:
         # preload the possible initial controller
@@ -94,14 +102,18 @@ if __name__ == "__main__":
     for i in range(0, config["num_runs"]):
         # generate initial FSM
         if config["initial_FSM_empty"]:
-            initial_FSM = FSM()
+            initial_controller = FSM()
         else:
-            initial_FSM = random.choice(fsm_list)
+            initial_controller = random.choice(fsm_list)
         os.mkdir("run_{}".format(i))
         os.chdir("run_{}".format(i))
-        initial_FSM.draw("initial")
-        result = run_local_search(initial_FSM)
+        initial_controller.draw("initial")
+        result = run_local_search(initial_controller)
         result.draw("final")
 
         print(result.convert_to_commandline_args())
         os.chdir("..")
+
+
+if __name__ == "__main__":
+    automode_localsearch()
