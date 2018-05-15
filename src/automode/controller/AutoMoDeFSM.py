@@ -111,9 +111,7 @@ class FSM(AutoMoDeControllerABC):
         self.states = [self.initial_state]
         self.transitions = []
 
-        # parameters used to keep track of the local search
-        self.mut_history = []
-        self.evaluated_instances = {}
+
         self.id = -1
 
         # used to find articulation points, find better place then here

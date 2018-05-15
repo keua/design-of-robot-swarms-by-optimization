@@ -149,9 +149,9 @@ class BT(AutoMoDeControllerABC):
 
     def evaluate_single_run(self, seed):
         """Run a single evaluation in Argos"""
-        # print("Evaluating FSM " + str(self.id) + " on seed " + str(seed))
+        # print("Evaluating BT " + str(self.id) + " on seed " + str(seed))
         # prepare the command line
-        args = [self.path_to_automode_executable, "-n", "-c", self.scenario_file, "--seed", str(seed), "--fsm-config"]
+        args = [self.path_to_automode_executable, "-n", "-c", self.scenario_file, "--seed", str(seed), "--bt-config"]
         args.extend(self.convert_to_commandline_args())
         # Run and capture output
         p = subprocess.Popen(args, stderr=subprocess.PIPE, stdout=subprocess.PIPE)

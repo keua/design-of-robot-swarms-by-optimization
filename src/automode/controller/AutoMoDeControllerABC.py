@@ -16,6 +16,9 @@ class AutoMoDeControllerABC:
 
     def __init__(self):
         self.score = float("inf")
+        # parameters used to keep track of the local search
+        self.mut_history = []
+        self.evaluated_instances = {}
 
     @abstractmethod
     def draw(self, graph_name):
@@ -35,7 +38,6 @@ class AutoMoDeControllerABC:
         pass
 
     def evaluate(self, seeds):
-        #TODO: Fix this method and remove it from AutoMoDeFSM
         """Run this FSM in Argos and receive a score to compute the efficiency of the FSM"""
         scores = []
         for seed in seeds:
