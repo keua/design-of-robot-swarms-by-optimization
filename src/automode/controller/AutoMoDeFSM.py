@@ -240,7 +240,6 @@ class FSM(AutoMoDeControllerABC):
     def evaluate_single_run(self, seed):
         """Run a single evaluation in Argos"""
         # print("Evaluating FSM " + str(self.id) + " on seed " + str(seed))
-
         # prepare the command line
         args = [self.path_to_automode_executable, "-n", "-c", self.scenario_file, "--seed", str(seed), "--fsm-config"]
         args.extend(self.convert_to_commandline_args())
@@ -258,32 +257,11 @@ class FSM(AutoMoDeControllerABC):
             print(stdout.decode('utf-8'))
             raise
 
-    def mutate(self):
-        """Apply a random mutation operator to this FSM"""
-        mutation_operators = [self.change_initial_state,
-                              self.add_state, self.remove_state,
-                              self.change_state_behavior, self.change_state_behavior_parameters,
-                              self.add_transition, self.remove_transition,
-                              self.change_transition_begin, self.change_transition_end,
-                              self.change_transition_condition, self.change_transition_condition_parameters
-                              ]
-        while mutation_operators:
-            mutation_operator = random.choice(mutation_operators)
-            # execute mutation
-            result = mutation_operator()
-            # remove operator from list so it is not chosen again if it failed
-            mutation_operators.remove(mutation_operator)
-            if result:
-                self.mut_history.append(mutation_operator)
-                return
-        # We cannot apply any operator -> how can this even happen?
-        print("A critical error appeared. We cannot apply any mutation at his point.")
-
     # ******************************************************************************************************************
     # Mutation operators
     # ******************************************************************************************************************
 
-    def change_initial_state(self):
+    def mut_change_initial_state(self):
         """Changes the initial state of the FSM.
         It is not allowed to keep the same initial state and the new initial state is chosen uniformly at random
         from all possible states.
@@ -297,7 +275,7 @@ class FSM(AutoMoDeControllerABC):
         self.initial_state = random.choice(other_states)
         return True
 
-    def add_state(self):
+    def mut_add_state(self):
         """Adds a new state to the FSM.
         It will not exceed the maximum number of states. In case that there is no space for a new state it will
         return False. Every added state will contain one ingoing and one outgoing edge."""
@@ -327,7 +305,7 @@ class FSM(AutoMoDeControllerABC):
                 return True
         return False
 
-    def remove_state(self):
+    def mut_remove_state(self):
         """Removes a state from the FSM.
         Doesn't remove the last state (returns False if there is only one state). Also removes all transitions to and
         from the removed state. Will not remove a state that is an articulation point or that would delete the last
@@ -373,7 +351,7 @@ class FSM(AutoMoDeControllerABC):
         self.states.remove(s)
         return True
 
-    def change_state_behavior(self):
+    def mut_change_state_behavior(self):
         """Swaps the behavior a random state with a new random behavior.
         The new behavior will not be the same as the replaced behavior."""
         # choose a random state
@@ -385,7 +363,7 @@ class FSM(AutoMoDeControllerABC):
         s.behavior = new_behavior
         return True
 
-    def change_state_behavior_parameters(self):
+    def mut_change_state_behavior_parameters(self):
         """Changes a single random parameter of the behavior of a random state.
         The parameter is chosen randomly in its range."""
         possible_states = list(self.states)
@@ -401,7 +379,7 @@ class FSM(AutoMoDeControllerABC):
         # There was no state that had a changeable parameter
         return False
 
-    def add_transition(self):
+    def mut_add_transition(self):
         """Adds a transition to the FSM"""
         if len(self.transitions) >= self.parameters["max_transitions"]:
             return False  # already all transitions used
@@ -426,7 +404,7 @@ class FSM(AutoMoDeControllerABC):
         # All states were tried but no one succeeded
         return False
 
-    def remove_transition(self):
+    def mut_remove_transition(self):
         """Removes a transition from the FSM"""
         possible_transitions = \
             [t for t in self.transitions
@@ -443,7 +421,7 @@ class FSM(AutoMoDeControllerABC):
         self.transitions.remove(t)
         return True
 
-    def change_transition_begin(self):
+    def mut_change_transition_begin(self):
         """Changes the starting state of a random transition"""
         possible_transitions = \
             [t for t in self.transitions
@@ -460,7 +438,7 @@ class FSM(AutoMoDeControllerABC):
                     return True
         return False
 
-    def change_transition_end(self):
+    def mut_change_transition_end(self):
         """Changes the end node of a random transition"""
         possible_transitions = \
             [t for t in self.transitions
@@ -474,7 +452,7 @@ class FSM(AutoMoDeControllerABC):
         t.to_state = random.choice(possible_states)
         return True
 
-    def change_transition_condition(self):
+    def mut_change_transition_condition(self):
         """Swaps the condition of a random transition"""
         # if no transition exists then report this operation as non-applicable
         if not self.transitions:
@@ -487,7 +465,7 @@ class FSM(AutoMoDeControllerABC):
         t.condition = new_condition
         return True
 
-    def change_transition_condition_parameters(self):
+    def mut_change_transition_condition_parameters(self):
         # TODO: Retry, but not urgently since all transitions have at least a probability parameter
         """Changes a random parameter of the condition of a random transition"""
         if len(self.transitions) == 0:
