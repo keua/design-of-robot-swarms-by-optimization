@@ -53,7 +53,7 @@ class AutoMoDeControllerABC:
     def get_mutation_operators(self):
         """Returns all methods that start with mut_ indicating that they are indeed mutation operators."""
         method_names = [method_name for method_name in dir(self) if callable(getattr(self, method_name)) and method_name.startswith("mut_")]
-        print(method_names)
+        # print(method_names)
         methods = [getattr(self, x) for x in method_names]
         return methods
 

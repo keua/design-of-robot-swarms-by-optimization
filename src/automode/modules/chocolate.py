@@ -65,7 +65,7 @@ class Behavior (ABCBehavior):
             return random.randint(0, 100)
         if p == "rep":
             return random.uniform(1, 5)
-        print("Invalid combination of condition and parameter " + name)
+        print("Invalid combination of behavior and parameter " + name)
         return 0
 
     @property

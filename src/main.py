@@ -39,7 +39,7 @@ def run_local_search(controller):
                        mutated_controller.mut_history[len(mutated_controller.mut_history) - 1].__name__ + "\n")
             if config["verbose"]:
                 print("Best score " + str(best.score) + " and new score " + str(mutated_controller.score))
-            if best.score < mutated_controller.score:  # < for max
+            if best.score <= mutated_controller.score:  # < for max
                 if config["verbose"]:
                     print(mutated_controller.mut_history[len(mutated_controller.mut_history) - 1].__name__)
                     mutated_controller.draw(str(i))
@@ -102,7 +102,7 @@ def automode_localsearch():
     for i in range(0, config["num_runs"]):
         # generate initial FSM
         if config["initial_FSM_empty"]:
-            initial_controller = FSM()
+            initial_controller = BT()
         else:
             initial_controller = random.choice(fsm_list)
         os.mkdir("run_{}".format(i))
@@ -110,7 +110,6 @@ def automode_localsearch():
         initial_controller.draw("initial")
         result = run_local_search(initial_controller)
         result.draw("final")
-
         print(result.convert_to_commandline_args())
         os.chdir("..")
 
