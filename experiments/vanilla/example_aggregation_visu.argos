@@ -11,7 +11,7 @@
   <!-- ****************** -->
   <!-- * Loop functions * -->
   <!-- ****************** -->
-  <loop_functions library="/home/jkuckling/Documents/argos3-AutoMoDe/build/loop-functions/example/libexample_aggregation_loopfunc.so"
+  <loop_functions library="/home/aligot/Desktop/Arena/AutoMoDe-BT/build/loop-functions/example/libexample_aggregation_loopfunc.so"
    label="example_aggregation_loop_functions">
    <params dist_radius="1.2" number_robots="20"/>
   </loop_functions>
@@ -22,7 +22,7 @@
   <controllers>
 	<!-- TRANSMITTER -->
     <automode_controller id="automode"
-                        library="/home/jkuckling/Documents/argos3-AutoMoDe/build/src/libautomode.so">
+                        library="/home/aligot/Desktop/Arena/argos3-AutoMoDe/build_simulator/src/libautomode.so">
       <actuators>
         <epuck_wheels implementation="default" noise_std_dev="0.05"/>
         <epuck_rgb_leds implementation="default" medium="leds"/>
@@ -35,8 +35,8 @@
 		    <epuck_ground implementation="rot_z_only" noise_level="0.05" calibrated="true"/>
 		    <epuck_omnidirectional_camera implementation="rot_z_only" medium="leds" show_rays="false"/>
       </sensors>
-    <params bt-config="--rootnode 0 --nchildsroot 1 --n0 0 --nc0 1 --c0x0 4 --p0x0 4 --w0x0 18.66 --a0 1"/>
-  </automode_controller>
+    <params />
+    </automode_controller>
   </controllers>
 
   <!-- ********* -->

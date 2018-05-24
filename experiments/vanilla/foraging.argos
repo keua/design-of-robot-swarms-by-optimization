@@ -11,7 +11,7 @@
   <!-- ****************** -->
   <!-- * Loop functions * -->
   <!-- ****************** -->
-  <loop_functions library="/home/aligot/Desktop/Arena/argos3-AutoMoDe/build_simulator/loop-functions/vanilla/libvanilla_foraging_loopfunc.so"
+  <loop_functions library="/home/jkuckling/Documents/AutoMoDe-BehaviorTree/build/loop-functions/vanilla/libvanilla_foraging_loopfunc.so"
    label="foraging_two_spots_lf">
    <params dist_radius="1.2" number_robots="20"/>
   </loop_functions>
@@ -22,7 +22,7 @@
   <controllers>
 	<!-- TRANSMITTER -->
     <automode_controller_bt id="automode"
-                        library="/home/aligot/Desktop/Arena/AutoMoDe-BT/build/src/libautomode_bt.so">
+                        library="/home/jkuckling/Documents/AutoMoDe-BehaviorTree/build/src/libautomode_bt.so">
       <actuators>
         <epuck_wheels implementation="default" noise_std_dev="0.05"/>
         <epuck_rgb_leds implementation="default" medium="leds"/>
@@ -115,16 +115,7 @@
   <!-- * Visualization * -->
   <!-- ***************** -->
   <visualization>
-  <qt-opengl>
-     <user_functions library="/home/aligot/Desktop/Arena/aligot-experiments/build_simulator/loop-functions/libepuck_planning_user_functions.so"
-        label="epuck_planning_qtopengl_user_functions" />
-    <camera>
-      <placement idx="0"
-                 position="0,0,4.5"
-                 look_at="0,0,0"
-                 lens_focal_length="30" />
-    </camera>
-  </qt-opengl>
+
   </visualization>
 
 </argos-configuration>

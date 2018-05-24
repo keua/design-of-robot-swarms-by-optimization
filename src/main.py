@@ -69,6 +69,7 @@ def load_config():
     config["num_runs"] = int(config_parser["Execution"]["num_runs"])
     config["verbose"] = config_parser["Logging"].getboolean("verbose")
     config["snapshot_frequency"] = int(config_parser["Logging"]["snapshot_frequency"])
+    config["path_to_AutoMoDe_BT"] = config_parser["AutoMoDe_BT-Installation"]["path_to_AutoMoDe"]
 
 
 def create_directory():
@@ -82,6 +83,9 @@ def set_executable_paths():
     # TODO: Set paths for every executable type
     FSM.path_to_automode_executable = config["path_to_AutoMoDe"]
     FSM.scenario_file = config["path_to_scenario"]
+
+    BT.path_to_automode_executable = config["path_to_AutoMoDe_BT"]
+    BT.scenario_file = config["path_to_scenario"]
 
 
 def automode_localsearch():
