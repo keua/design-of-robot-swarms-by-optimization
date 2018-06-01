@@ -30,10 +30,6 @@ class BT(AutoMoDeControllerABC):
             pass
 
         @abstractmethod
-        def tick(self):
-            pass
-
-        @abstractmethod
         def draw(self, graph):
             pass
 
@@ -41,9 +37,6 @@ class BT(AutoMoDeControllerABC):
 
         def name(self):
             return "Root_" + str(self.id)
-
-        def tick(self):
-            self.children[0].tick()
 
         def draw(self, graph):
             self.children[0].draw(graph)
@@ -53,14 +46,6 @@ class BT(AutoMoDeControllerABC):
         @property
         def name(self):
             return "Sequence*_" + str(self.id)
-
-        def tick(self):
-            for child in self.children:
-                return_value = child.tick()
-                if not return_value == BT.ABCNode.ReturnCode.SUCCESS:
-                    # TODO: Last ticked child
-                    return return_value
-            return BT.ABCNode.ReturnCode.SUCCESS
 
         def draw(self, graph):
             graph.node(self.name, shape="square", label="->*")
@@ -73,9 +58,6 @@ class BT(AutoMoDeControllerABC):
         @property
         def name(self):
             return "Selector_" + str(self.id)
-
-        def tick(self):
-            pass
 
         def draw(self, graph):
             graph.node(self.name, shape="square", label="?")
@@ -92,9 +74,6 @@ class BT(AutoMoDeControllerABC):
         @property
         def name(self):
             return self.action.name + "_" + str(self.id)
-
-        def tick(self):
-            pass
 
         def draw(self, graph):
             graph.node(self.name, shape="circle", label=self.caption())
@@ -113,9 +92,6 @@ class BT(AutoMoDeControllerABC):
         @property
         def name(self):
             return self.condition.name + "_" + str(self.id)
-
-        def tick(self):
-            pass
 
         def draw(self, graph):
             graph.node(self.name, shape="diamond", label=self.caption())
@@ -146,6 +122,7 @@ class BT(AutoMoDeControllerABC):
 
     @staticmethod
     def parse_from_commandline_args(cmd_args):
+        # TODO: Implement
         pass
 
     def convert_to_commandline_args(self):
@@ -226,21 +203,20 @@ class BT(AutoMoDeControllerABC):
         # TODO: Get the parameters
         # if len(self.top_node.children) >= self.parameters["max_states"]:
         #    return False  # we exceeded the amount of allowed subtrees
-        # TODO: Generate new subtree
+        # Generate new subtree
         new_selector = BT.SelectorNode()
-        # TODO: Set random condition and action
-        new_condition = BT.ConditionNode("BlackFloor")
-        new_action = BT.ActionNode("Stop")
+        # Create random condition and action
+        new_condition = BT.ConditionNode(random.choice(Condition.condition_list))
+        new_action = BT.ActionNode(random.choice(Action.action_list))
         new_selector.children.append(new_condition)
         new_selector.children.append(new_action)
-        # TODO: Add to random location
+        # Append new node
+        # TODO: Maybe random position
         self.top_node.children.append(new_selector)
         return True
 
     def mut_remove_subtree(self):
         """Removes a random subtree from the BT"""
-        # TODO: Check this method, update documentation and remove the following line
-        return False
         if len(self.top_node.children) <= 1:
             return False  # trying to remove the last subtree is forbidden
         to_remove = random.choice(self.top_node.children)
@@ -266,8 +242,6 @@ class BT(AutoMoDeControllerABC):
         TODO: More documentation
         :return:
         """
-        # TODO: Remove the following line
-        return False
         # Check that there is at least one child to the top-node (it should be there; but better check)
         if len(self.top_node.children) < 1:
             return False
@@ -284,8 +258,6 @@ class BT(AutoMoDeControllerABC):
         Mutation for the local search of BT
         TODO: More documentation
         """
-        # TODO: Remove following line
-        return False
         # Check that there is at least one child to the top-node (it should be there; but better check)
         if len(self.top_node.children) < 1:
             return False
@@ -305,8 +277,6 @@ class BT(AutoMoDeControllerABC):
 
     def mut_change_condition_node_condition(self):
         """Swaps the condition of a random condition node"""
-        # TODO: Check this method, update documentation and remove the following line
-        return False
         # TODO: Check that there is at least one child to the top-node (it should be there but better check)
         # choose a random condition node
         condition_parent = random.choice(self.top_node.children)
@@ -317,8 +287,7 @@ class BT(AutoMoDeControllerABC):
         return True
 
     def mut_change_condition_node_parameters(self):
-        # TODO: Check this method, update documentation and remove the following line
-        return False
+        """Changes a single parameter for one of the conditions"""
         # TODO: Check that there is at least one child to the top-node (it should be there but better check)
         possible_condition_parents = list(self.top_node.children)
         while possible_condition_parents:
