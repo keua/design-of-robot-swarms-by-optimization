@@ -101,6 +101,8 @@ class BT(AutoMoDeControllerABC):
             caption += self.condition.get_parameter_for_caption()
             return caption
 
+    parameters = {"max_states": 4}
+
     def __init__(self):
         super().__init__()
         self.root = BT.RootNode()
@@ -113,7 +115,11 @@ class BT(AutoMoDeControllerABC):
         sel2 = BT.SelectorNode()
         sel2.children.append(BT.ConditionNode("GrayFloor"))
         sel2.children.append(BT.ActionNode("AntiPhototaxis"))
-        sequence.children.append(sel2)
+        #sequence.children.append(sel2)
+        sel3 = BT.SelectorNode()
+        sel3.children.append(BT.ConditionNode("FixedProbability"))
+        sel3.children.append(BT.ActionNode("Stop"))
+        #sequence.children.append(sel3)
 
     def draw(self, graph_name):
         graph = gv.Digraph(format='svg')
@@ -197,26 +203,34 @@ class BT(AutoMoDeControllerABC):
         Adds a new condition/action subtree to the BT
         The new subtree will be added as a random child to the sequence* node.
         """
-        # TODO: Check this method, update documentation and remove the following line
-        return False
+        # return False
         # TODO: Check if maximum number of subtrees is not exceeded
         # TODO: Get the parameters
-        # if len(self.top_node.children) >= self.parameters["max_states"]:
-        #    return False  # we exceeded the amount of allowed subtrees
+        if len(self.top_node.children) >= self.parameters["max_states"]:
+            return False  # we exceeded the amount of allowed subtrees
         # Generate new subtree
         new_selector = BT.SelectorNode()
         # Create random condition and action
         new_condition = BT.ConditionNode(random.choice(Condition.condition_list))
-        new_action = BT.ActionNode(random.choice(Action.action_list))
+        new_action = BT.ActionNode(random.choice(Behavior.behavior_list))
         new_selector.children.append(new_condition)
         new_selector.children.append(new_action)
-        # Append new node
-        # TODO: Maybe random position
-        self.top_node.children.append(new_selector)
+        # Add new node at random position
+        copied_list = list(self.top_node.children)
+        copied_list.append(None)
+        new_position = random.choice(copied_list)
+        print(new_position)
+        if new_position is None:
+            self.top_node.children.append(new_selector)
+        else:
+            print("Insertpos: {}".format(self.top_node.children.index(new_position)))
+            self.top_node.children.insert(self.top_node.children.index(new_position), new_selector)
         return True
 
     def mut_remove_subtree(self):
-        """Removes a random subtree from the BT"""
+        """
+        Removes a random subtree from the BT
+        """
         if len(self.top_node.children) <= 1:
             return False  # trying to remove the last subtree is forbidden
         to_remove = random.choice(self.top_node.children)
@@ -224,15 +238,29 @@ class BT(AutoMoDeControllerABC):
         return True
 
     def mut_change_subtree_order(self):
-        # TODO: Check this method, update documentation and remove the following line
-        # return False
-
-        """Selects one subtree and moves it to a new position"""
+        """
+        Selects one subtree and moves it to a new position
+        """
         if len(self.top_node.children) <= 1:
             return False  # moving the only child has no effect
-        # TODO: Select the child to be moved
+        # Select the child to be moved
         (old_pos, new_pos) = random.sample(self.top_node.children, 2)
-        # TODO: Move subtree
+        # Take the element after old_pos and move it to the after new_pos (which cannot be the same as old_pos)
+        # If the element to be moved is the one at new_pos (it would have to be moved after itself),
+        # move it to the beginning instead
+        #
+        # First remove the element
+        remove_index = self.top_node.children.index(old_pos) + 1
+        if remove_index >= len(self.top_node.children):
+            remove_index -= len(self.top_node.children)
+        remove_element = self.top_node.children[remove_index]
+        self.top_node.children.remove(remove_element)
+        # now put it at the right position
+        if remove_element == new_pos:
+            self.top_node.children.insert(0, remove_element)
+        else:
+            put_index = self.top_node.children.index(new_pos) + 1
+            self.top_node.children.insert(put_index, remove_element)
         return True
 
     def mut_change_action_node_behavior(self):
