@@ -203,9 +203,7 @@ class BT(AutoMoDeControllerABC):
         Adds a new condition/action subtree to the BT
         The new subtree will be added as a random child to the sequence* node.
         """
-        # return False
-        # TODO: Check if maximum number of subtrees is not exceeded
-        # TODO: Get the parameters
+        # Check if maximum number of subtrees is not exceeded
         if len(self.top_node.children) >= self.parameters["max_states"]:
             return False  # we exceeded the amount of allowed subtrees
         # Generate new subtree
@@ -219,11 +217,9 @@ class BT(AutoMoDeControllerABC):
         copied_list = list(self.top_node.children)
         copied_list.append(None)
         new_position = random.choice(copied_list)
-        print(new_position)
         if new_position is None:
             self.top_node.children.append(new_selector)
         else:
-            print("Insertpos: {}".format(self.top_node.children.index(new_position)))
             self.top_node.children.insert(self.top_node.children.index(new_position), new_selector)
         return True
 
