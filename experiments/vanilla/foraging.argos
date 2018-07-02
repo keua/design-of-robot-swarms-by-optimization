@@ -11,7 +11,7 @@
   <!-- ****************** -->
   <!-- * Loop functions * -->
   <!-- ****************** -->
-  <loop_functions library="/home/jkuckling/Documents/AutoMoDe-BehaviorTree/build/loop-functions/vanilla/libvanilla_foraging_loopfunc.so"
+  <loop_functions library="/home/jkuckling/AutoMoDe-FSM/build/loop-functions/vanilla/libvanilla_foraging_loopfunc.so"
    label="foraging_two_spots_lf">
    <params dist_radius="1.2" number_robots="20"/>
   </loop_functions>
@@ -21,8 +21,8 @@
   <!-- *************** -->
   <controllers>
 	<!-- TRANSMITTER -->
-    <automode_controller_bt id="automode"
-                        library="/home/jkuckling/Documents/AutoMoDe-BehaviorTree/build/src/libautomode_bt.so">
+    <automode_controller id="automode"
+                        library="/home/jkuckling/AutoMoDe-FSM/build/src/libautomode.so">
       <actuators>
         <epuck_wheels implementation="default" noise_std_dev="0.05"/>
         <epuck_rgb_leds implementation="default" medium="leds"/>
@@ -35,8 +35,8 @@
 		    <epuck_ground implementation="rot_z_only" noise_level="0.05" calibrated="true"/>
 		    <epuck_omnidirectional_camera implementation="rot_z_only" medium="leds" show_rays="false"/>
       </sensors>
-    <params bt-config="--rootnode 0 --nchildsroot 4 --n0 0 --nc0 1 --c0x0 2 --p0x0 0.5 --a0 2 --n1 0 --nc1 1 --c1x0 4 --p1x0 9 --w1x0 14.39 --a1 2 --n2 0 --nc2 1 --c2x0 4 --p2x0 3 --w2x0 2.45 --a2 1 --n3 0 --nc3 1 --c3x0 0 --p3x0 0.2 --a3 0 --rwm3 4" />
-  </automode_controller_bt>
+    <params fsm-config="--rootnode 0 --nchildsroot 4 --n0 0 --nc0 1 --c0x0 2 --p0x0 0.5 --a0 2 --n1 0 --nc1 1 --c1x0 4 --p1x0 9 --w1x0 14.39 --a1 2 --n2 0 --nc2 1 --c2x0 4 --p2x0 3 --w2x0 2.45 --a2 1 --n3 0 --nc3 1 --c3x0 0 --p3x0 0.2 --a3 0 --rwm3 4" />
+  </automode_controller>
   </controllers>
 
   <!-- ********* -->
