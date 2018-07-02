@@ -4,6 +4,7 @@ import copy
 from datetime import datetime
 import random
 from automode.controller import FSM, BT
+import shutil
 
 config = {}
 
@@ -86,10 +87,13 @@ def create_directory():
     str_time = datetime.now().strftime("%Y%m%d-%H:%M:%S")
     os.mkdir(str_time)
     os.chdir(str_time)
+    # copy the configuration file
+    new_config_filename = "config_{}.ini".format(str_time)
+    shutil.copyfile("{}/../../config.ini".format(os.getcwd()), "{}/{}".format(os.getcwd(), new_config_filename))
 
 
 def set_parameters_fsm():
-    FSM.path_to_automode_executable = config["path_to_AutoMoDe"]
+    FSM.path_to_automode_executable = config["path_to_AutoMoDe_FSM"]
     FSM.scenario_file = config["path_to_scenario"]
 
 
@@ -103,6 +107,16 @@ def set_parameters():
     # TODO: Initialize all controller types
     set_parameters_fsm()
     set_parameters_bt()
+
+
+def get_controller_class():
+    if config["controller_type"] == "FSM":
+        return FSM
+    elif config["controller_type"] == "BT":
+        return BT
+    else:
+        print("WARNING: The specified type {} is not know.".format(config["controller_type"]))
+        return None
 
 
 def automode_localsearch():
@@ -124,7 +138,7 @@ def automode_localsearch():
     for i in range(0, config["num_runs"]):
         # generate initial FSM
         if config["initial_controller"]:
-            initial_controller = BT()
+            initial_controller = get_controller_class()()
         else:
             initial_controller = random.choice(controller_list)
         os.mkdir("run_{}".format(i))
