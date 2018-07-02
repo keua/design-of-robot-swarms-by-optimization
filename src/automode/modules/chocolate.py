@@ -198,7 +198,7 @@ class Condition (ABCCondition):
     def get_parameter_for_caption(self):
         param_list = ""
         if self.params:
-            param_list = param_list + "\n("
+            param_list = param_list + "("  # + "\n(" TODO: This linebreak seems to break on the cluster. Add it again if the issue is resolved
             first = True
             for key, value in self.params.items():
                 if not first:
