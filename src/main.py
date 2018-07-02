@@ -58,18 +58,27 @@ def load_config():
     global config
     config_parser = configparser.ConfigParser()
     config_parser.read("config.ini")
-    config["path_to_AutoMoDe"] = config_parser["AutoMoDe-Installation"]["path_to_AutoMoDe"]
+    # parse the paths for the executables and the scenario
+    config["path_to_AutoMoDe_FSM"] = config_parser["Installation"]["path_to_AutoMoDe_FSM"]
+    config["path_to_AutoMoDe_BT"] = config_parser["Installation"]["path_to_AutoMoDe_BT"]
     config["path_to_scenario"] = config_parser["Scenario"]["path_to_scenario"]
-    config["seed_window_size"] = int(config_parser["Seed window"]["size"])
-    config["seed_window_movement"] = int(config_parser["Seed window"]["movement"])
+    # the configuration for running
     config["working_directory"] = config_parser["Execution"]["working_directory"]
     config["max_improvements"] = int(config_parser["Execution"]["max_improvements"])
-    config["initial_FSM_empty"] = config_parser["Execution"].getboolean("initial_FSM_empty")
-    config["initial_FSM_file"] = config_parser["Execution"]["initial_FSM_file"]
     config["num_runs"] = int(config_parser["Execution"]["num_runs"])
+    # parse the window size and movement
+    config["seed_window_size"] = int(config_parser["Seed window"]["size"])
+    config["seed_window_movement"] = int(config_parser["Seed window"]["movement"])
+    # parse the controller configuration
+    config["controller_type"] = config_parser["Controller"]["controller_type"]
+    config["initial_controller"] = config_parser["Controller"]["initial_controller"]
+    # parse information related to the FSM
+    config["initial_FSM_file"] = config_parser["FSM"]["initial_FSM_file"]
+    # parse information related to the BT
+    config["BT_max_actions"] = int(config_parser["BT"]["max_actions"])
+    # parse logging configuration
     config["verbose"] = config_parser["Logging"].getboolean("verbose")
     config["snapshot_frequency"] = int(config_parser["Logging"]["snapshot_frequency"])
-    config["path_to_AutoMoDe_BT"] = config_parser["AutoMoDe_BT-Installation"]["path_to_AutoMoDe"]
 
 
 def create_directory():
@@ -79,36 +88,45 @@ def create_directory():
     os.chdir(str_time)
 
 
-def set_executable_paths():
-    # TODO: Set paths for every executable type
+def set_parameters_fsm():
     FSM.path_to_automode_executable = config["path_to_AutoMoDe"]
     FSM.scenario_file = config["path_to_scenario"]
 
+
+def set_parameters_bt():
     BT.path_to_automode_executable = config["path_to_AutoMoDe_BT"]
     BT.scenario_file = config["path_to_scenario"]
+    BT.parameters["max_actions"] = config["BT_max_actions"]
+
+
+def set_parameters():
+    # TODO: Initialize all controller types
+    set_parameters_fsm()
+    set_parameters_bt()
 
 
 def automode_localsearch():
     load_config()
     create_directory()
-    set_executable_paths()
-    fsm_list = []
-    if not config["initial_FSM_empty"]:
+    set_parameters()
+    controller_list = []
+    if config["initial_controller"] == "from_file":
         # preload the possible initial controller
-        with open(config["initial_FSM_file"]) as f:
+        with open(config["initial_FSM_file"]) as f:  # TODO: Load from correct file here
             initial_count = 0
             for line in f:
                 tmp = FSM.parse_from_commandline_args(line.strip().split(" "))
                 # tmp.draw_graph("Vanilla_"+str(initial_count))
-                fsm_list.append(tmp)
+                controller_list.append(tmp)
                 initial_count += 1
     # Run local search
+    # TODO: Get the right class here to run the localsearch with
     for i in range(0, config["num_runs"]):
         # generate initial FSM
-        if config["initial_FSM_empty"]:
+        if config["initial_controller"]:
             initial_controller = BT()
         else:
-            initial_controller = random.choice(fsm_list)
+            initial_controller = random.choice(controller_list)
         os.mkdir("run_{}".format(i))
         os.chdir("run_{}".format(i))
         initial_controller.draw("initial")

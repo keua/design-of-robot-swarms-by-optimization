@@ -101,9 +101,10 @@ class BT(AutoMoDeControllerABC):
             caption += self.condition.get_parameter_for_caption()
             return caption
 
-    parameters = {"max_states": 4}
+    parameters = {"max_actions": 4}
 
     def __init__(self):
+        # TODO: Correct initialization
         super().__init__()
         self.root = BT.RootNode()
         sequence = BT.SequenceStarNode()
@@ -204,7 +205,7 @@ class BT(AutoMoDeControllerABC):
         The new subtree will be added as a random child to the sequence* node.
         """
         # Check if maximum number of subtrees is not exceeded
-        if len(self.top_node.children) >= self.parameters["max_states"]:
+        if len(self.top_node.children) >= self.parameters["max_actions"]:
             return False  # we exceeded the amount of allowed subtrees
         # Generate new subtree
         new_selector = BT.SelectorNode()
