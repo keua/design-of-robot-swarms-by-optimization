@@ -75,6 +75,12 @@ def load_config():
     config["initial_controller"] = config_parser["Controller"]["initial_controller"]
     # parse information related to the FSM
     config["initial_FSM_file"] = config_parser["FSM"]["initial_FSM_file"]
+    config["FSM_max_states"] = int(config_parser["FSM"]["max_states"])
+    config["FSM_max_transitions"] = float(config_parser["FSM"]["max_transitions"])
+    config["FSM_max_transitions_per_state"] = int(config_parser["FSM"]["max_transitions_per_state"])
+    config["FSM_no_self_transition"] = config_parser["FSM"].getboolean("no_self_transition")
+    config["FSM_initial_state_behavior"] = config_parser["FSM"]["initial_state_behavior"]
+    config["FSM_random_parameter_initialization"] = config_parser["FSM"].getboolean("random_parameter_initialization")
     # parse information related to the BT
     config["BT_max_actions"] = int(config_parser["BT"]["max_actions"])
     # parse logging configuration
@@ -93,18 +99,28 @@ def create_directory():
 
 
 def set_parameters_fsm():
+    # parameters for the evaluation
     FSM.path_to_automode_executable = config["path_to_AutoMoDe_FSM"]
     FSM.scenario_file = config["path_to_scenario"]
+    # parameters for the FSM
+    FSM.parameters["max_states"] = config["FSM_max_states"]
+    FSM.parameters["max_transitions"] = config["FSM_max_transitions"]
+    FSM.parameters["max_transitions_per_state"] = config["FSM_max_transitions_per_state"]
+    FSM.parameters["no_self_transition"] = config["FSM_no_self_transition"]
+    FSM.parameters["initial_state_behavior"] = config["FSM_initial_state_behavior"]
+    FSM.parameters["random_parameter_initialization"] = config["FSM_random_parameter_initialization"]
 
 
 def set_parameters_bt():
+    # parameters for the evaluation
     BT.path_to_automode_executable = config["path_to_AutoMoDe_BT"]
     BT.scenario_file = config["path_to_scenario"]
+    # parameters for the BT
     BT.parameters["max_actions"] = config["BT_max_actions"]
 
 
 def set_parameters():
-    # TODO: Initialize all controller types
+    # Initialize all controller types
     set_parameters_fsm()
     set_parameters_bt()
 
@@ -134,7 +150,6 @@ def automode_localsearch():
                 controller_list.append(tmp)
                 initial_count += 1
     # Run local search
-    # TODO: Get the right class here to run the localsearch with
     for i in range(0, config["num_runs"]):
         # generate initial FSM
         if config["initial_controller"]:
