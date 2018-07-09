@@ -5,7 +5,10 @@ from datetime import datetime
 import random
 from automode.controller import FSM, BT
 import shutil
+import argparse
 
+
+config_file_name = "config.ini"
 config = {}
 
 
@@ -58,7 +61,7 @@ def run_local_search(controller):
 def load_config():
     global config
     config_parser = configparser.ConfigParser()
-    config_parser.read("config.ini")
+    config_parser.read(config_file_name)
     # parse the paths for the executables and the scenario
     config["path_to_AutoMoDe_FSM"] = config_parser["Installation"]["path_to_AutoMoDe_FSM"]
     config["path_to_AutoMoDe_BT"] = config_parser["Installation"]["path_to_AutoMoDe_BT"]
@@ -131,11 +134,21 @@ def get_controller_class():
     elif config["controller_type"] == "BT":
         return BT
     else:
-        print("WARNING: The specified type {} is not know.".format(config["controller_type"]))
+        print("WARNING: The specified type {} is not known.".format(config["controller_type"]))
         return None
 
 
+def parse_input():
+    global config_file_name
+    parser = argparse.ArgumentParser(description="Run the local search algorithm")
+    parser.add_argument('-c', '--config', dest="config_file", default="config.ini",
+                        help="The configuration file for the local search algorithm")
+    input_args = parser.parse_args()
+    config_file_name = input_args.config_file
+
+
 def automode_localsearch():
+    parse_input()
     load_config()
     create_directory()
     set_parameters()
