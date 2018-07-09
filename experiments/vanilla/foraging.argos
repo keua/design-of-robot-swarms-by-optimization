@@ -11,7 +11,7 @@
   <!-- ****************** -->
   <!-- * Loop functions * -->
   <!-- ****************** -->
-  <loop_functions library="/home/jkuckling/AutoMoDe-FSM/build/loop-functions/vanilla/libvanilla_foraging_loopfunc.so"
+  <loop_functions library="/home/jkuckling/AutoMoDe-loopfunctions/build/loop-functions/vanilla/libforaging_loopfunc.so"
    label="foraging_two_spots_lf">
    <params dist_radius="1.2" number_robots="20"/>
   </loop_functions>
