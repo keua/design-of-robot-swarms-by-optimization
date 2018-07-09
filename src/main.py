@@ -24,6 +24,8 @@ def run_local_search(controller):
         for i in range(0, config["seed_window_size"]):
             seed_window.append(random.randint(0, 2147483647))
         best.evaluate(seed_window)
+        if config["verbose"]:
+            print("Initial best score " + str(best.score))
         for i in range(0, config["max_improvements"]):
             # move the window
             for j in range(0, config["seed_window_movement"]):
