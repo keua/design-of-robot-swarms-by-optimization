@@ -98,7 +98,7 @@ def create_directory():
     os.chdir(str_time)
     # copy the configuration file
     new_config_filename = "config_{}.ini".format(str_time)
-    shutil.copyfile("{}/../../config.ini".format(os.getcwd()), "{}/{}".format(os.getcwd(), new_config_filename))
+    shutil.copyfile("{}/../../{}".format(os.getcwd(), config_file_name), "{}/{}".format(os.getcwd(), new_config_filename))
 
 
 def set_parameters_fsm():
