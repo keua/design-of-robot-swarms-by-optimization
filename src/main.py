@@ -43,7 +43,7 @@ def run_local_search(controller):
                        mutated_controller.mut_history[len(mutated_controller.mut_history) - 1].__name__ + "\n")
             if config["verbose"]:
                 print("Best score " + str(best.score) + " and new score " + str(mutated_controller.score))
-            if best.score <= mutated_controller.score:  # < for max
+            if best.score > mutated_controller.score:  # < for max
                 if config["verbose"]:
                     print(mutated_controller.mut_history[len(mutated_controller.mut_history) - 1].__name__)
                     mutated_controller.draw(str(i))
