@@ -11,7 +11,7 @@
   <!-- ****************** -->
   <!-- * Loop functions * -->
   <!-- ****************** -->
-  <loop_functions library="../../build/loop-functions/vanilla/libvanilla_foraging_loopfunc.so"
+  <loop_functions library="/home/jkuckling/AutoMoDe-BT/build/loop-functions/vanilla/libvanilla_foraging_loopfunc.so"
    label="foraging_two_spots_lf">
    <params dist_radius="1.2" number_robots="20"/>
   </loop_functions>
@@ -22,7 +22,7 @@
   <controllers>
 	<!-- TRANSMITTER -->
     <automode_controller_bt id="automode"
-                        library="../../build/src/libautomode_bt.so">
+                        library="/home/jkuckling/AutoMoDe-BT/build/src/libautomode_bt.so">
       <actuators>
         <epuck_wheels implementation="default" noise_std_dev="0.05"/>
         <epuck_rgb_leds implementation="default" medium="leds"/>
