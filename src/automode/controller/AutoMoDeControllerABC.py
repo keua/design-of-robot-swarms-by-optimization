@@ -43,7 +43,7 @@ class AutoMoDeControllerABC:
         for seed in seeds:
             if seed not in self.evaluated_instances:
                 self.evaluated_instances[seed] = self.evaluate_single_run(seed)
-            print(self.evaluated_instances[seed])
+            print("Seed: {}, Score: {}".format(seed, self.evaluated_instances[seed]))
             scores.append(self.evaluated_instances[seed])
         if use_mean:
             self.score = statistics.mean(scores)  # score / len(seeds)
