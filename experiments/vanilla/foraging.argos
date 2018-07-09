@@ -12,7 +12,7 @@
   <!-- * Loop functions * -->
   <!-- ****************** -->
   <loop_functions library="/home/jkuckling/AutoMoDe-loopfunctions/build/loop-functions/vanilla/libforaging_loopfunc.so"
-   label="foraging_two_spots_lf">
+   label="foraging_loop_functions">
    <params dist_radius="1.2" number_robots="20"/>
   </loop_functions>
 
@@ -91,7 +91,86 @@
   <!-- ********** -->
   <!-- * E-Puck * -->
   <!-- ********** -->
-
+<e-puck id="epuck_11_30">
+    <body orientation="0,0,0" position="0,-0.4,0" />
+	<controller config="automode" />
+  </e-puck>
+  <e-puck id="epuck_3_40">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+<controller config="automode" />
+  </e-puck>
+  <e-puck id="epuck_6_50">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+<controller config="automode" />
+  </e-puck>
+  <e-puck id="epuck_5_51">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+<controller config="automode" />
+  </e-puck>
+  <e-puck id="epuck_4_55">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+<controller config="automode" />
+  </e-puck>
+  <e-puck id="epuck_8_46">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+<controller config="automode" />
+  </e-puck>
+  <e-puck id="epuck_10_34">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+<controller config="automode" />
+  </e-puck>
+  <e-puck id="epuck_1_35">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+<controller config="automode" />
+  </e-puck>
+  <e-puck id="epuck_2_36">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+<controller config="automode" />
+  </e-puck>
+  <e-puck id="epuck_13_57">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+<controller config="automode" />
+  </e-puck>
+  <e-puck id="epuck_18_44">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+<controller config="automode" />
+  </e-puck>
+  <e-puck id="epuck_19_48">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+<controller config="automode" />
+  </e-puck>
+  <e-puck id="epuck_21_61">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+<controller config="automode" />
+  </e-puck>
+  <e-puck id="epuck_20_28">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+<controller config="automode" />
+  </e-puck>
+  <e-puck id="epuck_7_32">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+<controller config="automode" />
+  </e-puck>
+  <e-puck id="epuck_15_33">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+   <controller config="automode" />
+  </e-puck>
+  <e-puck id="epuck_16_39">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+<controller config="automode" />
+  </e-puck>
+  <e-puck id="epuck_9_42">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+<controller config="automode" />
+  </e-puck>
+  <e-puck id="epuck_12_47">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+<controller config="automode" />
+  </e-puck>
+  <e-puck id="epuck_14_53">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+<controller config="automode" />
+</e-puck>
   <!-- The epucks are distributed by the loop functions. -->
   </arena>
 
