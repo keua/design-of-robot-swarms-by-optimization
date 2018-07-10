@@ -6,11 +6,14 @@
 
 USERNAME=`whoami`
 TMPDIR=/tmp/$USERNAME/LocalSearch_results
-JOBDIR=/home/$USERNAME/LocalSearch_AutoMoDe
+JOBDIR=/home/$USERNAME/AutoMoDe-LocalSearch
 
 mkdir -p $TMPDIR
-source $JOBDIR/venv/bin/activate &> $TMPDIR/output.txt
-python3 $JOBDIR/src/main.py &>> $TMPDIR/output.txt
+mv $JOBDIR $TMPDIR
+cd $TMPDIR
+source venv/bin/activate &> $TMPDIR/output.txt
+cd src/
+python3 main.py -c config-FSM.ini &>> $TMPDIR/output.txt
 RET=$?
 mv $TMPDIR $JOBDIR
 cd $JOBDIR
