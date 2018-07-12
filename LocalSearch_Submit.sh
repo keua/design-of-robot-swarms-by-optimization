@@ -13,9 +13,10 @@ RESULTDIR=$JOBDIR/result
 mkdir -p $TMPDIR
 source venv/bin/activate &> $TMPDIR/output.txt
 cd $SOURCEDIR
-python3 main.py -c config-FSM.ini -r $TMPDIR &>> $TMPDIR/output.txt
+python3 main.py -c config_FSM.ini -r $TMPDIR &>> $TMPDIR/output.txt
 RET=$?
-mv $TMPDIR $RESULTDIR
+cd $TMPDIR
+mv * $RESULTDIR
 cd $JOBDIR
 rmdir -p $TMPDIR &> /dev/null
 

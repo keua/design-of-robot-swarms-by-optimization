@@ -9,7 +9,8 @@ import argparse
 
 
 config_file_name = "config.ini"
-result_directory = "result/"
+result_directory = "default/"
+src_directory = "src/"
 config = {}
 
 
@@ -95,13 +96,17 @@ def load_config():
 
 
 def create_directory():
+    global src_directory    
+    print("Directory of this file")
+    print(os.path.realpath(__file__))
+    src_directory = os.path.split(os.path.realpath(__file__))[0]
     os.chdir(result_directory)
     str_time = datetime.now().strftime("%Y%m%d-%H:%M:%S")
     os.mkdir(str_time)
     os.chdir(str_time)
     # copy the configuration file
     new_config_filename = "config_{}.ini".format(str_time)
-    shutil.copyfile("{}/../../{}".format(os.getcwd(), config_file_name), "{}/{}".format(os.getcwd(), new_config_filename))
+    shutil.copyfile("{}/{}".format(src_directory, config_file_name), "{}/{}".format(os.getcwd(), new_config_filename))
 
 
 def set_parameters_fsm():
@@ -143,6 +148,7 @@ def get_controller_class():
 
 def parse_input():
     global config_file_name
+    global result_directory
     parser = argparse.ArgumentParser(description="Run the local search algorithm")
     parser.add_argument('-c', '--config', dest="config_file", default="config.ini",
                         help="The configuration file for the local search algorithm")
