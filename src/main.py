@@ -9,6 +9,7 @@ import argparse
 
 
 config_file_name = "config.ini"
+result_directory = "result/"
 config = {}
 
 
@@ -94,7 +95,7 @@ def load_config():
 
 
 def create_directory():
-    os.chdir(config["working_directory"])
+    os.chdir(result_directory)
     str_time = datetime.now().strftime("%Y%m%d-%H:%M:%S")
     os.mkdir(str_time)
     os.chdir(str_time)
@@ -145,8 +146,11 @@ def parse_input():
     parser = argparse.ArgumentParser(description="Run the local search algorithm")
     parser.add_argument('-c', '--config', dest="config_file", default="config.ini",
                         help="The configuration file for the local search algorithm")
+    parser.add_argument('-r', '--result_directory', dest="result_dir", default="result/",
+                        help="The directory where the results of the local search algorithm are written")
     input_args = parser.parse_args()
     config_file_name = input_args.config_file
+    result_directory = input_args.result_dir
 
 
 def automode_localsearch():
