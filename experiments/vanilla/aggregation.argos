@@ -12,7 +12,7 @@
   <!-- * Loop functions * -->
   <!-- ****************** -->
   <loop_functions library="/home/jkuckling/AutoMoDe-loopfunctions/build/loop-functions/vanilla/libaggregation_loopfunc.so"
-   label="aggregation_two_spots_loop_functions">
+   label="aggregation_loop_functions">
    <params dist_radius="1.2" number_robots="20"/>
   </loop_functions>
 
@@ -22,7 +22,7 @@
   <controllers>
 	<!-- TRANSMITTER -->
     <automode_controller id="automode"
-                        library="/home/jkuckling/Documents/AutoMoDe-FSM/build/src/libautomode.so">
+                        library="/home/jkuckling/AutoMoDe-FSM/build/src/libautomode.so">
       <actuators>
         <epuck_wheels implementation="default" noise_std_dev="0.05"/>
         <epuck_rgb_leds implementation="default" medium="leds"/>
