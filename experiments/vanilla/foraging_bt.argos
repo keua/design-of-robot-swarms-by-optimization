@@ -11,8 +11,8 @@
   <!-- ****************** -->
   <!-- * Loop functions * -->
   <!-- ****************** -->
-  <loop_functions library="/home/jkuckling/AutoMoDe-BT/build/loop-functions/vanilla/libvanilla_foraging_loopfunc.so"
-   label="foraging_two_spots_lf">
+  <loop_functions library="/home/jkuckling/AutoMoDe-loopfunctions/build/loop-functions/vanilla/libforaging_loopfunc.so"
+   label="foraging_loop_functions">
    <params dist_radius="1.2" number_robots="20"/>
   </loop_functions>
 
@@ -29,11 +29,11 @@
         <epuck_range_and_bearing implementation="medium" medium="rab" data_size="4" range="0.7"/>
       </actuators>
       <sensors>
-		    <epuck_proximity implementation="default" show_rays="false" noise_level="0.05" calibrated="true"/>
+	<epuck_proximity implementation="default" show_rays="false" noise_level="0.05" calibrated="true"/>
         <epuck_range_and_bearing implementation="medium" medium="rab" data_size="4" loss_probability="0.85" calibrated="true"/>
-		    <epuck_light implementation="default" show_rays="false" noise_level="0.05" calibrated="true"/>
-		    <epuck_ground implementation="rot_z_only" noise_level="0.05" calibrated="true"/>
-		    <epuck_omnidirectional_camera implementation="rot_z_only" medium="leds" show_rays="false"/>
+        <epuck_light implementation="default" show_rays="false" noise_level="0.05" calibrated="true"/>
+	<epuck_ground implementation="rot_z_only" noise_level="0.05" calibrated="true"/>
+	<epuck_omnidirectional_camera implementation="rot_z_only" medium="leds" show_rays="false"/>
       </sensors>
     <params bt-config="--rootnode 0 --nchildsroot 4 --n0 0 --nc0 1 --c0x0 2 --p0x0 0.5 --a0 2 --n1 0 --nc1 1 --c1x0 4 --p1x0 9 --w1x0 14.39 --a1 2 --n2 0 --nc2 1 --c2x0 4 --p2x0 3 --w2x0 2.45 --a2 1 --n3 0 --nc3 1 --c3x0 0 --p3x0 0.2 --a3 0 --rwm3 4" />
   </automode_controller_bt>
@@ -93,6 +93,86 @@
   <!-- ********** -->
 
   <!-- The epucks are distributed by the loop functions. -->
+  <e-puck id="epuck_01_30">
+    <body orientation="0,0,0" position="0,-0.4,0" />
+    <controller config="automode" />
+  </e-puck>
+  <e-puck id="epuck_02_40">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+    <controller config="automode" />
+  </e-puck>
+  <e-puck id="epuck_03_50">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+    <controller config="automode" />
+  </e-puck>
+  <e-puck id="epuck_04_51">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+    <controller config="automode" />
+  </e-puck>
+  <e-puck id="epuck_05_55">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+    <controller config="automode" />
+  </e-puck>
+  <e-puck id="epuck_06_46">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+    <controller config="automode" />
+  </e-puck>
+  <e-puck id="epuck_07_34">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+    <controller config="automode" />
+  </e-puck>
+  <e-puck id="epuck_08_35">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+    <controller config="automode" />
+  </e-puck>
+  <e-puck id="epuck_09_36">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+    <controller config="automode" />
+  </e-puck>
+  <e-puck id="epuck_10_57">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+    <controller config="automode" />
+  </e-puck>
+  <e-puck id="epuck_11_44">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+    <controller config="automode" />
+  </e-puck>
+  <e-puck id="epuck_12_48">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+    <controller config="automode" />
+  </e-puck>
+  <e-puck id="epuck_13_61">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+    <controller config="automode" />
+  </e-puck>
+  <e-puck id="epuck_14_28">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+    <controller config="automode" />
+  </e-puck>
+  <e-puck id="epuck_15_32">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+    <controller config="automode" />
+  </e-puck>
+  <e-puck id="epuck_16_33">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+    <controller config="automode" />
+  </e-puck>
+  <e-puck id="epuck_17_39">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+    <controller config="automode" />
+  </e-puck>
+  <e-puck id="epuck_18_42">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+    <controller config="automode" />
+  </e-puck>
+  <e-puck id="epuck_19_47">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+    <controller config="automode" />
+  </e-puck>
+  <e-puck id="epuck_20_53">
+    <body orientation="0,0,0" position="0.4,-0.6,0" />
+    <controller config="automode" />
+  </e-puck>
   </arena>
 
   <!-- ******************* -->
