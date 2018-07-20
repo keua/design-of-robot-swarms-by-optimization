@@ -6,8 +6,7 @@ class Configuration:
     instance = None
 
     def __init__(self):
-        self.path_to_AutoMoDe_FSM = "/tmp/"
-        self.path_to_AutoMoDe_BT = "/tmp/"
+        self.path_to_AutoMoDe = "/tmp/"
         self.path_to_scenario = "/tmp/"
         self.working_directory = "/tmp/"
         self.max_improvements = 0
@@ -33,8 +32,7 @@ class Configuration:
         config_parser = configparser.ConfigParser()
         config_parser.read(config_file_name)
         # parse the paths for the executables and the scenario
-        config.path_to_AutoMoDe_FSM = config_parser["Installation"]["path_to_AutoMoDe_FSM"]
-        config.path_to_AutoMoDe_BT = config_parser["Installation"]["path_to_AutoMoDe_BT"]
+        config.path_to_AutoMoDe = config_parser["Installation"]["path_to_AutoMoDe"]
         config.path_to_scenario = config_parser["Scenario"]["path_to_scenario"]
         # the configuration for running
         config.working_directory = config_parser["Execution"]["working_directory"]

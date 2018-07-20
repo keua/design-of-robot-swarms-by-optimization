@@ -1,18 +1,10 @@
 from abc import ABCMeta, abstractmethod
-import statistics
+from automode.execution import AutoMoDeExecutor
 import random
-
-
-#
-use_mean = False  # if False then use the median
 
 
 class AutoMoDeControllerABC:
     __metaclass__ = ABCMeta
-
-    # Paths needed to evaluate the controller
-    path_to_automode_executable = ""
-    scenario_file = ""
 
     def __init__(self):
         self.score = float("inf")
@@ -33,23 +25,9 @@ class AutoMoDeControllerABC:
     def convert_to_commandline_args(self):
         pass
 
-    @abstractmethod
-    def evaluate_single_run(self, seed):
-        pass
-
     def evaluate(self, seeds):
         """Run this FSM in Argos and receive a score to compute the efficiency of the FSM"""
-        scores = []
-        for seed in seeds:
-            if seed not in self.evaluated_instances:
-                self.evaluated_instances[seed] = self.evaluate_single_run(seed)
-            print("Seed: {}, Score: {}".format(seed, self.evaluated_instances[seed]))
-            scores.append(self.evaluated_instances[seed])
-        if use_mean:
-            self.score = statistics.mean(scores)  # score / len(seeds)
-        else:
-            self.score = statistics.median(scores)
-        return self.score
+        return AutoMoDeExecutor.instance.evaluate_controller(self, seeds)
 
     def get_mutation_operators(self):
         """Returns all methods that start with mut_ indicating that they are indeed mutation operators."""

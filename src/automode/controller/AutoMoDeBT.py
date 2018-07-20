@@ -126,8 +126,8 @@ class BT(AutoMoDeControllerABC):
 
     def convert_to_commandline_args(self):
         """Converts this BT to a format that is readable by the AutoMoDe command line"""
-        # always start with "--rootnode 0"
-        args = ["--rootnode", "0"]
+        # always start with "--bt-config --rootnode 0"
+        args = ["--bt-config", "--rootnode", "0"]
         # report the number of subtrees for the top_node
         args.extend(["--nchildsroot", str(len(self.top_node.children))])  # the "rootnode" of the cmd args is in reality just the top_node
         for i in range(0, len(self.top_node.children)):
@@ -164,28 +164,6 @@ class BT(AutoMoDeControllerABC):
             child_args.extend(action_args)
             args.extend(child_args)
         return args
-
-    def evaluate_single_run(self, seed):
-        """Run a single evaluation in Argos"""
-        # print("Evaluating BT " + str(self.id) + " on seed " + str(seed))
-        print("Evaluating BT " + " on seed " + str(seed))
-        # prepare the command line
-        args = [self.path_to_automode_executable, "-n", "-c", self.scenario_file, "--seed", str(seed), "--bt-config"]
-        args.extend(self.convert_to_commandline_args())
-        # Run and capture output
-        p = subprocess.Popen(args, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-        (stdout, stderr) = p.communicate()
-        # Analyse result
-        output = stdout.decode('utf-8')
-        lines = output.splitlines()
-        # print(lines)
-        try:
-            return float(lines[len(lines) - 1].split(" ")[1])
-        except:
-            print("Args: " + str(args))
-            print("Stderr: " + stderr.decode('utf-8'))
-            print("Stdout: " + stdout.decode('utf-8'))
-            raise
 
     # ******************************************************************************************************************
     # Mutation operators

@@ -111,7 +111,6 @@ class FSM(AutoMoDeControllerABC):
         self.states = [self.initial_state]
         self.transitions = []
 
-
         self.id = -1
 
         # used to find articulation points, find better place then here
@@ -209,7 +208,7 @@ class FSM(AutoMoDeControllerABC):
         for state in [s for s in self.states if s != self.initial_state]:
             state.ext_id = counter
             counter += 1
-        args = ["--nstates", str(len(self.states))]
+        args = ["--fsm-config", "--nstates", str(len(self.states))]
         # first send the initial state as this has to be state 0
         args.extend(self.initial_state.convert_to_AutoMoDe_commandline_args())
         # Handle the transitions from the initial state
@@ -234,26 +233,6 @@ class FSM(AutoMoDeControllerABC):
                     counter += 1
                     args.extend(transition.convert_to_AutoMoDe_commandline_args())
         return args
-
-    def evaluate_single_run(self, seed):
-        """Run a single evaluation in Argos"""
-        # print("Evaluating FSM " + str(self.id) + " on seed " + str(seed))
-        # prepare the command line
-        args = [self.path_to_automode_executable, "-n", "-c", self.scenario_file, "--seed", str(seed), "--fsm-config"]
-        args.extend(self.convert_to_commandline_args())
-        # Run and capture output
-        p = subprocess.Popen(args, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-        (stdout, stderr) = p.communicate()
-        # Analyse result
-        output = stdout.decode('utf-8')
-        lines = output.splitlines()
-        try:
-            return float(lines[len(lines) - 1].split(" ")[1])
-        except:
-            print(args)
-            print(stderr.decode('utf-8'))
-            print(stdout.decode('utf-8'))
-            raise
 
     # ******************************************************************************************************************
     # Mutation operators

@@ -6,6 +6,7 @@ from automode.controller import FSM, BT
 import shutil
 import argparse
 from configuration import Configuration
+from automode.execution import AutoMoDeExecutor
 
 
 config_file_name = "config.ini"
@@ -81,7 +82,6 @@ def create_directory():
 
 def set_parameters_fsm():
     # parameters for the evaluation
-    FSM.path_to_automode_executable = Configuration.instance.path_to_AutoMoDe_FSM
     FSM.scenario_file = Configuration.instance.path_to_scenario
     # parameters for the FSM
     FSM.parameters["max_states"] = Configuration.instance.FSM_max_states
@@ -94,7 +94,6 @@ def set_parameters_fsm():
 
 def set_parameters_bt():
     # parameters for the evaluation
-    BT.path_to_automode_executable = Configuration.instance.path_to_AutoMoDe_BT
     BT.scenario_file = Configuration.instance.path_to_scenario
     # parameters for the BT
     BT.parameters["max_actions"] = Configuration.instance.BT_max_actions
@@ -129,11 +128,16 @@ def parse_input():
     result_directory = input_args.result_dir
 
 
+def create_executor():
+    executor = AutoMoDeExecutor()
+
+
 def automode_localsearch():
     parse_input()
     load_config()
     create_directory()
     set_parameters()
+    create_executor()
     controller_list = []
     if Configuration.instance.initial_controller == "from_file":
         # preload the possible initial controller
