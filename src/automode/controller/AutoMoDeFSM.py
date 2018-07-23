@@ -105,16 +105,16 @@ class FSM(AutoMoDeControllerABC):
 
     def __init__(self):
         super().__init__()
+
+        # used to find articulation points, find better place then here
+        self.aputils_time = 0
+
+    def create_minimal_controller(self):
         # The empty FSM
         stop_behavior = Behavior.get_by_name(FSM.parameters["initial_state_behavior"])
         self.initial_state = FSM.State(stop_behavior)
         self.states = [self.initial_state]
         self.transitions = []
-
-        self.id = -1
-
-        # used to find articulation points, find better place then here
-        self.aputils_time = 0
 
     def draw(self, graph_name):
         """Draw the graph representation of the FSM with graphviz"""

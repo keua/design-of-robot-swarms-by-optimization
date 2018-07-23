@@ -3,8 +3,8 @@ from abc import ABCMeta, abstractmethod
 from enum import Enum
 import graphviz as gv
 from automode.modules.chocolate import Behavior, Condition
-import subprocess
 import random
+from configuration import Configuration
 
 
 class BT(AutoMoDeControllerABC):
@@ -104,14 +104,15 @@ class BT(AutoMoDeControllerABC):
     parameters = {"max_actions": 4}
 
     def __init__(self):
-        # TODO: Correct initialization
         super().__init__()
         self.root = BT.RootNode()
+
+    def create_minimal_controller(self):
         sequence = BT.SequenceStarNode()
         self.root.children.append(sequence)
         sel1 = BT.SelectorNode()
         sel1.children.append(BT.ConditionNode("FixedProbability"))
-        sel1.children.append(BT.ActionNode("Stop"))
+        sel1.children.append(BT.ActionNode("Exploration"))
         sequence.children.append(sel1)
 
     def draw(self, graph_name):

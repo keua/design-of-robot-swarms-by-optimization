@@ -1,7 +1,7 @@
 from abc import ABCMeta, abstractmethod
 from automode.execution import AutoMoDeExecutor
 import random
-
+import configuration
 
 class AutoMoDeControllerABC:
     __metaclass__ = ABCMeta
@@ -11,6 +11,15 @@ class AutoMoDeControllerABC:
         # parameters used to keep track of the local search
         self.mut_history = []
         self.evaluated_instances = {}
+
+        if configuration.Configuration.instance.initial_controller == "minimal":
+            self.create_minimal_controller()
+
+        self.id = -1
+
+    @abstractmethod
+    def create_minimal_controller(self):
+        pass
 
     @abstractmethod
     def draw(self, graph_name):
