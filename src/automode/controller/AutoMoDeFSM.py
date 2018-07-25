@@ -133,70 +133,83 @@ class FSM(AutoMoDeControllerABC):
     @staticmethod
     def parse_from_commandline_args(cmd_args):
         """This is the invert of convert_to_commandline_args"""
+
+        def parse_number_of_states():
+            """Used so that transitions can immediately point to the states they need"""
+            number_of_states = int(to_parse.pop(0))  # this the number of states
+            # Create an according number of states
+            for i in range(0, number_of_states):
+                s = FSM.State(stop_behavior)
+                s.ext_id = i
+                finite_state_machine.states.append(s)
+
+        def parse_state():
+            state_number = int(token.split("--s")[1])  # take only the number
+            state_behavior_id = int(to_parse.pop(0))
+            # get the state
+            state = [s for s in finite_state_machine.states if s.ext_id == state_number][0]
+            # set the correct behavior
+            state.behavior = Behavior.get_by_id(state_behavior_id)
+            # pop until we read --nstatenumber
+            tmp = to_parse.pop(0)
+            number_of_transitions_delimiter = "--n" + str(state_number)
+            while tmp != number_of_transitions_delimiter:
+                # parse current attribute
+                regex_no_number = re.compile("[^0-9]+")
+                param_name = regex_no_number.match(tmp.split("--")[1]).group()
+                if param_name == "rwm":
+                    param_val = int(to_parse.pop(0))
+                else:
+                    param_val = float(to_parse.pop(0))
+                state.behavior.params[param_name] = param_val
+                tmp = to_parse.pop(0)
+            number_of_transitions = int(to_parse.pop(0))
+
+        def parse_transition():
+            transition_id = [int(x) for x in token.split("--n")[1].split("x")]
+            from_state = [s for s in finite_state_machine.states if s.ext_id == transition_id[0]][0]
+            # to_state = [s for s in finite_state_machine.states if s.ext_id == transition_ids[1]][0]
+            transition_ext_id = transition_id[1]
+            to_state_id = int(to_parse.pop(0))
+            if to_state_id < from_state.ext_id:
+                to_state = [s for s in finite_state_machine.states if s.ext_id == to_state_id][0]
+            else:  # self-reference not allowed
+                to_state = [s for s in finite_state_machine.states if s.ext_id == to_state_id + 1][0]
+            condition_count = to_parse.pop(0)
+            transition_condition_id = int(to_parse.pop(0))
+            # Create transition
+            t = FSM.Transition(from_state, to_state, Condition.get_by_id(transition_condition_id))
+            t.ext_id = transition_ext_id
+            finite_state_machine.transitions.append(t)
+            re_string = "--[a-z]{}x{}".format(from_state.ext_id, t.ext_id)
+            param_regex = re.compile(re_string)
+            while to_parse and param_regex.match(to_parse[0]):
+                param_name = to_parse.pop(0)
+                regex_no_number = re.compile("[^0-9]+")
+                param_name = regex_no_number.match(param_name.split("--")[1]).group()
+                if isinstance(t.condition.params[param_name], int):
+                    param_val = int(to_parse.pop(0))
+                else:
+                    param_val = float(to_parse.pop(0))
+                # print("{}: {}".format(param_name, param_val))
+                t.condition.params[param_name] = param_val
+
+        # Setting up a completely empty FSM
         finite_state_machine = FSM()
         finite_state_machine.states.clear()
+        # prepare the arguments
         to_parse = list(cmd_args)
         stop_behavior = Behavior.get_by_name("stop")
         while to_parse:
             token = to_parse.pop(0)
             if token == "--nstates":
-                number_of_states = int(to_parse.pop(0))  # this the number of states
-                # Create an according number of states
-                for i in range(0, number_of_states):
-                    s = FSM.State(stop_behavior)
-                    s.ext_id = i
-                    finite_state_machine.states.append(s)
+                parse_number_of_states()
             elif "--s" in token:
                 # token contains the string for a state
-                state_number = int(token.split("--s")[1])  # take only the number
-                state_behavior_id = int(to_parse.pop(0))
-                # get the state
-                state = [s for s in finite_state_machine.states if s.ext_id == state_number][0]
-                # set the correct behavior
-                state.behavior = Behavior.get_by_id(state_behavior_id)
-                # pop until we read --nstatenumber
-                tmp = to_parse.pop(0)
-                number_of_transitions_delimiter = "--n" + str(state_number)
-                while tmp != number_of_transitions_delimiter:
-                    # parse current attribute
-                    regex_no_number = re.compile("[^0-9]+")
-                    param_name = regex_no_number.match(tmp.split("--")[1]).group()
-                    if param_name == "rwm":
-                        param_val = int(to_parse.pop(0))
-                    else:
-                        param_val = float(to_parse.pop(0))
-                    state.behavior.params[param_name] = param_val
-                    tmp = to_parse.pop(0)
-                number_of_transitions = int(to_parse.pop(0))
+                parse_state()
             elif "--n" in token and "x" in token:  # TODO: Use better check (regex?)
                 # token contains the string for a transition
-                transition_id = [int(x) for x in token.split("--n")[1].split("x")]
-                from_state = [s for s in finite_state_machine.states if s.ext_id == transition_id[0]][0]
-                # to_state = [s for s in finite_state_machine.states if s.ext_id == transition_ids[1]][0]
-                transition_ext_id = transition_id[1]
-                to_state_id = int(to_parse.pop(0))
-                if to_state_id < from_state.ext_id:
-                    to_state = [s for s in finite_state_machine.states if s.ext_id == to_state_id][0]
-                else:  # self-reference not allowed
-                    to_state = [s for s in finite_state_machine.states if s.ext_id == to_state_id+1][0]
-                condition_count = to_parse.pop(0)
-                transition_condition_id = int(to_parse.pop(0))
-                # Create transition
-                t = FSM.Transition(from_state, to_state, Condition.get_by_id(transition_condition_id))
-                t.ext_id = transition_ext_id
-                finite_state_machine.transitions.append(t)
-                re_string = "--[a-z]{}x{}".format(from_state.ext_id, t.ext_id)
-                param_regex = re.compile(re_string)
-                while to_parse and param_regex.match(to_parse[0]):
-                    param_name = to_parse.pop(0)
-                    regex_no_number = re.compile("[^0-9]+")
-                    param_name = regex_no_number.match(param_name.split("--")[1]).group()
-                    if isinstance(t.condition.params[param_name], int):
-                        param_val = int(to_parse.pop(0))
-                    else:
-                        param_val = float(to_parse.pop(0))
-                    # print("{}: {}".format(param_name, param_val))
-                    t.condition.params[param_name] = param_val
+                parse_transition()
         finite_state_machine.initial_state = [s for s in finite_state_machine.states if s.ext_id == 0][0]
         # print("________")
         return finite_state_machine

@@ -5,6 +5,7 @@ import graphviz as gv
 from automode.modules.chocolate import Behavior, Condition
 import random
 from configuration import Configuration
+import re
 
 
 class BT(AutoMoDeControllerABC):
@@ -122,8 +123,41 @@ class BT(AutoMoDeControllerABC):
 
     @staticmethod
     def parse_from_commandline_args(cmd_args):
-        # TODO: Implement
-        pass
+
+        def parse_top_level_node():
+            to_parse.pop(0)  # --rootnode
+            top_level_type = int(to_parse.pop(0))  # 0
+            behavior_tree.root.children.append(BT.SequenceStarNode())
+            to_parse.pop(0)  # --nchildsroot
+            top_level_children_count = int(to_parse.pop(0))  # not really needed, iterating over subtrees should work fine
+
+        def parse_selector_subtree():
+            # parse selector node
+            selector_id_string = to_parse.pop(0)  # --n[]
+            selector_type = int(to_parse.pop(0))  # 0
+            num_conditions_string = to_parse.pop(0)  # --nc[]
+            num_conditions = int(to_parse.pop(0))  # 1
+            selector = BT.SelectorNode()
+            condition_label = to_parse.pop(0)  # --c[]x[]
+            condition_type = int(to_parse.pop(0))
+            token = to_parse.pop(0)
+            while not regex_action_node.match(token):  # TODO: Fix and test
+                token = to_parse.pop(0)
+            action_label = token  # --a[]
+            action_type = to_parse.pop(0)
+            # TODO: Parse action parameters
+            behavior_tree.root.children[0].append(selector)
+
+        #
+        regex_action_node = re.compile("--a[0-9]")
+        # create an emtpy BT
+        behavior_tree = BT()
+        behavior_tree.root.children.clear()  # could also clear the root node, but the root node is invariant
+        # prepare the arguments
+        to_parse = list(cmd_args)
+        # parse the initial information
+        while to_parse:
+            parse_selector_subtree()
 
     def convert_to_commandline_args(self):
         """Converts this BT to a format that is readable by the AutoMoDe command line"""
