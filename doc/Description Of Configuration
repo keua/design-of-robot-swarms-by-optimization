@@ -1,0 +1,5 @@
+Controller - Initial Controller
+    Can be either minimal, from_file, random_from_file
+    minimal: Each run will start with a controller representing the "Stop" behavior
+    from_file: All controllers from a given file will be loaded. Each run will be executed the next controller from the file
+    random_from_file: As from_file but the controllers are selected randomly. Repetition allowed.

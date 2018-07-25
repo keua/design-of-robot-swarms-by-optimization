@@ -104,6 +104,9 @@ class FSM(AutoMoDeControllerABC):
                   "random_parameter_initialization": True}
 
     def __init__(self):
+        self.initial_state = None
+        self.states = []
+        self.transitions = []
         super().__init__()
 
         # used to find articulation points, find better place then here

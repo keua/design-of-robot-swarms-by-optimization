@@ -139,22 +139,22 @@ def automode_localsearch():
     set_parameters()
     create_executor()
     controller_list = []
-    if Configuration.instance.initial_controller == "from_file":
+    if "from_file" in Configuration.instance.initial_controller:  # either from_file or random_from_file
         # preload the possible initial controller
-        with open(Configuration.instance.initial_FSM_file) as f:  # TODO: Load from correct file here
+        with open(Configuration.instance.initial_controller_file) as f:
             initial_count = 0
             for line in f:
                 tmp = FSM.parse_from_commandline_args(line.strip().split(" "))
-                # tmp.draw_graph("Vanilla_"+str(initial_count))
+                tmp.draw("Vanilla_"+str(initial_count))
                 controller_list.append(tmp)
                 initial_count += 1
     # Run local search
     for i in range(0, Configuration.instance.num_runs):
         # generate initial FSM
-        if Configuration.instance.initial_controller:
+        if Configuration.instance.initial_controller == "minimal":
             initial_controller = get_controller_class()()
         else:
-            initial_controller = random.choice(controller_list)
+            initial_controller = controller_list[i]
         os.mkdir("run_{}".format(i))
         os.chdir("run_{}".format(i))
         initial_controller.draw("initial")

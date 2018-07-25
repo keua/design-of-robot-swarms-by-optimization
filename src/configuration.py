@@ -15,7 +15,7 @@ class Configuration:
         self.seed_window_movement = 0
         self.controller_type = "None"
         self.initial_controller = "None"
-        self.initial_FSM_file = "/tmp/"
+        self.initial_controller_file = "/tmp/"
         self.FSM_max_states = 0
         self.FSM_max_transitions = 0
         self.FSM_max_transitions_per_state = 0
@@ -49,10 +49,10 @@ class Configuration:
             # parse the controller configuration
             config.controller_type = config_parser["Controller"]["controller_type"]
             config.initial_controller = config_parser["Controller"]["initial_controller"]
-            if config.initial_controller not in ["minimal"]:
+            if config.initial_controller not in ["minimal", "from_file", "random_from_file"]:
                 print("Unrecognized configuration for initial_controller: {}".format(config.initial_controller))
+            config.initial_controller_file = config_parser["Controller"]["initial_controller_file"]
             # parse information related to the FSM
-            config.initial_FSM_file = config_parser["FSM"]["initial_FSM_file"]
             config.FSM_max_states = int(config_parser["FSM"]["max_states"])
             config.FSM_max_transitions = float(config_parser["FSM"]["max_transitions"])
             config.FSM_max_transitions_per_state = int(config_parser["FSM"]["max_transitions_per_state"])
