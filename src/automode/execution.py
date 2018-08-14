@@ -1,5 +1,5 @@
 import statistics
-import mpi4py.futures
+# import mpi4py.futures
 from configuration import Configuration
 import subprocess
 
@@ -15,8 +15,8 @@ class AutoMoDeExecutor:
 
         self.path_to_AutoMoDe_executable = Configuration.instance.path_to_AutoMoDe
         self.scenario_file = Configuration.instance.path_to_scenario
-        if self.use_mpi:
-            self.mpi_pool = mpi4py.futures.MPIPoolExecutor()
+        # if self.use_mpi:
+        #     self.mpi_pool = mpi4py.futures.MPIPoolExecutor()
 
         # Singleton
         AutoMoDeExecutor.instance = self

@@ -130,7 +130,7 @@ class Condition (ABCCondition):
         elif t_id == 5:
             t_name = "FixedProbability"
         else:
-            print("Unknown id " + str(t_id) + " for a behavior.")
+            print("Unknown id " + str(t_id) + " for a condition.")
         return Condition(t_name)
 
     @staticmethod

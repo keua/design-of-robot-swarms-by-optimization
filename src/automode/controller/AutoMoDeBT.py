@@ -132,6 +132,12 @@ class BT(AutoMoDeControllerABC):
             top_level_children_count = int(to_parse.pop(0))  # not really needed, iterating over subtrees should work fine
 
         def parse_selector_subtree():
+            '''
+                The parsing of the parameters in this function is a very dirty fix.
+                Once back from holidays, try and find a better way to handle it.
+                At  the moment it just iterates over the length of the parameters and 
+                reads one parameter from the parse_list.
+            '''
             # parse selector node
             selector_id_string = to_parse.pop(0)  # --n[]
             selector_type = int(to_parse.pop(0))  # 0
@@ -140,24 +146,48 @@ class BT(AutoMoDeControllerABC):
             selector = BT.SelectorNode()
             condition_label = to_parse.pop(0)  # --c[]x[]
             condition_type = int(to_parse.pop(0))
-            token = to_parse.pop(0)
-            while not regex_action_node.match(token):  # TODO: Fix and test
-                token = to_parse.pop(0)
-            action_label = token  # --a[]
-            action_type = to_parse.pop(0)
-            # TODO: Parse action parameters
-            behavior_tree.root.children[0].append(selector)
+            condition_node = BT.ConditionNode("FixedProbability")
+            condition_node.condition = Condition.get_by_id(condition_type)
+            # TODO: FIX: parse condition parameters
+            for condition_param in condition_node.condition.params:
+                param_string = to_parse.pop(0)  # param identifier
+                param_name = regex_no_number.match(param_string.split("--")[1]).group()
+                if isinstance(condition_node.condition.params[param_name], int):
+                    param_val = int(to_parse.pop(0))
+                else:
+                    param_val = float(to_parse.pop(0))
+                condition_node.condition.params[param_name] = param_val
+            action_label = to_parse.pop(0)  # --a[]
+            action_type = int(to_parse.pop(0))
+            action_node = BT.ActionNode("Stop")
+            action_node.action = Behavior.get_by_id(action_type)
+            # TODO: FIX: parse action parameters
+            for action_param in action_node.action.params:
+                param_string = to_parse.pop(0)  # param identifier
+                param_name = regex_no_number.match(param_string.split("--")[1]).group()
+                if param_name == "rwm":
+                    param_val = int(to_parse.pop(0))
+                else:
+                    param_val = float(to_parse.pop(0))
+                action_node.action.params[param_name] = param_val
+            selector.children.append(condition_node)
+            selector.children.append(action_node)
+            behavior_tree.root.children[0].children.append(selector)
 
         #
         regex_action_node = re.compile("--a[0-9]")
+        regex_no_number = re.compile("[^0-9]+")
         # create an emtpy BT
         behavior_tree = BT()
         behavior_tree.root.children.clear()  # could also clear the root node, but the root node is invariant
         # prepare the arguments
         to_parse = list(cmd_args)
         # parse the initial information
+        parse_top_level_node()
+        # parse the selector subtrees
         while to_parse:
             parse_selector_subtree()
+        return behavior_tree
 
     def convert_to_commandline_args(self):
         """Converts this BT to a format that is readable by the AutoMoDe command line"""

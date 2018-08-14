@@ -144,7 +144,7 @@ def automode_localsearch():
         with open(Configuration.instance.initial_controller_file) as f:
             initial_count = 0
             for line in f:
-                tmp = FSM.parse_from_commandline_args(line.strip().split(" "))
+                tmp = get_controller_class().parse_from_commandline_args(line.strip().split(" "))
                 tmp.draw("Vanilla_"+str(initial_count))
                 controller_list.append(tmp)
                 initial_count += 1
