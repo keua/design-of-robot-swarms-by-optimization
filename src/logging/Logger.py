@@ -33,6 +33,8 @@ class Logger:
         :param message:
         :return:
         """
+        if self.log_level <= Logger.LogLevel.VERBOSE:
+            print(message)
 
     def log(self, message):
         """
