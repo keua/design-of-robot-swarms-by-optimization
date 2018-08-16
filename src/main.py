@@ -73,8 +73,9 @@ def create_directory():
     src_directory = os.path.split(os.path.realpath(__file__))[0]
     os.chdir(result_directory)
     str_time = datetime.now().strftime("%Y%m%d-%H:%M:%S")
-    os.mkdir(str_time)
-    os.chdir(str_time)
+    exp_dir = "{}_{}".format(config_file_name.split(".")[0], str_time)
+    os.mkdir(exp_dir)
+    os.chdir(exp_dir)
     # copy the configuration file
     new_config_filename = "config_{}.ini".format(str_time)
     shutil.copyfile("{}/{}".format(src_directory, config_file_name), "{}/{}".format(os.getcwd(), new_config_filename))
