@@ -144,9 +144,14 @@ def automode_localsearch():
         # preload the possible initial controller
         with open(Configuration.instance.initial_controller_file) as f:
             initial_count = 0
+            pre_seed_window = list()
+            for i in range(0, Configuration.instance.seed_window_size):
+                pre_seed_window.append(random.randint(0, 2147483647))
             for line in f:
                 tmp = get_controller_class().parse_from_commandline_args(line.strip().split(" "))
                 tmp.draw("Vanilla_"+str(initial_count))
+                tmp.evaluate(pre_seed_window)
+                print("Vanilla_{} scored {}".format(initial_count, tmp.score))
                 controller_list.append(tmp)
                 initial_count += 1
     # Run local search
