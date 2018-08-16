@@ -56,7 +56,7 @@ class AutoMoDeExecutor:
         :return: The score of controller with the given seed (which is also saved in the controller)
         """
         # print("Evaluating BT " + str(self.id) + " on seed " + str(seed))
-        Logger.instance.log_verbose("Evaluating BT " + " on seed " + str(seed))
+        Logger.instance.log_debug("Evaluating BT " + " on seed " + str(seed))
         # prepare the command line
         args = [self.path_to_AutoMoDe_executable, "-n", "-c", self.scenario_file, "--seed", str(seed)]
         args.extend(controller.convert_to_commandline_args())
@@ -75,5 +75,6 @@ class AutoMoDeExecutor:
             Logger.instance.log_error("Stdout: " + stdout.decode('utf-8'))
             raise
         controller.evaluated_instances[seed] = score
-        Logger.instance.log_debug("Seed: {}, Score: {}".format(seed, controller.evaluated_instances[seed]))
+        Logger.instance.log_verbose("Controller {} on seed {} returned score: {}".format(
+            "", seed, controller.evaluated_instances[seed]))
 
