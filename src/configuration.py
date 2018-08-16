@@ -23,7 +23,7 @@ class Configuration:
         self.FSM_no_self_transition = True
         self.FSM_initial_state_behavior = "None"
         self.FSM_random_parameter_initialization = True
-        self.verbose = False
+        self.log_level = "INFO"
         self.snapshot_frequency = 1
         Configuration.instance = self
 
@@ -71,6 +71,6 @@ class Configuration:
         load_run_configuration()
         load_controller_configuration()
         # parse logging configuration
-        config.verbose = config_parser["Logging"].getboolean("verbose")
+        config.log_level = config_parser["Logging"]["log_level"]
         config.snapshot_frequency = int(config_parser["Logging"]["snapshot_frequency"])
 
