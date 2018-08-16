@@ -2,6 +2,7 @@ from abc import ABCMeta, abstractmethod
 from automode.execution import AutoMoDeExecutor
 import random
 import configuration
+from logging.Logger import Logger
 
 class AutoMoDeControllerABC:
     __metaclass__ = ABCMeta
@@ -41,7 +42,6 @@ class AutoMoDeControllerABC:
     def get_mutation_operators(self):
         """Returns all methods that start with mut_ indicating that they are indeed mutation operators."""
         method_names = [method_name for method_name in dir(self) if callable(getattr(self, method_name)) and method_name.startswith("mut_")]
-        # print(method_names)
         methods = [getattr(self, x) for x in method_names]
         return methods
 
@@ -62,4 +62,4 @@ class AutoMoDeControllerABC:
                 self.mut_history.append(mutation_operator)
                 return
         # We cannot apply any operator -> how can this even happen?
-        print("A critical error appeared. We cannot apply any mutation at his point.")
+        Logger.instance.log_error("A critical error appeared. We cannot apply any mutation at his point.")

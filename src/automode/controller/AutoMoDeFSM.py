@@ -1,7 +1,7 @@
 from automode.modules.chocolate import Behavior, Condition
 import random
 import graphviz as gv
-import subprocess
+from logging.Logger import Logger
 import re
 from automode.controller.AutoMoDeControllerABC import AutoMoDeControllerABC
 
@@ -31,7 +31,7 @@ class FSM(AutoMoDeControllerABC):
                 elif param == "rwm":
                     pval = str(self.behavior.params[param])
                 else:
-                    print("Undefined parameter")
+                    Logger.instance.log_error("Undefined parameter")
                     pval = 0
                 args.extend(["--" + param + str(self.ext_id), pval])
             return args
@@ -194,7 +194,7 @@ class FSM(AutoMoDeControllerABC):
                     param_val = int(to_parse.pop(0))
                 else:
                     param_val = float(to_parse.pop(0))
-                # print("{}: {}".format(param_name, param_val))
+                Logger.instance.log_debug("{}: {}".format(param_name, param_val))
                 t.condition.params[param_name] = param_val
 
         # Setting up a completely empty FSM
@@ -214,7 +214,6 @@ class FSM(AutoMoDeControllerABC):
                 # token contains the string for a transition
                 parse_transition()
         finite_state_machine.initial_state = [s for s in finite_state_machine.states if s.ext_id == 0][0]
-        # print("________")
         return finite_state_machine
 
     def convert_to_commandline_args(self):

@@ -7,6 +7,7 @@ import shutil
 import argparse
 from configuration import Configuration
 from automode.execution import AutoMoDeExecutor
+from logging.Logger import Logger
 
 
 config_file_name = "config.ini"
@@ -16,9 +17,8 @@ src_directory = "src/"
 
 def run_local_search(controller):
     best = controller
-    if Configuration.instance.verbose:
-        start_time = datetime.now()
-        print("Started at " + str(start_time))
+    start_time = datetime.now()
+    Logger.instance.log("Started at " + str(start_time))
     if not os.path.isdir("scores"):
         os.mkdir("scores")
     with open("scores/best_score.csv", "w") as file:
@@ -26,8 +26,7 @@ def run_local_search(controller):
         for i in range(0, Configuration.instance.seed_window_size):
             seed_window.append(random.randint(0, 2147483647))
         best.evaluate(seed_window)
-        if Configuration.instance.verbose:
-            print("Initial best score " + str(best.score))
+        Logger.instance.log_verbose("Initial best score " + str(best.score))
         for i in range(0, Configuration.instance.max_improvements):
             # move the window
             for j in range(0, Configuration.instance.seed_window_movement):
@@ -45,20 +44,17 @@ def run_local_search(controller):
             # save the scores to file
             file.write(str(best.score) + ", " + str(mutated_controller.score) + ", " +
                        mutated_controller.mut_history[len(mutated_controller.mut_history) - 1].__name__ + "\n")
-            if Configuration.instance.verbose:
-                print("Best score " + str(best.score) + " and new score " + str(mutated_controller.score))
+            Logger.instance.log_verbose("Best score " + str(best.score) + " and new score " + str(mutated_controller.score))
             if best.score < mutated_controller.score:  # < for max
-                if Configuration.instance.verbose:
-                    print(mutated_controller.mut_history[len(mutated_controller.mut_history) - 1].__name__)
-                    mutated_controller.draw(str(i))
+                Logger.instance.log_verbose(mutated_controller.mut_history[len(mutated_controller.mut_history) - 1].__name__)
+                mutated_controller.draw(str(i))
                 best = mutated_controller
             if i % Configuration.instance.snapshot_frequency == 0:
                 best.draw(str(i))
         end_time = datetime.now()
-    if Configuration.instance.verbose:
-        print("Finished at " + str(end_time))
-        time_diff = end_time - start_time
-        print("Took " + str(time_diff))
+    Logger.instance.log("Finished at " + str(end_time))
+    time_diff = end_time - start_time
+    Logger.instance.log_verbose("Took " + str(time_diff))
     return best
 
 
@@ -67,9 +63,8 @@ def load_config():
 
 
 def create_directory():
-    global src_directory    
-    print("Directory of this file")
-    print(os.path.realpath(__file__))
+    global src_directory
+    Logger.instance.log_debug("Directory of this file {}".format(os.path.realpath(__file__)))
     src_directory = os.path.split(os.path.realpath(__file__))[0]
     os.chdir(result_directory)
     str_time = datetime.now().strftime("%Y%m%d-%H:%M:%S")
@@ -112,7 +107,7 @@ def get_controller_class():
     elif Configuration.instance.controller_type == "BT":
         return BT
     else:
-        print("WARNING: The specified type {} is not known.".format(Configuration.instance.controller_type))
+        Logger.instance.log_warning("WARNING: The specified type {} is not known.".format(Configuration.instance.controller_type))
         return None
 
 
@@ -134,6 +129,7 @@ def create_executor():
 
 
 def automode_localsearch():
+    logger = Logger()
     parse_input()
     load_config()
     create_directory()
@@ -151,7 +147,7 @@ def automode_localsearch():
                 tmp = get_controller_class().parse_from_commandline_args(line.strip().split(" "))
                 tmp.draw("Vanilla_"+str(initial_count))
                 tmp.evaluate(pre_seed_window)
-                print("Vanilla_{} scored {}".format(initial_count, tmp.score))
+                Logger.instance.log_verbose("Vanilla_{} scored {}".format(initial_count, tmp.score))
                 controller_list.append(tmp)
                 initial_count += 1
     # Run local search
@@ -166,7 +162,7 @@ def automode_localsearch():
         initial_controller.draw("initial")
         result = run_local_search(initial_controller)
         result.draw("final")
-        print(result.convert_to_commandline_args())
+        Logger.instance.log(result.convert_to_commandline_args())
         os.chdir("..")
 
 

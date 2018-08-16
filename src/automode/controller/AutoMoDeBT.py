@@ -4,7 +4,7 @@ from enum import Enum
 import graphviz as gv
 from automode.modules.chocolate import Behavior, Condition
 import random
-from configuration import Configuration
+from logging.Logger import Logger
 import re
 
 
@@ -223,7 +223,7 @@ class BT(AutoMoDeControllerABC):
                 elif param == "rwm":
                     pval = str(action_node.action.params[param])
                 else:
-                    print("Undefined parameter")
+                    Logger.instance.log_error("Undefined parameter")
                     pval = 0
                 action_args.extend(["--{}{}".format(param, i), pval])
             child_args.extend(action_args)

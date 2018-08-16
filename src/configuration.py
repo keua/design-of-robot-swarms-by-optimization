@@ -1,4 +1,5 @@
 import configparser
+from logging.Logger import Logger
 
 
 class Configuration:
@@ -50,7 +51,7 @@ class Configuration:
             config.controller_type = config_parser["Controller"]["controller_type"]
             config.initial_controller = config_parser["Controller"]["initial_controller"]
             if config.initial_controller not in ["minimal", "from_file", "random_from_file"]:
-                print("Unrecognized configuration for initial_controller: {}".format(config.initial_controller))
+                Logger.instance.log_error("Unrecognized configuration for initial_controller: {}".format(config.initial_controller))
             config.initial_controller_file = config_parser["Controller"]["initial_controller_file"]
             # parse information related to the FSM
             config.FSM_max_states = int(config_parser["FSM"]["max_states"])

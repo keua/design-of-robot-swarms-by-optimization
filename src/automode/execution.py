@@ -2,6 +2,7 @@ import statistics
 # import mpi4py.futures
 from configuration import Configuration
 import subprocess
+from logging.Logger import Logger
 
 
 class AutoMoDeExecutor:
@@ -55,7 +56,7 @@ class AutoMoDeExecutor:
         :return: The score of controller with the given seed (which is also saved in the controller)
         """
         # print("Evaluating BT " + str(self.id) + " on seed " + str(seed))
-        print("Evaluating BT " + " on seed " + str(seed))
+        Logger.instance.log_verbose("Evaluating BT " + " on seed " + str(seed))
         # prepare the command line
         args = [self.path_to_AutoMoDe_executable, "-n", "-c", self.scenario_file, "--seed", str(seed)]
         args.extend(controller.convert_to_commandline_args())
@@ -69,10 +70,10 @@ class AutoMoDeExecutor:
             score = float(lines[len(lines) - 1].split(" ")[1])
         except:
             score = -1  # Just to be sure
-            print("Args: " + str(args))
-            print("Stderr: " + stderr.decode('utf-8'))
-            print("Stdout: " + stdout.decode('utf-8'))
+            Logger.instance.log_error("Args: " + str(args))
+            Logger.instance.log_error("Stderr: " + stderr.decode('utf-8'))
+            Logger.instance.log_error("Stdout: " + stdout.decode('utf-8'))
             raise
         controller.evaluated_instances[seed] = score
-        print("Seed: {}, Score: {}".format(seed, controller.evaluated_instances[seed]))
+        Logger.instance.log_debug("Seed: {}, Score: {}".format(seed, controller.evaluated_instances[seed]))
 
