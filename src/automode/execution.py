@@ -60,6 +60,7 @@ class AutoMoDeExecutor:
         # prepare the command line
         args = [self.path_to_AutoMoDe_executable, "-n", "-c", self.scenario_file, "--seed", str(seed)]
         args.extend(controller.convert_to_commandline_args())
+        Logger.instance.log_debug(args)
         # Run and capture output
         p = subprocess.Popen(args, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         (stdout, stderr) = p.communicate()
