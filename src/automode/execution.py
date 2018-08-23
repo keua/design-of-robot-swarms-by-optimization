@@ -67,6 +67,7 @@ class AutoMoDeExecutor:
         output = stdout.decode('utf-8')
         lines = output.splitlines()
         try:
+            Logger.instance.log_debug(lines[len(lines) - 1])
             score = float(lines[len(lines) - 1].split(" ")[1])
         except:
             score = -1  # Just to be sure
