@@ -93,8 +93,8 @@ def set_parameters_bt():
     BT.scenario_file = Configuration.instance.path_to_scenario
     # parameters for the BT
     BT.parameters["max_actions"] = Configuration.instance.BT_max_actions
-    FSM.parameters["minimal_behavior"] = Configuration.instance.controller_minimal_behavior
-    FSM.parameters["minimal_condition"] = Configuration.instance.controller_minimal_condition
+    BT.parameters["minimal_behavior"] = Configuration.instance.controller_minimal_behavior
+    BT.parameters["minimal_condition"] = Configuration.instance.controller_minimal_condition
 
 
 def set_parameters():
