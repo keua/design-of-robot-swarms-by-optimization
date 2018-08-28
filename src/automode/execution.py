@@ -2,7 +2,7 @@ import statistics
 # import mpi4py.futures
 from configuration import Configuration
 import subprocess
-from logging.Logger import Logger
+from logging import Logger
 
 
 class AutoMoDeExecutor:

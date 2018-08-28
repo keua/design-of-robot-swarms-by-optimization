@@ -4,7 +4,7 @@ from enum import Enum
 import graphviz as gv
 from automode.modules.chocolate import Behavior, Condition
 import random
-from logging.Logger import Logger
+from logging import Logger
 import re
 
 
@@ -102,7 +102,9 @@ class BT(AutoMoDeControllerABC):
             caption += self.condition.get_parameter_for_caption()
             return caption
 
-    parameters = {"max_actions": 4}
+    parameters = {"max_actions": 4,
+                  "minimal_condition": "Fail",
+                  "minimal_behavior": "Fail"}
 
     def __init__(self):        
         self.root = BT.RootNode()
@@ -113,8 +115,8 @@ class BT(AutoMoDeControllerABC):
         sequence = BT.SequenceStarNode()
         self.root.children.append(sequence)
         sel1 = BT.SelectorNode()
-        sel1.children.append(BT.ConditionNode("FixedProbability"))
-        sel1.children.append(BT.ActionNode("Exploration"))
+        sel1.children.append(BT.ConditionNode(BT.parameters["minimal_condition"]))
+        sel1.children.append(BT.ActionNode(BT.parameters["minimal_behavior"]))
         sequence.children.append(sel1)
 
     def draw(self, graph_name):

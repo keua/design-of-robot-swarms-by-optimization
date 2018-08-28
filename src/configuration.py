@@ -1,5 +1,5 @@
 import configparser
-from logging.Logger import Logger
+from logging import Logger
 
 
 class Configuration:
@@ -17,11 +17,12 @@ class Configuration:
         self.controller_type = "None"
         self.initial_controller = "None"
         self.initial_controller_file = "/tmp/"
+        self.controller_minimal_behavior = "None"
+        self.controller_minimal_condition = "None"
         self.FSM_max_states = 0
         self.FSM_max_transitions = 0
         self.FSM_max_transitions_per_state = 0
         self.FSM_no_self_transition = True
-        self.FSM_initial_state_behavior = "None"
         self.FSM_random_parameter_initialization = True
         self.log_level = "INFO"
         self.snapshot_frequency = 1
@@ -53,12 +54,13 @@ class Configuration:
             if config.initial_controller not in ["minimal", "from_file", "random_from_file"]:
                 Logger.instance.log_error("Unrecognized configuration for initial_controller: {}".format(config.initial_controller))
             config.initial_controller_file = config_parser["Controller"]["initial_controller_file"]
+            config.controller_minimal_behavior = config_parser["Controller"]["minimal_behavior"]
+            config.controller_minimal_condition = config_parser["Controller"]["minimal_condition"]
             # parse information related to the FSM
             config.FSM_max_states = int(config_parser["FSM"]["max_states"])
             config.FSM_max_transitions = float(config_parser["FSM"]["max_transitions"])
             config.FSM_max_transitions_per_state = int(config_parser["FSM"]["max_transitions_per_state"])
             config.FSM_no_self_transition = config_parser["FSM"].getboolean("no_self_transition")
-            config.FSM_initial_state_behavior = config_parser["FSM"]["initial_state_behavior"]
             config.FSM_random_parameter_initialization = config_parser["FSM"].getboolean(
                 "random_parameter_initialization")
             # parse information related to the BT
