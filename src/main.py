@@ -7,7 +7,7 @@ import shutil
 import argparse
 from configuration import Configuration
 from automode.execution import AutoMoDeExecutor
-from logging.Logger import Logger
+from logging import Logger
 
 
 config_file_name = "config.ini"
@@ -84,7 +84,7 @@ def set_parameters_fsm():
     FSM.parameters["max_transitions"] = Configuration.instance.FSM_max_transitions
     FSM.parameters["max_transitions_per_state"] = Configuration.instance.FSM_max_transitions_per_state
     FSM.parameters["no_self_transition"] = Configuration.instance.FSM_no_self_transition
-    FSM.parameters["initial_state_behavior"] = Configuration.instance.FSM_initial_state_behavior
+    FSM.parameters["initial_state_behavior"] = Configuration.instance.controller_minimal_behavior
     FSM.parameters["random_parameter_initialization"] = Configuration.instance.FSM_random_parameter_initialization
 
 
@@ -93,6 +93,8 @@ def set_parameters_bt():
     BT.scenario_file = Configuration.instance.path_to_scenario
     # parameters for the BT
     BT.parameters["max_actions"] = Configuration.instance.BT_max_actions
+    FSM.parameters["minimal_behavior"] = Configuration.instance.controller_minimal_behavior
+    FSM.parameters["minimal_condition"] = Configuration.instance.controller_minimal_condition
 
 
 def set_parameters():

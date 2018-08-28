@@ -1,7 +1,7 @@
 from automode.modules.chocolate import Behavior, Condition
 import random
 import graphviz as gv
-from logging.Logger import Logger
+from logging import Logger
 import re
 from automode.controller.AutoMoDeControllerABC import AutoMoDeControllerABC
 
@@ -100,7 +100,7 @@ class FSM(AutoMoDeControllerABC):
                   "max_transitions": float("inf"),
                   "max_transitions_per_state": 4,
                   "no_self_transition": True,
-                  "initial_state_behavior": "Stop",
+                  "initial_state_behavior": "Fail",
                   "random_parameter_initialization": True}
 
     def __init__(self):
