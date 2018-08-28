@@ -104,9 +104,10 @@ class BT(AutoMoDeControllerABC):
 
     parameters = {"max_actions": 4}
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self):        
         self.root = BT.RootNode()
+        super().__init__()
+
 
     def create_minimal_controller(self):
         sequence = BT.SequenceStarNode()
