@@ -9,7 +9,8 @@ TMPDIR=/tmp/$USERNAME/LocalSearch_results_${job_name}_${count}
 JOBDIR=/home/$USERNAME/AutoMoDe-LocalSearch
 SOURCEDIR=$JOBDIR/src
 RESULTDIR=$JOBDIR/result
-CONFIG_FILE=config_${job_name}.ini
+CONFIG_DIR=${dir}
+CONFIG_FILE=${CONFIG_DIR}/config_${job_name}.ini
 # CONFIG_FILE=config_BT_for.ini
 
 mkdir -p $TMPDIR
