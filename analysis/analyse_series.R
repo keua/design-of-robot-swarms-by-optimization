@@ -26,8 +26,8 @@ draw_improvement_boxplot <- function(initial, final, exp_type) {
   boxplot(initial, final, names=c("initial", "final"), main=plot_title)
 }
 
-show_experiment_series <- function(series) {
-  result_dir <- "/home/jkuckling/AutoMoDe-LocalSearch/result"
+show_experiment_series <- function(series, directory="") {
+  result_dir <- paste("/home/jkuckling/AutoMoDe-LocalSearch/result", directory, sep="/")
   initial_results <- 1:10
   final_results <- 1:10
   for (i in 1:10) {
