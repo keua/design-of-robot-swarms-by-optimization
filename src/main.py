@@ -68,7 +68,8 @@ def create_directory():
     src_directory = os.path.split(os.path.realpath(__file__))[0]
     os.chdir(result_directory)
     str_time = datetime.now().strftime("%Y%m%d-%H:%M:%S")
-    exp_dir = "{}_{}".format(config_file_name.split(".")[0], str_time)
+    config_id = config_file_name.split("config_")[1].split(".ini")[0]  # the part between config_ and .ini
+    exp_dir = "{}_{}".format(config_id, str_time)
     os.mkdir(exp_dir)
     os.chdir(exp_dir)
     # copy the configuration file
