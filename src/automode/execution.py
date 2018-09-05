@@ -1,5 +1,5 @@
 import statistics
-# import mpi4py.futures
+import mpi4py.futures
 from configuration import Configuration
 import subprocess
 from logging import Logger
@@ -16,8 +16,8 @@ class AutoMoDeExecutor:
 
         self.path_to_AutoMoDe_executable = Configuration.instance.path_to_AutoMoDe
         self.scenario_file = Configuration.instance.path_to_scenario
-        # if self.use_mpi:
-        #     self.mpi_pool = mpi4py.futures.MPIPoolExecutor()
+        if self.use_mpi:
+            self.mpi_pool = mpi4py.futures.MPIPoolExecutor()
 
         # Singleton
         AutoMoDeExecutor.instance = self
@@ -30,6 +30,14 @@ class AutoMoDeExecutor:
         :param reevaluate_seeds: Indicates if already evaluated seeds are evaluated again. False by default.
         :return: An aggregate of the scores for each seed
         """
+
+        def sequential_execution():
+            for s in evaluate_seeds:
+                self.execute_controller(controller, s)
+
+        def parallel_execution():
+            pass
+
         scores = []
         # prepare the set of seeds that need to be evaluated
         evaluate_seeds = []
@@ -38,10 +46,9 @@ class AutoMoDeExecutor:
                 evaluate_seeds.append(seed)
         # evaluate the controller on the set of seeds
         if self.use_mpi:
-            pass
+            parallel_execution()
         else:
-            for seed in evaluate_seeds:
-                self.execute_controller(controller, seed)
+            sequential_execution()
         # return the score
         for seed in seeds:
             scores.append(controller.evaluated_instances[seed])

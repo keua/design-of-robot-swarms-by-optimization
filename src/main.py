@@ -122,9 +122,17 @@ def parse_input():
                         help="The configuration file for the local search algorithm")
     parser.add_argument('-r', '--result_directory', dest="result_dir", default="result/",
                         help="The directory where the results of the local search algorithm are written")
+    parser.add_argument('-s', '--scenario_file', dest="scenario_file", default="missing.argos",
+                        help="The scenario file for the improvement")
+    parser.add_argument('-i', '--initial_controller', dest="initial_controller", default="",
+                        help="The initial controller for the local search. Empty if there it should start from a minimal controller")
+    parser.add_argument('-exe', '--automode_executable', dest="executable", default="automode_main",
+                        help="The AutoMoDe executable")
     input_args = parser.parse_args()
     config_file_name = input_args.config_file
     result_directory = input_args.result_dir
+    # TODO: get other information
+    # TODO: Rework to not use global variables
 
 
 def create_executor():
