@@ -156,7 +156,6 @@ def automode_localsearch():
         with open(controller_file, mode='r') as file:
             for i in range(0, int(line)):
                 controller = file.readline()
-        print(controller)
         controller = controller.split(" ")
         Configuration.instance.initial_controller = get_controller_class()().parse_from_commandline_args(controller)
     # Run local search

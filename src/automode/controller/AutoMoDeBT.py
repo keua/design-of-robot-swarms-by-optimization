@@ -135,12 +135,12 @@ class BT(AutoMoDeControllerABC):
             top_level_children_count = int(to_parse.pop(0))  # not really needed, iterating over subtrees should work fine
 
         def parse_selector_subtree():
-            '''
+            """
                 The parsing of the parameters in this function is a very dirty fix.
                 Once back from holidays, try and find a better way to handle it.
                 At  the moment it just iterates over the length of the parameters and 
                 reads one parameter from the parse_list.
-            '''
+            """
             # parse selector node
             selector_id_string = to_parse.pop(0)  # --n[]
             selector_type = int(to_parse.pop(0))  # 0
