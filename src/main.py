@@ -149,13 +149,20 @@ def automode_localsearch():
     create_directory()
     set_parameters()
     create_executor()
+    if Configuration.instance.initial_controller == "minimal":
+        Configuration.instance.initial_controller = get_controller_class()()
+    else:
+        controller_file, line = Configuration.instance.initial_controller.split(":")
+        with open(controller_file, mode='r') as file:
+            for i in range(0, int(line)):
+                controller = file.readline()
+        print(controller)
+        controller = controller.split(" ")
+        Configuration.instance.initial_controller = get_controller_class()().parse_from_commandline_args(controller)
     # Run local search
     for i in range(0, Configuration.instance.num_runs):
         # generate initial FSM
-        if Configuration.instance.initial_controller == "minimal":
-            initial_controller = get_controller_class()()
-        else:
-            initial_controller = Configuration.instance.initial_controller
+        initial_controller = Configuration.instance.initial_controller
         os.mkdir("run_{}".format(i))
         os.chdir("run_{}".format(i))
         initial_controller.draw("initial")
