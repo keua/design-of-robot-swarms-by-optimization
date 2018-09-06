@@ -49,11 +49,6 @@ class Configuration:
 
         def load_controller_configuration():
             # parse the controller configuration
-            config.controller_type = config_parser["Controller"]["controller_type"]
-            config.initial_controller = config_parser["Controller"]["initial_controller"]
-            if config.initial_controller not in ["minimal", "from_file", "random_from_file"]:
-                Logger.instance.log_error("Unrecognized configuration for initial_controller: {}".format(config.initial_controller))
-            config.initial_controller_file = config_parser["Controller"]["initial_controller_file"]
             config.controller_minimal_behavior = config_parser["Controller"]["minimal_behavior"]
             config.controller_minimal_condition = config_parser["Controller"]["minimal_condition"]
             config.random_parameter_initialization = config_parser["Controller"].getboolean(
