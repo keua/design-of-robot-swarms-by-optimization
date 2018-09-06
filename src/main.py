@@ -60,7 +60,7 @@ def load_config():
 def create_directory():
     Logger.instance.log_debug("Directory of this file {}".format(os.path.realpath(__file__)))
     src_directory = os.path.split(os.path.realpath(__file__))[0]
-    os.chdir(Configuration.instanceresult_directory)
+    os.chdir(Configuration.instance.result_directory)
     str_time = datetime.now().strftime("%Y%m%d-%H:%M:%S")
     exp_dir = "{}_{}".format(Configuration.instance.job_name, str_time)
     os.mkdir(exp_dir)
