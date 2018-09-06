@@ -7,23 +7,28 @@ class Configuration:
     instance = None
 
     def __init__(self):
+        # Settings passed from the terminal
         self.path_to_AutoMoDe = "/tmp/"
         self.path_to_scenario = "/tmp/"
+        self.config_file_name = "config.ini"
+        self.src_directory = "src/"
+        self.result_directory = "default/"
+        self.initial_controller = "None"
+        self.job_name = "default"
+        self.controller_type = "None"
+        # Settings read from the file
         self.working_directory = "/tmp/"
         self.max_improvements = 0
         self.num_runs = 0
         self.seed_window_size = 0
         self.seed_window_movement = 0
-        self.controller_type = "None"
-        self.initial_controller = "None"
-        self.initial_controller_file = "/tmp/"
         self.controller_minimal_behavior = "None"
         self.controller_minimal_condition = "None"
+        self.random_parameter_initialization = True
         self.FSM_max_states = 0
         self.FSM_max_transitions = 0
         self.FSM_max_transitions_per_state = 0
         self.FSM_no_self_transition = True
-        self.FSM_random_parameter_initialization = True
         self.log_level = "INFO"
         self.snapshot_frequency = 1
         Configuration.instance = self
@@ -32,11 +37,6 @@ class Configuration:
     def load_from_file(config_file_name):
 
         # TODO: Add checks to values
-
-        def load_execution_configuration():
-            # parse the paths for the executables and the scenario
-            config.path_to_AutoMoDe = config_parser["Installation"]["path_to_AutoMoDe"]
-            config.path_to_scenario = config_parser["Scenario"]["path_to_scenario"]
 
         def load_run_configuration():
             # the configuration for running
@@ -56,20 +56,21 @@ class Configuration:
             config.initial_controller_file = config_parser["Controller"]["initial_controller_file"]
             config.controller_minimal_behavior = config_parser["Controller"]["minimal_behavior"]
             config.controller_minimal_condition = config_parser["Controller"]["minimal_condition"]
+            config.random_parameter_initialization = config_parser["Controller"].getboolean(
+                "random_parameter_initialization")
             # parse information related to the FSM
             config.FSM_max_states = int(config_parser["FSM"]["max_states"])
             config.FSM_max_transitions = float(config_parser["FSM"]["max_transitions"])
             config.FSM_max_transitions_per_state = int(config_parser["FSM"]["max_transitions_per_state"])
             config.FSM_no_self_transition = config_parser["FSM"].getboolean("no_self_transition")
-            config.FSM_random_parameter_initialization = config_parser["FSM"].getboolean(
-                "random_parameter_initialization")
             # parse information related to the BT
             config.BT_max_actions = int(config_parser["BT"]["max_actions"])
 
-        config = Configuration()
+        if Configuration.instance is None:
+            config = Configuration()  # only create a new object if it hasn't been created yet
+
         config_parser = configparser.ConfigParser()
         config_parser.read(config_file_name)
-        load_execution_configuration()
         load_run_configuration()
         load_controller_configuration()
         # parse logging configuration

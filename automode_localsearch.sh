@@ -22,7 +22,7 @@ RESULTDIR=$JOBDIR/result
 mkdir -p $TMPDIR
 source venv/bin/activate &> $TMPDIR/output_${job_name}_${count}.txt
 cd $SOURCEDIR
-python3 main.py -c ${config} -r $TMPDIR -s ${scenario} -i ${initial} -exe ${executable} &>> $TMPDIR/output_${job_name}_${count}.txt
+python3 main.py -c ${config} -r $TMPDIR -s ${scenario} -i ${initial} -exe ${executable} -j ${job_name} -t ${controller_type} &>> $TMPDIR/output_${job_name}_${count}.txt
 RET=$?
 mv $TMPDIR/* $RESULTDIR
 cd $JOBDIR

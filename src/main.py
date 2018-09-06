@@ -10,11 +10,6 @@ from automode.execution import AutoMoDeExecutor
 from logging import Logger
 
 
-config_file_name = "config.ini"
-result_directory = "default/"
-src_directory = "src/"
-
-
 def run_local_search(controller):
     best = controller
     start_time = datetime.now()
@@ -59,22 +54,21 @@ def run_local_search(controller):
 
 
 def load_config():
-    Configuration.load_from_file(config_file_name)
+    Configuration.load_from_file(Configuration.instance.config_file_name)
 
 
 def create_directory():
-    global src_directory
     Logger.instance.log_debug("Directory of this file {}".format(os.path.realpath(__file__)))
     src_directory = os.path.split(os.path.realpath(__file__))[0]
-    os.chdir(result_directory)
+    os.chdir(Configuration.instanceresult_directory)
     str_time = datetime.now().strftime("%Y%m%d-%H:%M:%S")
-    config_id = config_file_name.split("config_")[1].split(".ini")[0]  # the part between config_ and .ini
-    exp_dir = "{}_{}".format(config_id, str_time)
+    exp_dir = "{}_{}".format(Configuration.instance.job_name, str_time)
     os.mkdir(exp_dir)
     os.chdir(exp_dir)
     # copy the configuration file
     new_config_filename = "config_{}.ini".format(str_time)
-    shutil.copyfile("{}/{}".format(src_directory, config_file_name), "{}/{}".format(os.getcwd(), new_config_filename))
+    shutil.copyfile("{}/{}".format(
+        src_directory, Configuration.instance.config_file_name), "{}/{}".format(os.getcwd(), new_config_filename))
 
 
 def set_parameters_fsm():
@@ -115,8 +109,6 @@ def get_controller_class():
 
 
 def parse_input():
-    global config_file_name
-    global result_directory
     parser = argparse.ArgumentParser(description="Run the local search algorithm")
     parser.add_argument('-c', '--config', dest="config_file", default="config.ini",
                         help="The configuration file for the local search algorithm")
@@ -128,11 +120,19 @@ def parse_input():
                         help="The initial controller for the local search. Empty if there it should start from a minimal controller")
     parser.add_argument('-exe', '--automode_executable', dest="executable", default="automode_main",
                         help="The AutoMoDe executable")
+    parser.add_argument('-j', '--job_name', dest="job_name", default="",
+                        help="The job name, used for the results folder")
+    parser.add_argument('-t', '--controller_type', dest="controller_type", default="FSM",
+                        help="The type of controller used (important for a minimal start)")
     input_args = parser.parse_args()
-    config_file_name = input_args.config_file
-    result_directory = input_args.result_dir
-    # TODO: get other information
-    # TODO: Rework to not use global variables
+    # Get the information
+    Configuration.instance.config_file_name = input_args.config_file
+    Configuration.instance.result_directory = input_args.result_dir
+    Configuration.instance.path_to_scenario = input_args.scenario_file
+    Configuration.instance.initial_controller = input_args.initial_controller
+    Configuration.instance.path_to_AutoMoDe = input_args.executable
+    Configuration.instance.job_name = input_args.job_name
+    Configuration.instance.controller_type = input_args.controller_type
 
 
 def create_executor():
@@ -141,6 +141,7 @@ def create_executor():
 
 def automode_localsearch():
     logger = Logger()
+    config = Configuration
     parse_input()
     load_config()
     Logger.instance.log_level = Logger.LogLevel[Configuration.instance.log_level]
