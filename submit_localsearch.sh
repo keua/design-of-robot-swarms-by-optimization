@@ -41,7 +41,7 @@ do
     then
         controller="$(sed "${i}q;d" ${controller_file})"
     else
-        controller=""
+        controller="minimal"
     fi
     job_id=${job_name}_${i}
     # submit the job

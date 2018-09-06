@@ -116,7 +116,7 @@ def parse_input():
                         help="The directory where the results of the local search algorithm are written")
     parser.add_argument('-s', '--scenario_file', dest="scenario_file", default="missing.argos",
                         help="The scenario file for the improvement")
-    parser.add_argument('-i', '--initial_controller', dest="initial_controller", default="",
+    parser.add_argument('-i', '--initial_controller', dest="initial_controller", default="minimal",
                         help="The initial controller for the local search. Empty if there it should start from a minimal controller")
     parser.add_argument('-exe', '--automode_executable', dest="executable", default="automode_main",
                         help="The AutoMoDe executable")
@@ -148,28 +148,13 @@ def automode_localsearch():
     create_directory()
     set_parameters()
     create_executor()
-    controller_list = []
-    if "from_file" in Configuration.instance.initial_controller:  # either from_file or random_from_file
-        # preload the possible initial controller
-        with open(Configuration.instance.initial_controller_file) as f:
-            initial_count = 0
-            pre_seed_window = list()
-            for i in range(0, Configuration.instance.seed_window_size):
-                pre_seed_window.append(random.randint(0, 2147483647))
-            for line in f:
-                tmp = get_controller_class().parse_from_commandline_args(line.strip().split(" "))
-                tmp.draw("Vanilla_"+str(initial_count))
-                tmp.evaluate(pre_seed_window)
-                Logger.instance.log_verbose("Vanilla_{} scored {}".format(initial_count, tmp.score))
-                controller_list.append(tmp)
-                initial_count += 1
     # Run local search
     for i in range(0, Configuration.instance.num_runs):
         # generate initial FSM
         if Configuration.instance.initial_controller == "minimal":
             initial_controller = get_controller_class()()
         else:
-            initial_controller = controller_list[i]
+            initial_controller = Configuration.instance.initial_controller
         os.mkdir("run_{}".format(i))
         os.chdir("run_{}".format(i))
         initial_controller.draw("initial")
