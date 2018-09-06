@@ -38,7 +38,8 @@ do
     # if a controller_file was supplied, read the ith controller from it
     if [ ${controller_file} !=  'empty' ]
     then
-        controller="$(sed "${i}q;d" ${controller_file})"
+	controller=${controller_file}:${i}
+	#controller="$(sed "${i}q;d" ${controller_file})"
     else
         controller="minimal"
     fi
