@@ -80,7 +80,7 @@ def set_parameters_fsm():
     FSM.parameters["max_transitions_per_state"] = Configuration.instance.FSM_max_transitions_per_state
     FSM.parameters["no_self_transition"] = Configuration.instance.FSM_no_self_transition
     FSM.parameters["initial_state_behavior"] = Configuration.instance.controller_minimal_behavior
-    FSM.parameters["random_parameter_initialization"] = Configuration.instance.FSM_random_parameter_initialization
+    FSM.parameters["random_parameter_initialization"] = Configuration.instance.random_parameter_initialization
 
 
 def set_parameters_bt():
@@ -90,6 +90,7 @@ def set_parameters_bt():
     BT.parameters["max_actions"] = Configuration.instance.BT_max_actions
     BT.parameters["minimal_behavior"] = Configuration.instance.controller_minimal_behavior
     BT.parameters["minimal_condition"] = Configuration.instance.controller_minimal_condition
+    BT.parameters["random_parameter_initialization"] = Configuration.instance.random_parameter_initialization
 
 
 def set_parameters():
