@@ -68,6 +68,8 @@ class Configuration:
 
         if Configuration.instance is None:
             config = Configuration()  # only create a new object if it hasn't been created yet
+        else:
+            config = Configuration.instance
 
         config_parser = configparser.ConfigParser()
         config_parser.read(config_file_name)
