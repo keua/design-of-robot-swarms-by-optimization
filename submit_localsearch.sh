@@ -33,7 +33,6 @@ elif [ ${controller_type} = 'BT' ]
 then
     automode=${AutoMoDe_BT}
 fi
-echo ${automode}
 for i in `seq 1 ${num_instances}`
 do
     # if a controller_file was supplied, read the ith controller from it
