@@ -13,16 +13,17 @@ AutoMoDe_BT=/home/jkuckling/AutoMoDe-BT/bin/automode_main_bt
 
 #First parameter is the job_name
 job_name=${1:?A first parameter (job_name) needs to be specified}
-# fourth parameter is the type of controller (FSM or BT)
-controller_type=${2:?The controller type needs to be specified}
 # third parameter is the number of instances that are needed
-num_instances=${3:-1}
+num_instances=${2:-1}
 # fourth parameter is the path to the config file (relative from src/)
-config=${4:-'./config/config.ini'}
-# fifth parameter is the path to the controller file
-controller_file=${5:-'empty'}
+config=${3:-'./config/config.ini'}
 # sixth parameter is the path to the scenario file
-scenario_file={6:-'missing_scenario.argos'}
+scenario_file={4:-'missing_scenario.argos'}
+# fourth parameter is the type of controller (FSM or BT)
+controller_type=${5:?The controller type needs to be specified}
+# fifth parameter is the path to the controller file
+controller_file=${6:-'empty'}
+
 
 #get the correct version of AutoMoDe
 if [ ${controller_type} = 'FSM' ]
