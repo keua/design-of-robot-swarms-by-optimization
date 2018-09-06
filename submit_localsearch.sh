@@ -18,7 +18,7 @@ num_instances=${2:-1}
 # fourth parameter is the path to the config file (relative from src/)
 config=${3:-'./config/config.ini'}
 # sixth parameter is the path to the scenario file
-scenario_file={4:-'missing_scenario.argos'}
+scenario_file=${4:-'missing_scenario.argos'}
 # fourth parameter is the type of controller (FSM or BT)
 controller_type=${5:?The controller type needs to be specified}
 # fifth parameter is the path to the controller file
