@@ -141,7 +141,7 @@ def create_executor():
 
 def automode_localsearch():
     logger = Logger()
-    config = Configuration
+    config = Configuration()
     parse_input()
     load_config()
     Logger.instance.log_level = Logger.LogLevel[Configuration.instance.log_level]
