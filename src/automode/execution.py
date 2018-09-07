@@ -1,5 +1,5 @@
 import statistics
-# import mpi4py.futures
+from mpi4py.futures import MPIPoolExecutor
 from configuration import Configuration
 import subprocess
 from logging import Logger
@@ -16,8 +16,6 @@ class AutoMoDeExecutor:
 
         self.path_to_AutoMoDe_executable = Configuration.instance.path_to_AutoMoDe
         self.scenario_file = Configuration.instance.path_to_scenario
-        # if self.use_mpi:
-        #     self.mpi_pool = mpi4py.futures.MPIPoolExecutor()
 
         # Singleton
         AutoMoDeExecutor.instance = self
@@ -36,7 +34,9 @@ class AutoMoDeExecutor:
                 self.execute_controller(controller, s)
 
         def parallel_execution():
-            pass
+            with MPIPoolExecutor(max_workers=Configuration.instance.seed_window_size) as executor:
+                for s in evaluate_seeds:
+                    executor.submit(self.execute_controller, controller, s)
 
         scores = []
         # prepare the set of seeds that need to be evaluated
