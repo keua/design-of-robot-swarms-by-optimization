@@ -7,7 +7,7 @@ import shutil
 import argparse
 from configuration import Configuration
 from automode.execution import AutoMoDeExecutor
-from logging import Logger
+from simple_logging import Logger
 
 
 def run_local_search(controller):

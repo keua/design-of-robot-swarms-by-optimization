@@ -1,5 +1,5 @@
 import configparser
-from logging import Logger
+from simple_logging import Logger
 
 
 class Configuration:

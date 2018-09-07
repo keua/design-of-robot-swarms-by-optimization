@@ -1,6 +1,6 @@
 import random
 from automode.modules.modulesABC import ABCBehavior, ABCCondition
-from logging import Logger
+from simple_logging import Logger
 
 
 class Behavior (ABCBehavior):
