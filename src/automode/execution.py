@@ -12,7 +12,7 @@ class AutoMoDeExecutor:
     def __init__(self):
         # TODO: Configure this
         self.score_aggregation = statistics.mean  # this can be any function to get a single data point out of
-        self.use_mpi = True
+        self.use_mpi = False
 
         self.path_to_AutoMoDe_executable = Configuration.instance.path_to_AutoMoDe
         self.scenario_file = Configuration.instance.path_to_scenario
@@ -34,7 +34,7 @@ class AutoMoDeExecutor:
                 self.execute_controller(controller, s)
 
         def parallel_execution():
-            with MPIPoolExecutor(max_workers=Configuration.instance.seed_window_size/2) as executor:
+            with MPIPoolExecutor(max_workers=Configuration.instance.seed_window_size) as executor:
                 for s in evaluate_seeds:
                     future = executor.submit(self.execute_controller, controller, s)
                     future.add_done_callback(parallel_execution_done)
