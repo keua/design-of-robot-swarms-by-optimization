@@ -3,8 +3,8 @@
 # run BT_agg
 sh submit_localsearch.sh BT_agg_minimal 1 ./config/config.ini /home/jkuckling/AutoMoDe-LocalSearch/experiments/vanilla/aggregation_bt.argos BT
 # run BT_for
-sh submit_localsearch.sh BT_for_minimal 10 ./config/config.ini /home/jkuckling/AutoMoDe-LocalSearch/experiments/vanilla/foraging_bt.argos BT
+# sh submit_localsearch.sh BT_for_minimal 10 ./config/config.ini /home/jkuckling/AutoMoDe-LocalSearch/experiments/vanilla/foraging_bt.argos BT
 # run FSM_agg
-sh submit_localsearch.sh FSM_agg_minimal 10 ./config/config.ini /home/jkuckling/AutoMoDe-LocalSearch/experiments/vanilla/aggregation.argos FSM
+# sh submit_localsearch.sh FSM_agg_minimal 10 ./config/config.ini /home/jkuckling/AutoMoDe-LocalSearch/experiments/vanilla/aggregation.argos FSM
 # run BT_for
-sh submit_localsearch.sh FSM_for_minimal 10 ./config/config.ini /home/jkuckling/AutoMoDe-LocalSearch/experiments/vanilla/foraging.argos FSM
+# sh submit_localsearch.sh FSM_for_minimal 10 ./config/config.ini /home/jkuckling/AutoMoDe-LocalSearch/experiments/vanilla/foraging.argos FSM

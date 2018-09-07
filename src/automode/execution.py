@@ -34,9 +34,11 @@ class AutoMoDeExecutor:
                 self.execute_controller(controller, s)
 
         def parallel_execution():
-            with MPIPoolExecutor(max_workers=Configuration.instance.seed_window_size) as executor:
+            future = None
+            with MPIPoolExecutor(max_workers=Configuration.instance.seed_window_size/2) as executor:
                 for s in evaluate_seeds:
-                    executor.submit(self.execute_controller, controller, s)
+                    future = executor.submit(self.execute_controller, controller, s)
+            raise future.exception()
 
         scores = []
         # prepare the set of seeds that need to be evaluated
@@ -63,6 +65,7 @@ class AutoMoDeExecutor:
         :return: The score of controller with the given seed (which is also saved in the controller)
         """
         # print("Evaluating BT " + str(self.id) + " on seed " + str(seed))
+        print("execute")
         Logger.instance.log_debug("Evaluating BT " + " on seed " + str(seed))
         # prepare the command line
         args = [self.path_to_AutoMoDe_executable, "-n", "-c", self.scenario_file, "--seed", str(seed)]
