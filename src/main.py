@@ -171,5 +171,9 @@ def automode_localsearch():
         os.chdir("..")
 
 
+# print(__name__)
 if __name__ == "__main__":
     automode_localsearch()
+
+if __name__ == "__worker__":
+    Logger()

@@ -1,5 +1,5 @@
 from automode.controller.AutoMoDeControllerABC import AutoMoDeControllerABC
-from abc import ABCMeta, abstractmethod
+# from abc import ABCMeta, abstractmethod
 from enum import Enum
 import graphviz as gv
 from automode.modules.chocolate import Behavior, Condition
@@ -7,116 +7,130 @@ import random
 from simple_logging import Logger
 import re
 
+#    class ABCNode:
+#        __metaclass__ = ABCMeta
+#
+#        count = 0
+#
+#        class ReturnCode(Enum):
+#            FAIL = -1
+#            RUNNING = 0
+#            SUCCESS = 1
+#
+#        def __init__(self):
+#            self.children = []
+#            self.id = BT.ABCNode.count
+#            BT.ABCNode.count += 1
+#
+#        @property
+#        @abstractmethod
+#        def name(self):
+#            pass
+#
+#        @abstractmethod
+#        def draw(self, graph):
+#            pass
+
+#    class RootNode(ABCNode):
+class RootNode:
+
+    def __init__(self):
+        self.children = []
+
+    @property
+    def name(self):
+        return "Root_"  # + str(self.id)
+
+    def draw(self, graph):
+        self.children[0].draw(graph)
+
+#    class SequenceStarNode(ABCNode):
+class SequenceStarNode:
+
+    def __init__(self):
+        self.children = []
+
+    @property
+    def name(self):
+        return "Sequence*_"  # + str(self.id)
+
+    def draw(self, graph):
+        graph.node(self.name, shape="square", label="->*")
+        for child in self.children:
+            graph.edge(self.name, child.name)
+            child.draw(graph)
+
+#    class SelectorNode(ABCNode):
+class SelectorNode:
+
+    def __init__(self):
+        self.children = []
+
+    @property
+    def name(self):
+        return "Selector_"  # + str(self.id)
+
+    def draw(self, graph):
+        graph.node(self.name, shape="square", label="?")
+        for child in self.children:
+            graph.edge(self.name, child.name)
+            child.draw(graph)
+
+#    class ActionNode(ABCNode):
+class ActionNode:
+
+    def __init__(self, behavior_name):
+        self.children = []
+        self.action = Behavior.get_by_name(behavior_name)
+
+    @property
+    def name(self):
+        return self.action.name  # + "_" + str(self.id)
+
+    def draw(self, graph):
+        graph.node(self.name, shape="circle", label=self.caption())
+
+    def caption(self):
+        caption = self.action.name  # + "_" + str(self.id)
+        caption += self.action.get_parameter_for_caption()
+        return caption
+
+#    class ConditionNode(ABCNode):
+class ConditionNode:
+
+    def __init__(self, condition_name):
+        self.children = []
+        self.condition = Condition.get_by_name(condition_name)
+
+    @property
+    def name(self):
+        return self.condition.name  # + "_" + str(self.id)
+
+    def draw(self, graph):
+        graph.node(self.name, shape="diamond", label=self.caption())
+
+    def caption(self):
+        caption = self.condition.name  # + "_" + str(self.id)
+        caption += self.condition.get_parameter_for_caption()
+        return caption
+
 
 class BT(AutoMoDeControllerABC):
-
-    class ABCNode:
-        __metaclass__ = ABCMeta
-
-        count = 0
-
-        class ReturnCode(Enum):
-            FAIL = -1
-            RUNNING = 0
-            SUCCESS = 1
-
-        def __init__(self):
-            self.children = []
-            self.id = BT.ABCNode.count
-            BT.ABCNode.count += 1
-
-        @property
-        @abstractmethod
-        def name(self):
-            pass
-
-        @abstractmethod
-        def draw(self, graph):
-            pass
-
-    class RootNode(ABCNode):
-
-        def name(self):
-            return "Root_" + str(self.id)
-
-        def draw(self, graph):
-            self.children[0].draw(graph)
-
-    class SequenceStarNode(ABCNode):
-
-        @property
-        def name(self):
-            return "Sequence*_" + str(self.id)
-
-        def draw(self, graph):
-            graph.node(self.name, shape="square", label="->*")
-            for child in self.children:
-                graph.edge(self.name, child.name)
-                child.draw(graph)
-
-    class SelectorNode(ABCNode):
-
-        @property
-        def name(self):
-            return "Selector_" + str(self.id)
-
-        def draw(self, graph):
-            graph.node(self.name, shape="square", label="?")
-            for child in self.children:
-                graph.edge(self.name, child.name)
-                child.draw(graph)
-
-    class ActionNode(ABCNode):
-
-        def __init__(self, behavior_name):
-            super().__init__()
-            self.action = Behavior.get_by_name(behavior_name)
-
-        @property
-        def name(self):
-            return self.action.name + "_" + str(self.id)
-
-        def draw(self, graph):
-            graph.node(self.name, shape="circle", label=self.caption())
-
-        def caption(self):
-            caption = self.action.name + "_" + str(self.id)
-            caption += self.action.get_parameter_for_caption()
-            return caption
-
-    class ConditionNode(ABCNode):
-
-        def __init__(self, condition_name):
-            super().__init__()
-            self.condition = Condition.get_by_name(condition_name)
-
-        @property
-        def name(self):
-            return self.condition.name + "_" + str(self.id)
-
-        def draw(self, graph):
-            graph.node(self.name, shape="diamond", label=self.caption())
-
-        def caption(self):
-            caption = self.condition.name + "_" + str(self.id)
-            caption += self.condition.get_parameter_for_caption()
-            return caption
 
     parameters = {"max_actions": 4,
                   "minimal_condition": "Fail",
                   "minimal_behavior": "Fail"}
 
     def __init__(self):        
-        self.root = BT.RootNode()
+        self.root = RootNode()
         super().__init__()
 
-
     def create_minimal_controller(self):
-        sequence = BT.SequenceStarNode()
+        sequence = SequenceStarNode()
         self.root.children.append(sequence)
-        sel1 = BT.SelectorNode()
-        sel1.children.append(BT.ConditionNode(BT.parameters["minimal_condition"]))
-        sel1.children.append(BT.ActionNode(BT.parameters["minimal_behavior"]))
+        sel1 = SelectorNode()
+        sel1.children.append(ConditionNode(BT.parameters["minimal_condition"]))
+        sel1.children.append(ActionNode(BT.parameters["minimal_behavior"]))
         sequence.children.append(sel1)
 
     def draw(self, graph_name):
@@ -130,7 +144,7 @@ class BT(AutoMoDeControllerABC):
         def parse_top_level_node():
             to_parse.pop(0)  # --rootnode
             top_level_type = int(to_parse.pop(0))  # 0
-            behavior_tree.root.children.append(BT.SequenceStarNode())
+            behavior_tree.root.children.append(SequenceStarNode())
             to_parse.pop(0)  # --nchildsroot
             top_level_children_count = int(to_parse.pop(0))  # not really needed, iterating over subtrees should work fine
 
@@ -146,10 +160,10 @@ class BT(AutoMoDeControllerABC):
             selector_type = int(to_parse.pop(0))  # 0
             num_conditions_string = to_parse.pop(0)  # --nc[]
             num_conditions = int(to_parse.pop(0))  # 1
-            selector = BT.SelectorNode()
+            selector = SelectorNode()
             condition_label = to_parse.pop(0)  # --c[]x[]
             condition_type = int(to_parse.pop(0))
-            condition_node = BT.ConditionNode("FixedProbability")
+            condition_node = ConditionNode("FixedProbability")
             condition_node.condition = Condition.get_by_id(condition_type)
             # TODO: FIX: parse condition parameters
             for condition_param in condition_node.condition.params:
@@ -162,7 +176,7 @@ class BT(AutoMoDeControllerABC):
                 condition_node.condition.params[param_name] = param_val
             action_label = to_parse.pop(0)  # --a[]
             action_type = int(to_parse.pop(0))
-            action_node = BT.ActionNode("Stop")
+            action_node = ActionNode("Stop")
             action_node.action = Behavior.get_by_id(action_type)
             # TODO: FIX: parse action parameters
             for action_param in action_node.action.params:
@@ -246,10 +260,10 @@ class BT(AutoMoDeControllerABC):
         if len(self.top_node.children) >= self.parameters["max_actions"]:
             return False  # we exceeded the amount of allowed subtrees
         # Generate new subtree
-        new_selector = BT.SelectorNode()
+        new_selector = SelectorNode()
         # Create random condition and action
-        new_condition = BT.ConditionNode(random.choice(Condition.condition_list))
-        new_action = BT.ActionNode(random.choice(Behavior.behavior_list))
+        new_condition = ConditionNode(random.choice(Condition.condition_list))
+        new_action = ActionNode(random.choice(Behavior.behavior_list))
         new_selector.children.append(new_condition)
         new_selector.children.append(new_action)
         # Add new node at random position
