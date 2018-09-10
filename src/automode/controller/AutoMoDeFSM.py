@@ -7,90 +7,88 @@ from automode.controller.AutoMoDeControllerABC import AutoMoDeControllerABC
 
 # TODO: Write documentation for methods and classes
 
+class State:
+    count = 0
+
+    def __init__(self, behavior):
+        self.behavior = behavior
+        self.id = State.count
+        self.ext_id = self.id  # the ext_id is used to identify this state for any external program
+        State.count += 1
+
+    def convert_to_AutoMoDe_commandline_args(self):
+        """Converts this state to a format that is readable by the AutoMoDe command line"""
+        args = ["--s" + str(self.ext_id), str(self.behavior.int)]
+        for param in self.behavior.params:
+            # TODO: Find better handling
+            if param == "att" or param == "rep":
+                pval = "%.2f" % self.behavior.params[param]
+            elif param == "rwm":
+                pval = str(self.behavior.params[param])
+            else:
+                Logger.instance.log_error("Undefined parameter")
+                pval = 0
+            args.extend(["--" + param + str(self.ext_id), pval])
+        return args
+
+    @property
+    def name(self):
+        """Returns an identifier for this state, made up by its behavior and id"""
+        return self.behavior.name + "_" + str(self.id)
+
+    def caption(self):
+        """Returns a caption for the state that can be used to represent the state in graphviz"""
+        caption = self.behavior.name + "_" + str(self.id)
+        caption += self.behavior.get_parameter_for_caption()
+        return caption
+
+
+class Transition:
+    count = 0
+
+    def __init__(self, from_state, to_state, condition):
+        self.from_state = from_state
+        self.to_state = to_state
+        self.condition = condition
+        self.id = Transition.count
+        self.ext_id = self.id  # the ext_id is used to identify this transition for any external program
+        Transition.count += 1
+
+    def convert_to_AutoMoDe_commandline_args(self):
+        """Converts this transition to a format that is readable by the AutoMoDe command line"""
+        t_id = str(self.from_state.ext_id) + "x" + str(self.ext_id)
+        if self.from_state.ext_id < self.to_state.ext_id:
+            # This has to do with the issue of GetPossibleDestinationBehaviors in AutoMoDe
+            args = ["--n" + t_id, str(self.to_state.ext_id - 1)]
+        else:
+            args = ["--n" + t_id, str(self.to_state.ext_id)]
+        args.extend(["--c" + t_id, str(self.condition.int)])
+        for param in self.condition.params:
+            c = self.condition.name
+            if c == "BlackFloor" or c == "GrayFloor" or c == "WhiteFloor" or c == "FixedProbability":
+                if param == "p":
+                    pval = "%.2f" % self.condition.params[param]
+            if c == "NeighborsCount" or c == "InvertedNeighborsCount":
+                if param == "w":
+                    pval = "%.2f" % self.condition.params[param]
+                if param == "p":
+                    pval = str(self.condition.params[param])
+            args.extend(["--" + param + str(t_id), pval])
+        return args
+
+    @property
+    def name(self):
+        """Returns an identifier for this state, made up by its behavior and id"""
+        return self.condition.name + "_" + str(self.id)
+
+    def caption(self):
+        """Returns a caption for the state that can be used to represent the state in graphviz"""
+        caption = self.condition.name + "_" + str(self.id)
+        caption += self.condition.get_parameter_for_caption()
+        return caption
 
 class FSM(AutoMoDeControllerABC):
     """A finite state machine"""
-
-    class State:
-
-        count = 0
-
-        def __init__(self, behavior):
-            self.behavior = behavior
-            self.id = FSM.State.count
-            self.ext_id = self.id  # the ext_id is used to identify this state for any external program
-            FSM.State.count += 1
-
-        def convert_to_AutoMoDe_commandline_args(self):
-            """Converts this state to a format that is readable by the AutoMoDe command line"""
-            args = ["--s" + str(self.ext_id), str(self.behavior.int)]
-            for param in self.behavior.params:
-                # TODO: Find better handling
-                if param == "att" or param == "rep":
-                    pval = "%.2f" % self.behavior.params[param]
-                elif param == "rwm":
-                    pval = str(self.behavior.params[param])
-                else:
-                    Logger.instance.log_error("Undefined parameter")
-                    pval = 0
-                args.extend(["--" + param + str(self.ext_id), pval])
-            return args
-
-        @property
-        def name(self):
-            """Returns an identifier for this state, made up by its behavior and id"""
-            return self.behavior.name + "_" + str(self.id)
-
-        def caption(self):
-            """Returns a caption for the state that can be used to represent the state in graphviz"""
-            caption = self.behavior.name + "_" + str(self.id)
-            caption += self.behavior.get_parameter_for_caption()
-            return caption
-
-    class Transition:
-
-        count = 0
-
-        def __init__(self, from_state, to_state, condition):
-            self.from_state = from_state
-            self.to_state = to_state
-            self.condition = condition
-            self.id = FSM.Transition.count
-            self.ext_id = self.id  # the ext_id is used to identify this transition for any external program
-            FSM.Transition.count += 1
-
-        def convert_to_AutoMoDe_commandline_args(self):
-            """Converts this transition to a format that is readable by the AutoMoDe command line"""
-            t_id = str(self.from_state.ext_id) + "x" + str(self.ext_id)
-            if self.from_state.ext_id < self.to_state.ext_id:
-                # This has to do with the issue of GetPossibleDestinationBehaviors in AutoMoDe
-                args = ["--n" + t_id, str(self.to_state.ext_id-1)]
-            else:
-                args = ["--n" + t_id, str(self.to_state.ext_id)]
-            args.extend(["--c"+t_id, str(self.condition.int)])
-            for param in self.condition.params:
-                c = self.condition.name
-                if c == "BlackFloor" or c == "GrayFloor" or c == "WhiteFloor" or c == "FixedProbability":
-                    if param == "p":
-                        pval = "%.2f" % self.condition.params[param]
-                if c == "NeighborsCount" or c == "InvertedNeighborsCount":
-                    if param == "w":
-                        pval = "%.2f" % self.condition.params[param]
-                    if param == "p":
-                        pval = str(self.condition.params[param])
-                args.extend(["--" + param + str(t_id), pval])
-            return args
-
-        @property
-        def name(self):
-            """Returns an identifier for this state, made up by its behavior and id"""
-            return self.condition.name + "_" + str(self.id)
-
-        def caption(self):
-            """Returns a caption for the state that can be used to represent the state in graphviz"""
-            caption = self.condition.name + "_" + str(self.id)
-            caption += self.condition.get_parameter_for_caption()
-            return caption
 
     # FSM implementation
 
@@ -115,7 +113,7 @@ class FSM(AutoMoDeControllerABC):
     def create_minimal_controller(self):
         # The empty FSM
         stop_behavior = Behavior.get_by_name(FSM.parameters["initial_state_behavior"])
-        self.initial_state = FSM.State(stop_behavior)
+        self.initial_state = State(stop_behavior)
         self.states = [self.initial_state]
         self.transitions = []
 
@@ -142,7 +140,7 @@ class FSM(AutoMoDeControllerABC):
             number_of_states = int(to_parse.pop(0))  # this the number of states
             # Create an according number of states
             for i in range(0, number_of_states):
-                s = FSM.State(stop_behavior)
+                s = State(stop_behavior)
                 s.ext_id = i
                 finite_state_machine.states.append(s)
 
@@ -181,7 +179,7 @@ class FSM(AutoMoDeControllerABC):
             condition_count = to_parse.pop(0)
             transition_condition_id = int(to_parse.pop(0))
             # Create transition
-            t = FSM.Transition(from_state, to_state, Condition.get_by_id(transition_condition_id))
+            t = Transition(from_state, to_state, Condition.get_by_id(transition_condition_id))
             t.ext_id = transition_ext_id
             finite_state_machine.transitions.append(t)
             re_string = "--[a-z]{}x{}".format(from_state.ext_id, t.ext_id)
@@ -275,7 +273,7 @@ class FSM(AutoMoDeControllerABC):
             return False  # we exceeded the amount of allowed states
         # create a new state with a random behavior
         new_behavior = Behavior.get_by_name(random.choice(Behavior.behavior_list))
-        s = FSM.State(new_behavior)
+        s = State(new_behavior)
         if self.parameters["no_self_transition"]:
             possible_states = list(self.states)  # create a transition from an already existing state
             s_in = random.choice(self.states)  # create a transition to an already existing state
@@ -286,9 +284,9 @@ class FSM(AutoMoDeControllerABC):
             s_out = random.choice(possible_states)
             possible_states.remove(s_out)
             if len([t for t in self.transitions if t.from_state == s_out]) < self.parameters["max_transitions_per_state"]:
-                ingoing = FSM.Transition(s_out, s,
+                ingoing = Transition(s_out, s,
                                          Condition.get_by_name(random.choice(Condition.condition_list)))
-                outgoing = FSM.Transition(s, s_in,
+                outgoing = Transition(s, s_in,
                                           Condition.get_by_name(random.choice(Condition.condition_list)))
                 # add the state and transitions to the FSM
                 self.states.append(s)
@@ -389,7 +387,7 @@ class FSM(AutoMoDeControllerABC):
                     # choose the endpoint at random
                     end = random.choice(other_states)
                     # Choose random condition
-                    t = FSM.Transition(start, end, Condition.get_by_name(random.choice(Condition.condition_list)))
+                    t = Transition(start, end, Condition.get_by_name(random.choice(Condition.condition_list)))
                     # add the new transition to the FSM
                     self.transitions.append(t)
                     return True
