@@ -1,5 +1,6 @@
 #!/bin/bash
 #$ -N AutoMoDe_LocalSearch
+#$ -l opteron6272
 #$ -l long
 #$ -m eas
 #$ -M jonas.kuckling@ulb.ac.be
