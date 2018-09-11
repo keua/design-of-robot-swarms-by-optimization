@@ -1,10 +1,10 @@
---.id. 3 --numstates 3 --s0 4 --numconnections0 2 --s1 2 --numconnections1 0 --s2 2 --rep0 1 --n0x0 1 --c0x0 1 --n0x1 4 --c0x1 1 --n0x2 2 --c0x2 1 --n0x3 1 --rep1 1 --n1x0 5 --c1x0 0 --n1x1 0 --c1x3 2 --rep2 0 --n2x0 3 --c2x0 0 --n2x1 2 --c3x3 0.48 --w0x1 4 --bi0x1 16.91 --wi0x1 0.27 --wi0x2 0.33 --wi0x3 0.36 --wi1x0 0.42 --p2x0 6 --b2x0 18.24 --wi2x0 0.8 
---.id. 0 --numstates 2 --s0 0 --numconnections0 0 --s2 1 --numconnections2 3 --s3 1 --numconnections3 0 --c0x0 5 --n0x3 2 --rwm1 1 --rep2 0.23 --att3 0.67 
---.id. 0 --numstates 3 --s0 0 --numconnections0 0 --s1 0 --s2 1 --numconnections2 0 --s3 1 --numconnections3 2 --rwm0 1 --att0 3 --c0x0 3 --c0x1 3 --n0x3 1 --n1x0 1 --n2x0 8 --c2x0 4.09 --att3 0.11 --p0x0 0.89 
---.id. 0 --numstates 3 --s0 0 --numconnections0 0 --s1 0 --s2 1 --numconnections2 3 --s3 1 --numconnections3 0 --rwm0 1 --att0 2 --c0x0 1 --n0x3 0 --rwm1 9 --n1x0 2 --rep2 0.34 --att3 0.74 --p0x0 0.55 
---.id. 0 --numstates 3 --s0 0 --numconnections0 0 --s1 0 --s2 1 --numconnections2 0 --s3 1 --numconnections3 1 --rwm0 1 --att0 3 --c0x0 3 --c0x1 4 --n0x3 5 --n1x0 2 --n2x0 10 --c2x0 7.77 --att3 0.63 --p0x0 0.41 
---.id. 0 --numstates 2 --s0 0 --numconnections0 0 --s2 1 --numconnections2 0 --s3 1 --numconnections3 3 --c0x0 0 --c0x1 3 --n0x3 4 --rep2 0.04 --c3x0 5 --n3x1 0.87 
---.id. 0 --numstates 2 --s0 0 --numconnections0 0 --s2 1 --numconnections2 0 --s3 1 --numconnections3 3 --c0x0 2 --c0x1 4 --n0x3 5 --rep2 0.72 --att3 0.47 
---.id. 0 --numstates 2 --s0 0 --numconnections0 0 --s2 1 --numconnections2 0 --s3 1 --numconnections3 4 --c0x0 0 --c0x1 4 --n0x3 4 --att1 2.57 --rep2 0.96 --c3x0 9 --n3x1 7.45 
---.id. 0 --numstates 3 --s0 0 --numconnections0 0 --s1 0 --s2 1 --numconnections2 3 --s3 1 --numconnections3 0 --rwm0 1 --att0 5 --c0x0 5 --n0x3 3 --rwm1 6 --n1x0 0 --n1x2 2.8 --rep2 0.55 --rep3 9 --n3x0 16.89 --p0x0 0.2 
---.id. 0 --numstates 3 --s0 0 --numconnections0 0 --s1 0 --s2 1 --numconnections2 0 --s3 1 --numconnections3 5 --rwm0 1 --att0 2 --c0x0 3 --c0x1 5 --n0x3 2 --rep1 3.86 --n1x0 0 --n2x0 5 --c2x0 11.79 --att3 0.98 --p0x0 0.96 
+--rootnode 0 --numchildsroot 3 --n0 0 --n1 0 --n2 0 --numconds0 1 --action0 1 --numconds1 1 --action1 3 --numconds2 1 --action2 0 --c0x0 1 --c1x0 4 --c2x0 3 --rwm2 4 --p0x0 0.35 --bi1x0 3 --wi1x0 12.6 --b2x0 7 --w2x0 17.55 
+--rootnode 0 --numchildsroot 2 --n0 0 --n1 0 --numconds0 1 --action0 3 --numconds1 1 --action1 0 --c0x0 5 --c1x0 2 --rwm1 1 --p0x0 0.23 --p1x0 0.67
+--rootnode 0 --numchildsroot 3 --n0 0 --n1 0 --n2 0 --numconds0 1 --action0 0 --numconds1 1 --action1 2 --numconds2 1 --action2 3 --c0x0 3 --rwm0 3 --c1x0 1 --c2x0 1 --b0x0 8 --w0x0 4.09 --p1x0 0.11 --p2x0 0.89
+--rootnode 0 --numchildsroot 3 --n0 0 --n1 0 --n2 0 --numconds0 1 --action0 3 --numconds1 1 --action1 0 --numconds2 1 --action2 2 --c0x0 1 --c1x0 0 --rwm1 9 --c2x0 2 --p0x0 0.34 --p1x0 0.74 --p2x0 0.55
+--rootnode 0 --numchildsroot 3 --n0 0 --n1 0 --n2 0 --numconds0 1 --action0 0 --numconds1 1 --action1 1 --numconds2 1 --action2 3 --c0x0 3 --rwm0 4 --c1x0 5 --c2x0 2 --b0x0 10 --w0x0 7.77 --p1x0 0.63 --p2x0 0.41
+--rootnode 0 --numchildsroot 2 --n0 0 --n1 0 --numconds0 1 --action0 0 --numconds1 1 --action1 3 --c0x0 0 --rwm0 3 --c1x0 4 --p0x0 0.04 --bi1x0 5 --wi1x0 0.87
+--rootnode 0 --numchildsroot 2 --n0 0 --n1 0 --numconds0 1 --action0 0 --numconds1 1 --action1 3 --c0x0 2 --rwm0 4 --c1x0 5 --p0x0 0.72 --p1x0 0.47
+--rootnode 0 --numchildsroot 2 --n0 0 --n1 0 --numconds0 1 --action0 0 --numconds1 1 --action1 4 --c0x0 0 --rwm0 4 --c1x0 4 --att1 2.57 --p0x0 0.96 --bi1x0 9 --wi1x0 7.45
+--rootnode 0 --numchildsroot 3 --n0 0 --n1 0 --n2 0 --numconds0 1 --action0 3 --numconds1 1 --action1 0 --numconds2 1 --action2 5 --c0x0 5 --c1x0 3 --rwm1 6 --c2x0 0 --rep2 2.8 --p0x0 0.55 --b1x0 9 --w1x0 16.89 --p2x0 0.2
+--rootnode 0 --numchildsroot 3 --n0 0 --n1 0 --n2 0 --numconds0 1 --action0 0 --numconds1 1 --action1 5 --numconds2 1 --action2 2 --c0x0 3 --rwm0 5 --c1x0 2 --rep1 3.86 --c2x0 0 --b0x0 5 --w0x0 11.79 --p1x0 0.98 --p2x0 0.96
