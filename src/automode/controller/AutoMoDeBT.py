@@ -1,5 +1,5 @@
 from automode.controller.AutoMoDeControllerABC import AutoMoDeControllerABC
-# from abc import ABCMeta, abstractmethod
+from abc import ABCMeta, abstractmethod
 from enum import Enum
 import graphviz as gv
 from automode.modules.chocolate import Behavior, Condition
@@ -7,35 +7,36 @@ import random
 from simple_logging import Logger
 import re
 
-#    class ABCNode:
-#        __metaclass__ = ABCMeta
-#
-#        count = 0
-#
-#        class ReturnCode(Enum):
-#            FAIL = -1
-#            RUNNING = 0
-#            SUCCESS = 1
-#
-#        def __init__(self):
-#            self.children = []
-#            self.id = BT.ABCNode.count
-#            BT.ABCNode.count += 1
-#
-#        @property
-#        @abstractmethod
-#        def name(self):
-#            pass
-#
-#        @abstractmethod
-#        def draw(self, graph):
-#            pass
 
-#    class RootNode(ABCNode):
-class RootNode:
+class ABCNode:
+    __metaclass__ = ABCMeta
+
+    count = 0
+
+    class ReturnCode(Enum):
+        FAIL = -1
+        RUNNING = 0
+        SUCCESS = 1
 
     def __init__(self):
         self.children = []
+        self.id = BT.ABCNode.count
+        BT.ABCNode.count += 1
+
+    @property
+    @abstractmethod
+    def name(self):
+        pass
+
+    @abstractmethod
+    def draw(self, graph):
+        pass
+
+
+class RootNode(ABCNode):
+
+    def __init__(self):
+        super.__init__()
 
     @property
     def name(self):
@@ -44,15 +45,15 @@ class RootNode:
     def draw(self, graph):
         self.children[0].draw(graph)
 
-#    class SequenceStarNode(ABCNode):
-class SequenceStarNode:
+
+class SequenceStarNode(ABCNode):
 
     def __init__(self):
-        self.children = []
+        super.__init__()
 
     @property
     def name(self):
-        return "Sequence*_"  # + str(self.id)
+        return "Sequence*_"  + str(self.id)
 
     def draw(self, graph):
         graph.node(self.name, shape="square", label="->*")
@@ -60,15 +61,15 @@ class SequenceStarNode:
             graph.edge(self.name, child.name)
             child.draw(graph)
 
-#    class SelectorNode(ABCNode):
-class SelectorNode:
+
+class SelectorNode(ABCNode):
 
     def __init__(self):
-        self.children = []
+        super.__init__()
 
     @property
     def name(self):
-        return "Selector_"  # + str(self.id)
+        return "Selector_"  + str(self.id)
 
     def draw(self, graph):
         graph.node(self.name, shape="square", label="?")
@@ -76,16 +77,16 @@ class SelectorNode:
             graph.edge(self.name, child.name)
             child.draw(graph)
 
-#    class ActionNode(ABCNode):
-class ActionNode:
+
+class ActionNode(ABCNode):
 
     def __init__(self, behavior_name):
-        self.children = []
+        super.__init__()
         self.action = Behavior.get_by_name(behavior_name)
 
     @property
     def name(self):
-        return self.action.name  # + "_" + str(self.id)
+        return self.action.name + "_" + str(self.id)
 
     def draw(self, graph):
         graph.node(self.name, shape="circle", label=self.caption())
@@ -95,16 +96,16 @@ class ActionNode:
         caption += self.action.get_parameter_for_caption()
         return caption
 
-#    class ConditionNode(ABCNode):
-class ConditionNode:
+
+class ConditionNode(ABCNode):
 
     def __init__(self, condition_name):
-        self.children = []
+        super.__init__()
         self.condition = Condition.get_by_name(condition_name)
 
     @property
     def name(self):
-        return self.condition.name  # + "_" + str(self.id)
+        return self.condition.name + "_" + str(self.id)
 
     def draw(self, graph):
         graph.node(self.name, shape="diamond", label=self.caption())
