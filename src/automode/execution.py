@@ -12,10 +12,10 @@ class AutoMoDeExecutor:
     def __init__(self):
         # TODO: Configure this
         self.score_aggregation = statistics.mean  # this can be any function to get a single data point out of
-        self.use_mpi = True
+        self.use_mpi = False
 
-        self.path_to_AutoMoDe_executable = Configuration.instance.path_to_AutoMoDe
-        self.scenario_file = Configuration.instance.path_to_scenario
+        self.path_to_AutoMoDe_executable = "/tmp/"
+        self.scenario_file = "/tmp/"
 
         # Singleton
         AutoMoDeExecutor.instance = self

@@ -20,8 +20,8 @@ class ABCNode:
 
     def __init__(self):
         self.children = []
-        self.id = BT.ABCNode.count
-        BT.ABCNode.count += 1
+        self.id = ABCNode.count
+        ABCNode.count += 1
 
     @property
     @abstractmethod
@@ -36,7 +36,7 @@ class ABCNode:
 class RootNode(ABCNode):
 
     def __init__(self):
-        super.__init__()
+        super().__init__()
 
     @property
     def name(self):
@@ -49,7 +49,7 @@ class RootNode(ABCNode):
 class SequenceStarNode(ABCNode):
 
     def __init__(self):
-        super.__init__()
+        super().__init__()
 
     @property
     def name(self):
@@ -65,7 +65,7 @@ class SequenceStarNode(ABCNode):
 class SelectorNode(ABCNode):
 
     def __init__(self):
-        super.__init__()
+        super().__init__()
 
     @property
     def name(self):
@@ -81,7 +81,7 @@ class SelectorNode(ABCNode):
 class ActionNode(ABCNode):
 
     def __init__(self, behavior_name):
-        super.__init__()
+        super().__init__()
         self.action = Behavior.get_by_name(behavior_name)
 
     @property
@@ -100,7 +100,7 @@ class ActionNode(ABCNode):
 class ConditionNode(ABCNode):
 
     def __init__(self, condition_name):
-        super.__init__()
+        super().__init__()
         self.condition = Condition.get_by_name(condition_name)
 
     @property
