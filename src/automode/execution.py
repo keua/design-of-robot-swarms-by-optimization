@@ -40,7 +40,8 @@ class AutoMoDeExecutor:
                     future.add_done_callback(parallel_execution_done)
 
         def parallel_execution_done(future):
-            # TODO: Check for exception
+            if future.exception() is not None:
+                raise future.exception()
             seed, score = future.result()
             controller.evaluated_instances[seed] = score
 

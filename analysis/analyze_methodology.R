@@ -12,7 +12,7 @@ load_from_file <- function(file){
 build_file_name <- function(controller, scenario, initial, count) {
   folder_name <- paste(controller, scenario, initial, count, sep="_")
   file_name <- paste(result_folder, folder_name, file_location, sep="/")
-  print(file_name)
+  # print(file_name)
   return(file_name)
 }
 
@@ -61,16 +61,30 @@ load_irace_localsearch <- function(scenario) {
   return(results_df)
 }
 
-display_irace <- function(scenario) {
-  
+load_irace <- function(scenario) {
+  load_irace_bt <- function() {
+    file = paste("/home/jkuckling/AutoMoDe-LocalSearch/result/BT", scenario, "irace50k/scores.txt", sep="_")
+    dat = read.csv(file, header = FALSE)
+    return(dat)
+  }
+  load_irace_fsm <- function() {
+    file = paste("/home/jkuckling/AutoMoDe-LocalSearch/result/FSM", scenario, "irace50k/scores.txt", sep="_")
+    dat = read.csv(file, header = FALSE)
+    return(dat)
+  }
+  bt_results <- load_irace_bt()
+  fsm_results <- load_irace_fsm()
+  results_df <- data.frame(bt_results, fsm_results)
+  results_df <- setNames(results_df, c("Irace BT", "Irace FSM"))
+  return(results_df)
 }
 
 load_all_results <- function(scenario) {
   minimal_df <- load_minimal(scenario)
   # display_random(scenario)
   improving <- load_irace_localsearch(scenario)
-  # display_irace(scenario)
-  all_df <- data.frame(minimal_df, improving)
+  irace <- load_irace(scenario)
+  all_df <- data.frame(minimal_df, improving, irace)
   print(all_df)
   return(all_df)
 }
