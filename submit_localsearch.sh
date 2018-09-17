@@ -46,5 +46,5 @@ do
     job_id=${job_name}_${i}
     # submit the job
     qsub -v job_name=${job_id},config=${config},scenario=${scenario_file},initial=${controller},executable=${automode},controller_type=${controller_type} automode_localsearch.sh
-    sleep 60
+    # sleep 60
 done

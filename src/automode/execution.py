@@ -34,7 +34,7 @@ class AutoMoDeExecutor:
                 self.execute_controller(controller, s)
 
         def parallel_execution():
-            with MPIPoolExecutor(max_workers=Configuration.instance.seed_window_size) as executor:
+            with MPIPoolExecutor(max_workers=5) as executor:
                 for s in evaluate_seeds:
                     future = executor.submit(self.execute_controller, controller, s)
                     future.add_done_callback(parallel_execution_done)
