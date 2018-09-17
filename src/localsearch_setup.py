@@ -103,7 +103,7 @@ def setup_localsearch():
 
 
 def setup_evaluation(controller_type, scenario):
-    load_config("/home/jkuckling/AutoMoDe-LocalSearch/src/config/config.ini")
+    load_config("/home/jkuckling/AutoMoDe-LocalSearch/src/config/config_evaluation.ini")
     setup_executor(controller_type, scenario)
 
 

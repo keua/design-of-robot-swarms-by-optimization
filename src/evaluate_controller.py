@@ -5,8 +5,9 @@ from automode.controller.AutoMoDeBT import BT
 from automode.controller.AutoMoDeFSM import FSM
 
 # TODO: Guess this from controller file name
-path_to_scenario = "/home/jkuckling/AutoMoDe-LocalSearch/experiments/vanilla/aggregation_bt.argos"
-controller_type = "BT"
+path_to_scenario = "/home/jkuckling/AutoMoDe-LocalSearch/experiments/vanilla/aggregation.argos"
+controller_type = "FSM"
+default_controller_file = "/home/jkuckling/AutoMoDe-LocalSearch/controller/FSM/agg/FSM-agg-50k.txt"
 
 
 def evaluate_controller(controller_args):
@@ -47,7 +48,9 @@ if __name__ == "__main__":
         The results are printed to the terminal
     """
     localsearch_setup.setup_evaluation(controller_type, path_to_scenario)
-    if len(sys.argv) > 2:
+    if len(sys.argv) == 1:
+        evaluate_all_controllers(default_controller_file)
+    elif len(sys.argv) > 2:
         evaluate_controller(sys.argv)
     else:
         evaluate_all_controllers(sys.argv[1])
