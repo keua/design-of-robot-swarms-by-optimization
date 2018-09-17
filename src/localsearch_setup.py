@@ -99,6 +99,14 @@ def setup_configuration():
 def setup_localsearch():
     args = parse_input()
     load_config(args["config_file_name"])
+    # TODO: Don't save this in the config
+    Configuration.instance.path_to_scenario = args["path_to_scenario"]
+    Configuration.instance.config_file_name = args["config_file_name"]
+    Configuration.instance.src_directory = "src/"
+    Configuration.instance.result_directory = args["result_directory"]
+    Configuration.instance.initial_controller = args["initial_controller"]
+    Configuration.instance.job_name = args["job_name"]
+    Configuration.instance.controller_type = args["controller_type"]
     setup_executor(args["controller_type"], args["path_to_scenario"])
 
 
