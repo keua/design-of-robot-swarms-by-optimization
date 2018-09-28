@@ -111,6 +111,9 @@ class FSM(AutoMoDeControllerABC):
         self.aputils_time = 0
 
     def create_minimal_controller(self):
+        """
+        Sets up a minimal controller. That is a FSM with a single state and no transitions.
+        """
         # The empty FSM
         stop_behavior = Behavior.get_by_name(FSM.parameters["initial_state_behavior"])
         self.initial_state = State(stop_behavior)
@@ -154,6 +157,7 @@ class FSM(AutoMoDeControllerABC):
             # pop until we read --nstatenumber
             tmp = to_parse.pop(0)
             number_of_transitions_delimiter = "--n" + str(state_number)
+            # TODO: Improve parsing of parameters and try to add some error handling
             while tmp != number_of_transitions_delimiter:
                 # parse current attribute
                 regex_no_number = re.compile("[^0-9]+")
@@ -184,6 +188,7 @@ class FSM(AutoMoDeControllerABC):
             finite_state_machine.transitions.append(t)
             re_string = "--[a-z]{}x{}".format(from_state.ext_id, t.ext_id)
             param_regex = re.compile(re_string)
+            # TODO: Improve parsing of parameters and try to add some error handling
             while to_parse and param_regex.match(to_parse[0]):
                 param_name = to_parse.pop(0)
                 regex_no_number = re.compile("[^0-9]+")

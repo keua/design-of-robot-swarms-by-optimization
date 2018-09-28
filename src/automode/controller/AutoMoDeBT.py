@@ -53,7 +53,7 @@ class SequenceStarNode(ABCNode):
 
     @property
     def name(self):
-        return "Sequence*_"  + str(self.id)
+        return "Sequence*_" + str(self.id)
 
     def draw(self, graph):
         graph.node(self.name, shape="square", label="->*")
@@ -69,7 +69,7 @@ class SelectorNode(ABCNode):
 
     @property
     def name(self):
-        return "Selector_"  + str(self.id)
+        return "Selector_" + str(self.id)
 
     def draw(self, graph):
         graph.node(self.name, shape="square", label="?")
@@ -127,6 +127,9 @@ class BT(AutoMoDeControllerABC):
         super().__init__()
 
     def create_minimal_controller(self):
+        """
+        Sets up a minimal controller. That is a BT with a single action and a single condition.
+        """
         sequence = SequenceStarNode()
         self.root.children.append(sequence)
         sel1 = SelectorNode()

@@ -7,6 +7,11 @@ from configuration import Configuration
 
 
 def iterative_improvement(initial_controller):
+    """
+    The iterative improvement method, that improves upon the initial_controller
+    :param initial_controller: The controller that is used to first improve from
+    :return: The best controller after the iterative improvement
+    """
     best = initial_controller
     start_time = datetime.now()
     Logger.instance.log("Started at " + str(start_time))

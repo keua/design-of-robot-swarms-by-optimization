@@ -38,3 +38,28 @@ show_experiment_series <- function(series, directory="") {
   }
   draw_improvement_boxplot(initial_results, final_results, series)
 }
+
+show_experiment_series_development <- function(series, directory="") {
+  if (directory != "") {
+    result_dir <- paste("/home/jkuckling/AutoMoDe-LocalSearch/result", directory, sep="/")
+  } else {
+    result_dir <- "/home/jkuckling/AutoMoDe-LocalSearch/result"
+  }
+  # load the ten runs
+  for (i in 1:10) {
+    exp_name <- paste(series, i, sep="_")
+    file_name <- paste(result_dir, exp_name, "run_0/scores/best_score.csv", sep="/")
+    dat = read.csv(file_name, header = FALSE)
+    dat <- setNames(dat, c("best", "new", "mutation"))
+    dat <- dat[,c("best")]
+    if (i > 1) {
+      results <- data.frame(results, dat)
+    } else {
+      results <- dat
+    }
+  }
+  # subsample the runs
+  subsample <- results[seq(1, nrow(results), 100), ]
+  subsample <- transpose(subsample)
+  boxplot(subsample) 
+}

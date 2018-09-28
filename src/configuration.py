@@ -38,6 +38,12 @@ class Configuration:
     @staticmethod
     def load_from_file(config_file_name):
 
+        """
+        Sets the files from the specified file.
+        :param config_file_name: The file containing the configuration. If a path is given, it needs to be relative
+        to the src/ folder.
+        """
+
         # TODO: Add checks to values
 
         def load_run_configuration():
