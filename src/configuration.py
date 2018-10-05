@@ -17,7 +17,6 @@ class Configuration:
         self.controller_type = "None"
         # Settings read from the file
         self.max_improvements = 0
-        self.num_runs = 0
         self.MPI = False
         self.seed_window_size = 0
         self.seed_window_movement = 0
@@ -49,7 +48,6 @@ class Configuration:
         def load_run_configuration():
             # the configuration for running
             config.max_improvements = int(config_parser["Execution"]["max_improvements"])
-            config.num_runs = int(config_parser["Execution"]["num_runs"])
             config.MPI = config_parser["Execution"].getboolean("use_mpi")
             # parse the window size and movement
             config.seed_window_size = int(config_parser["Seed window"]["size"])
