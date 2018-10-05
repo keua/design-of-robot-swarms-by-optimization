@@ -54,16 +54,11 @@ def automode_localsearch():
         controller = controller.split(" ")
         Configuration.instance.initial_controller = get_controller_class()().parse_from_commandline_args(controller)
     # Run local search
-    for i in range(0, Configuration.instance.num_runs):
-        # generate initial FSM
-        initial_controller = Configuration.instance.initial_controller
-        os.mkdir("run_{}".format(i))
-        os.chdir("run_{}".format(i))
-        initial_controller.draw("initial")
-        result = run_local_search(initial_controller)
-        result.draw("final")
-        Logger.instance.log(result.convert_to_commandline_args())
-        os.chdir("..")
+    initial_controller = Configuration.instance.initial_controller
+    initial_controller.draw("initial")
+    result = run_local_search(initial_controller)
+    result.draw("final")
+    Logger.instance.log(result.convert_to_commandline_args())
 
 
 # print(__name__)
