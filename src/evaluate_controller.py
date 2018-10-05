@@ -5,9 +5,9 @@ from automode.controller.AutoMoDeBT import BT
 from automode.controller.AutoMoDeFSM import FSM
 
 # TODO: Guess this from controller file name
-path_to_scenario = "/home/jkuckling/AutoMoDe-LocalSearch/experiments/vanilla/aggregation.argos"
+path_to_scenario = "/home/jkuckling/AutoMoDe-loopfunctions/scenarios/guided_shelter.argos"
 controller_type = "FSM"
-default_controller_file = "/home/jkuckling/AutoMoDe-LocalSearch/controller/FSM/agg/FSM-agg-50k.txt"
+default_controller_file = "/media/data/controller/guided-shelter/FSM-50k/FSM-irace-50k.txt"
 
 
 def evaluate_controller(controller_args):

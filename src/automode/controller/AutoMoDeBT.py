@@ -116,14 +116,48 @@ class ConditionNode(ABCNode):
         return caption
 
 
-class BT(AutoMoDeControllerABC):
+class AbstractBehaviorTree(AutoMoDeControllerABC):
+
+    """This class is used as a base class for behavior trees. It should implemenet feature for both the restricted
+    (Maple) version and a less restricted version.
+    """
 
     parameters = {"max_actions": 4,
                   "minimal_condition": "Fail",
                   "minimal_behavior": "Fail"}
 
-    def __init__(self):        
+    def __init__(self):
         self.root = RootNode()
+        super().__init__()
+
+    def draw(self, graph_name):
+        graph = gv.Digraph(format='svg')
+        self.root.draw(graph)
+        filename = graph.render(filename='img/graph_' + graph_name, view=False)
+
+
+class Unrestricted_BT(AbstractBehaviorTree):
+    """
+    This is the implementation for an unrestricted BT (there are still restrictions on the number of levels and the
+    number of childs, but everything else can be chosen freely)
+    """
+
+    def __init__(self):
+        super().__init__()
+
+    def create_minimal_controller(self):
+        """
+        Sets up a minimal controller. That is a BT with a single action
+        """
+        self.root.children.append((ActionNode(AbstractBehaviorTree.parameters["minimal_behavior"])))
+
+
+class Restricted_BT(AbstractBehaviorTree):
+    """
+    This is the implementation of a restricted BT (just like in Maple)
+    """
+
+    def __init__(self):
         super().__init__()
 
     def create_minimal_controller(self):
@@ -133,14 +167,9 @@ class BT(AutoMoDeControllerABC):
         sequence = SequenceStarNode()
         self.root.children.append(sequence)
         sel1 = SelectorNode()
-        sel1.children.append(ConditionNode(BT.parameters["minimal_condition"]))
-        sel1.children.append(ActionNode(BT.parameters["minimal_behavior"]))
+        sel1.children.append(ConditionNode(AbstractBehaviorTree.parameters["minimal_condition"]))
+        sel1.children.append(ActionNode(AbstractBehaviorTree.parameters["minimal_behavior"]))
         sequence.children.append(sel1)
-
-    def draw(self, graph_name):
-        graph = gv.Digraph(format='svg')
-        self.root.draw(graph)
-        filename = graph.render(filename='img/graph_' + graph_name, view=False)
 
     @staticmethod
     def parse_from_commandline_args(cmd_args):
@@ -199,7 +228,7 @@ class BT(AutoMoDeControllerABC):
         regex_action_node = re.compile("--a[0-9]")
         regex_no_number = re.compile("[^0-9]+")
         # create an emtpy BT
-        behavior_tree = BT()
+        behavior_tree = Restricted_BT()
         behavior_tree.root.children.clear()  # could also clear the root node, but the root node is invariant
         # prepare the arguments
         to_parse = list(cmd_args)
