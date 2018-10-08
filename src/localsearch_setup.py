@@ -1,7 +1,7 @@
 import argparse
 from configuration import Configuration
 from automode.controller.AutoMoDeFSM import FSM
-from automode.controller.AutoMoDeBT import BT
+from automode.controller.AutoMoDeBT import Restricted_BT as BT
 from automode.execution import AutoMoDeExecutor
 from simple_logging import Logger
 

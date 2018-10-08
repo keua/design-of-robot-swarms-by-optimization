@@ -1,13 +1,13 @@
 import sys
 import random
 import localsearch_setup
-from automode.controller.AutoMoDeBT import BT
+from automode.controller.AutoMoDeBT import Restricted_BT as BT
 from automode.controller.AutoMoDeFSM import FSM
 
 # TODO: Guess this from controller file name
-path_to_scenario = "/home/jkuckling/AutoMoDe-loopfunctions/scenarios/guided_shelter.argos"
+path_to_scenario = "/home/jkuckling/AutoMoDe-loopfunctions/scenarios/guided-shelter/shelter-with-big-offset/guided_shelter.argos"
 controller_type = "FSM"
-default_controller_file = "/media/data/controller/guided-shelter/FSM-50k/FSM-irace-50k.txt"
+default_controller_file = "/media/data/controller/guided-shelter/big_offset/FSM-irace-50k/FSM-irace-50k.txt"
 
 
 def evaluate_controller(controller_args):
