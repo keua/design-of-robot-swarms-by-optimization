@@ -1,7 +1,7 @@
 import statistics
-from mpi4py.futures import MPIPoolExecutor
 import subprocess
-from simple_logging import Logger
+from logging.simple_logging import SimpleLogger
+import os
 
 
 class AutoMoDeExecutor:
@@ -72,11 +72,11 @@ class AutoMoDeExecutor:
         :return: The score of controller with the given seed (which is also saved in the controller)
         """
         # print("Evaluating BT " + str(self.id) + " on seed " + str(seed))
-        Logger.instance.log_debug("Evaluating BT " + " on seed " + str(seed))
+        SimpleLogger.instance.log_debug("Evaluating BT " + " on seed " + str(seed))
         # prepare the command line
         args = [self.path_to_AutoMoDe_executable, "-n", "-c", self.scenario_file, "--seed", str(seed)]
         args.extend(controller.convert_to_commandline_args())
-        Logger.instance.log_debug(args)
+        SimpleLogger.instance.log_debug(args)
         # Run and capture output
         p = subprocess.Popen(args, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         (stdout, stderr) = p.communicate()
@@ -84,15 +84,15 @@ class AutoMoDeExecutor:
         output = stdout.decode('utf-8')
         lines = output.splitlines()
         try:
-            Logger.instance.log_debug(lines[len(lines) - 1])
+            SimpleLogger.instance.log_debug(lines[len(lines) - 1])
             score = float(lines[len(lines) - 1].split(" ")[1])
         except:
             score = -1  # Just to be sure
-            Logger.instance.log_error("Args: " + str(args))
-            Logger.instance.log_error("Stderr: " + stderr.decode('utf-8'))
-            Logger.instance.log_error("Stdout: " + stdout.decode('utf-8'))
+            SimpleLogger.instance.log_error("Args: " + str(args))
+            SimpleLogger.instance.log_error("Stderr: " + stderr.decode('utf-8'))
+            SimpleLogger.instance.log_error("Stdout: " + stdout.decode('utf-8'))
             raise
         controller.evaluated_instances[seed] = score
-        Logger.instance.log_verbose("Controller {} on seed {} returned score: {}".format(
+        SimpleLogger.instance.log_verbose("Controller {} on seed {} returned score: {}".format(
             "", seed, controller.evaluated_instances[seed]))
         return seed, score

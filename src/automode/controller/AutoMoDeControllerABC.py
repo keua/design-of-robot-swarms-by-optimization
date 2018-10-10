@@ -1,8 +1,8 @@
 from abc import ABCMeta, abstractmethod
 from execution import AutoMoDeExecutor
 import random
-import configuration
-from simple_logging import Logger
+from config import configuration
+from logging.simple_logging import SimpleLogger
 
 class AutoMoDeControllerABC:
     __metaclass__ = ABCMeta
@@ -62,4 +62,4 @@ class AutoMoDeControllerABC:
                 self.mut_history.append(mutation_operator)
                 return
         # We cannot apply any operator -> how can this even happen?
-        Logger.instance.log_error("A critical error appeared. We cannot apply any mutation at his point.")
+        SimpleLogger.instance.log_error("A critical error appeared. We cannot apply any mutation at his point.")

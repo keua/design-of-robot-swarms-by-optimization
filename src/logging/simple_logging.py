@@ -1,9 +1,19 @@
 from enum import IntEnum
 
 
-class Logger:
+class SimpleLogger:
 
     instance = None
+
+    # @property
+    # def instance(self):
+    #    """
+    #    Returns the singleton for the Logger
+    #    :return:
+    #    """
+    #    if self._instance is None:
+    #        SimpleLogger()  # creates and sets a new logger
+    #    return self._instance
 
     class LogLevel(IntEnum):
         DEBUG = 1
@@ -15,7 +25,7 @@ class Logger:
     def __init__(self, level=LogLevel.INFO):
         self.log_level = level
 
-        Logger.instance = self
+        SimpleLogger.instance = self
 
     def log_debug(self, message):
         """
@@ -24,7 +34,7 @@ class Logger:
         :param message:
         :return:
         """
-        if self.log_level <= Logger.LogLevel.DEBUG:
+        if self.log_level <= SimpleLogger.LogLevel.DEBUG:
             print(message)
 
     def log_verbose(self, message):
@@ -33,7 +43,7 @@ class Logger:
         :param message:
         :return:
         """
-        if self.log_level <= Logger.LogLevel.VERBOSE:
+        if self.log_level <= SimpleLogger.LogLevel.VERBOSE:
             print(message)
 
     def log(self, message):
@@ -42,7 +52,7 @@ class Logger:
         :param message:
         :return:
         """
-        if self.log_level <= Logger.LogLevel.INFO:
+        if self.log_level <= SimpleLogger.LogLevel.INFO:
             print(message)
 
     def log_warning(self, message):
@@ -51,7 +61,7 @@ class Logger:
         :param message:
         :return:
         """
-        if self.log_level <= Logger.LogLevel.WARNING:
+        if self.log_level <= SimpleLogger.LogLevel.WARNING:
             print(message)
 
     def log_error(self, message):
@@ -60,5 +70,5 @@ class Logger:
         :param message:
         :return:
         """
-        if self.log_level <= Logger.LogLevel.ERROR:
+        if self.log_level <= SimpleLogger.LogLevel.ERROR:
             print(message)

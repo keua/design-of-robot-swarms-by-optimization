@@ -1,5 +1,4 @@
 import configparser
-from simple_logging import Logger
 
 
 class Configuration:

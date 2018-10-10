@@ -1,9 +1,9 @@
 import argparse
-from configuration import Configuration
+from config.configuration import Configuration
 from automode.controller.AutoMoDeFSM import FSM
 from automode.controller.AutoMoDeBT import BT
 from execution import AutoMoDeExecutor
-from simple_logging import Logger
+from logging import SimpleLogger
 
 
 def set_parameters_fsm():
@@ -36,7 +36,7 @@ def set_controller_parameters():
 
 def load_config(file_name):
     Configuration.load_from_file(file_name)
-    Logger.instance.log_level = Logger.LogLevel[Configuration.instance.log_level]
+    SimpleLogger.instance.log_level = SimpleLogger.LogLevel[Configuration.instance.log_level]
     set_controller_parameters()
 
 
@@ -86,7 +86,8 @@ def setup_logger():
     """
         Creats the default logger
     """
-    logger = Logger()
+    print("Logger generated")
+    logger = SimpleLogger()
 
 
 def setup_configuration():
