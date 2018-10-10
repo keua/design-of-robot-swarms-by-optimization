@@ -1,6 +1,5 @@
 import statistics
 from mpi4py.futures import MPIPoolExecutor
-from configuration import Configuration
 import subprocess
 from simple_logging import Logger
 
@@ -34,10 +33,13 @@ class AutoMoDeExecutor:
                 self.execute_controller(controller, s)
 
         def parallel_execution():
-            with MPIPoolExecutor(max_workers=5) as executor:
-                for s in evaluate_seeds:
-                    future = executor.submit(self.execute_controller, controller, s)
-                    future.add_done_callback(parallel_execution_done)
+            # execute the parallel_automode.R script
+            pass
+            # TODO: Fix this to not use so much memory or run for ever
+            # with MPIPoolExecutor(max_workers=5) as executor:
+            #   for s in evaluate_seeds:
+            #       future = executor.submit(self.execute_controller, controller, s)
+            #       future.add_done_callback(parallel_execution_done)
 
         def parallel_execution_done(future):
             if future.exception() is not None:

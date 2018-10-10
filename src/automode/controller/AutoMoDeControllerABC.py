@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from automode.execution import AutoMoDeExecutor
+from execution import AutoMoDeExecutor
 import random
 import configuration
 from simple_logging import Logger
