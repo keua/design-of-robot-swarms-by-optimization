@@ -21,5 +21,6 @@ src/automode/__pycache__/*
 src/automode/controller/__pycache__/*
 src/automode/modules/__pycache__/*
 
-# Ignore the image folder in the analysis part
-analysis/images/*
+# Ignore analysis folder, except for the scripts
+analysis/*
+!analysis/scripts/*
