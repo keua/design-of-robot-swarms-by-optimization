@@ -1,4 +1,4 @@
-from logging.simple_logging import SimpleLogger
+from simple_logging.simple_logging import SimpleLogger
 
 
 # @property

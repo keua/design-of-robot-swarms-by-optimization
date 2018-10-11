@@ -2,7 +2,7 @@ from abc import ABCMeta, abstractmethod
 from execution import AutoMoDeExecutor
 import random
 from config import configuration
-from logging.simple_logging import SimpleLogger
+from simple_logging.simple_logging import SimpleLogger
 
 class AutoMoDeControllerABC:
     __metaclass__ = ABCMeta

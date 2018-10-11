@@ -3,7 +3,7 @@ from config.configuration import Configuration
 from automode.controller.AutoMoDeFSM import FSM
 from automode.controller.AutoMoDeBT import BT
 from execution import AutoMoDeExecutor
-from logging import SimpleLogger
+from simple_logging import SimpleLogger
 
 
 def set_parameters_fsm():

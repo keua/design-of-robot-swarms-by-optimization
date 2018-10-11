@@ -4,7 +4,7 @@ from enum import Enum
 import graphviz as gv
 from automode.modules.chocolate import Behavior, Condition
 import random
-from logging.simple_logging import SimpleLogger
+from simple_logging.simple_logging import SimpleLogger
 import re
 
 

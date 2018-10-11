@@ -1,6 +1,6 @@
 import statistics
 import subprocess
-from logging.simple_logging import SimpleLogger
+from simple_logging.simple_logging import SimpleLogger
 from mpi4py.futures import MPIPoolExecutor
 
 

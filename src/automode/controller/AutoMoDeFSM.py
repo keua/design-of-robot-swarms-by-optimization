@@ -1,7 +1,7 @@
 from automode.modules.chocolate import Behavior, Condition
 import random
 import graphviz as gv
-from logging.simple_logging import SimpleLogger
+from simple_logging.simple_logging import SimpleLogger
 import re
 from automode.controller.AutoMoDeControllerABC import AutoMoDeControllerABC
 

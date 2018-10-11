@@ -4,7 +4,7 @@ from automode.controller import FSM, BT
 import shutil
 from config.configuration import Configuration
 import localsearch_setup
-from logging.simple_logging import SimpleLogger
+from simple_logging.simple_logging import SimpleLogger
 from localsearch import iterative_improvement
 
 """

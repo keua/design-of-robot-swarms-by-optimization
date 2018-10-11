@@ -2,7 +2,7 @@ from datetime import datetime
 import os
 import random
 import copy
-from logging.simple_logging import SimpleLogger
+from simple_logging.simple_logging import SimpleLogger
 from config.configuration import Configuration
 
 
