@@ -2,7 +2,7 @@ from execution.factory import ExecutorFactory
 
 # TODO: Maybe hide this? At least make it read only
 mpi_enabled = False
-budget = 0
+parallel = 0
 
 
 def get_executor():
