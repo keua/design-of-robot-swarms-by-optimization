@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from execution import AutoMoDeExecutor
+from execution import ExecutorFactory
 import random
 from config import configuration
 import logging
@@ -13,6 +13,7 @@ class AutoMoDeControllerABC:
         # parameters used to keep track of the local search
         self.mut_history = []
         self.evaluated_instances = {}
+        self.executor = ExecutorFactory.get_executor()
 
         if configuration.Configuration.instance.initial_controller == "minimal":
             self.create_minimal_controller()
@@ -36,9 +37,9 @@ class AutoMoDeControllerABC:
     def convert_to_commandline_args(self):
         pass
 
-    def evaluate(self, seeds):
+    def evaluate(self):
         """Run this FSM in Argos and receive a score to compute the efficiency of the FSM"""
-        return AutoMoDeExecutor.instance.evaluate_controller(self, seeds)
+        return self.executor.evaluate_controller(self)
 
     def get_mutation_operators(self):
         """Returns all methods that start with mut_ indicating that they are indeed mutation operators."""

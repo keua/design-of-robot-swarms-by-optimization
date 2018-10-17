@@ -2,24 +2,43 @@ import statistics
 import subprocess
 import logging
 from mpi4py.futures import MPIPoolExecutor
+import execution
+import random
 
 
 class AutoMoDeExecutor:
 
-    instance = None
-
     def __init__(self):
         # TODO: Configure this
         self.score_aggregation = statistics.mean  # this can be any function to get a single data point out of
-        self.use_mpi = False
 
         self.path_to_AutoMoDe_executable = "/tmp/"
         self.scenario_file = "/tmp/"
 
-        # Singleton
-        AutoMoDeExecutor.instance = self
+        self.seed_window_size = 0
+        self.seed_window_move = 0
+        self.seeds = self.create_seeds()
 
-    def evaluate_controller(self, controller, seeds, reevaluate_seeds=False):
+    def create_seeds(self):
+        """
+        Creates a list of self.seed_window_size seeds
+        :return: The list of seeds
+        """
+        seed_window = list()
+        for i in range(0, self.seed_window_size):
+            seed_window.append(random.randint(0, 2147483647))
+        return seed_window
+
+    def advance_seeds(self):
+        """
+        Moves the self.seeds by self.seed_window_move seeds.
+        :return: nothing
+        """
+        for i in range(0, self.seed_window_move):
+            self.seeds.pop(0)
+            self.seeds.append(random.randint(0, 2147483647))
+
+    def evaluate_controller(self, controller, reevaluate_seeds=False):
         """
         Evaluates a controller on a set of seeds
         :param controller: The controller to be evaluated
@@ -50,16 +69,16 @@ class AutoMoDeExecutor:
         scores = []
         # prepare the set of seeds that need to be evaluated
         evaluate_seeds = []
-        for seed in seeds:
+        for seed in self.seeds:
             if (seed not in controller.evaluated_instances) or reevaluate_seeds:
                 evaluate_seeds.append(seed)
         # evaluate the controller on the set of seeds
-        if self.use_mpi:
+        if execution.mpi_enabled:
             parallel_execution()
         else:
             sequential_execution()
         # return the score
-        for seed in seeds:
+        for seed in self.seeds:
             scores.append(controller.evaluated_instances[seed])
         controller.score = self.score_aggregation(scores)
         return controller.score
