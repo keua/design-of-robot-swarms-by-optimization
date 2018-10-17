@@ -1,0 +1,2 @@
+The configurations in PyCharm are broken at the moment.
+Environment variables for argos are not set when the program is executed from PyCharm (but if it is executed from the shell)

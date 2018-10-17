@@ -4,7 +4,7 @@ from enum import Enum
 import graphviz as gv
 from automode.modules.chocolate import Behavior, Condition
 import random
-from simple_logging import Logger
+import logging
 import re
 
 
@@ -122,9 +122,9 @@ class BT(AutoMoDeControllerABC):
                   "minimal_condition": "Fail",
                   "minimal_behavior": "Fail"}
 
-    def __init__(self):        
+    def __init__(self, minimal=False):
         self.root = RootNode()
-        super().__init__()
+        super().__init__(minimal=minimal)
 
     def create_minimal_controller(self):
         """
@@ -244,7 +244,7 @@ class BT(AutoMoDeControllerABC):
                 elif param == "rwm":
                     pval = str(action_node.action.params[param])
                 else:
-                    Logger.instance.log_error("Undefined parameter")
+                    logging.error("Undefined parameter")
                     pval = 0
                 action_args.extend(["--{}{}".format(param, i), pval])
             child_args.extend(action_args)

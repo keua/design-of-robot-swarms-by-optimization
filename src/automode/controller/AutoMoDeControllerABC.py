@@ -1,19 +1,21 @@
 from abc import ABCMeta, abstractmethod
-from automode.execution import AutoMoDeExecutor
+import execution
 import random
-import configuration
-from simple_logging import Logger
+from config import configuration
+import logging
+
 
 class AutoMoDeControllerABC:
     __metaclass__ = ABCMeta
 
-    def __init__(self):
+    def __init__(self, minimal=False):
         self.score = float("inf")
         # parameters used to keep track of the local search
         self.mut_history = []
         self.evaluated_instances = {}
+        self.executor = execution.get_executor()
 
-        if configuration.Configuration.instance.initial_controller == "minimal":
+        if minimal:
             self.create_minimal_controller()
 
         self.id = -1
@@ -35,9 +37,9 @@ class AutoMoDeControllerABC:
     def convert_to_commandline_args(self):
         pass
 
-    def evaluate(self, seeds):
+    def evaluate(self):
         """Run this FSM in Argos and receive a score to compute the efficiency of the FSM"""
-        return AutoMoDeExecutor.instance.evaluate_controller(self, seeds)
+        return self.executor.evaluate_controller(self)
 
     def get_mutation_operators(self):
         """Returns all methods that start with mut_ indicating that they are indeed mutation operators."""
@@ -62,4 +64,4 @@ class AutoMoDeControllerABC:
                 self.mut_history.append(mutation_operator)
                 return
         # We cannot apply any operator -> how can this even happen?
-        Logger.instance.log_error("A critical error appeared. We cannot apply any mutation at his point.")
+        logging.error("A critical error appeared. We cannot apply any mutation at his point.")
