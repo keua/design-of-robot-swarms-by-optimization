@@ -22,7 +22,10 @@ def automode_localsearch():
     initial_controller.draw("initial")
     result = run_local_search(initial_controller)
     result.draw("final")
-    logging.info(result.convert_to_commandline_args())
+    best_controller = result.convert_to_commandline_args()
+    logging.info(best_controller)
+    with open("best_controller.txt", mode="w") as file:
+        file.write(best_controller)
 
 
 if __name__ == "__main__":
