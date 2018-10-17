@@ -147,6 +147,7 @@ class FSM(AutoMoDeControllerABC):
                 s = State(stop_behavior)
                 s.ext_id = i
                 finite_state_machine.states.append(s)
+            return number_of_states
 
         def parse_state():
             state_number = int(token.split("--s")[1])  # take only the number
@@ -155,21 +156,23 @@ class FSM(AutoMoDeControllerABC):
             state = [s for s in finite_state_machine.states if s.ext_id == state_number][0]
             # set the correct behavior
             state.behavior = Behavior.get_by_id(state_behavior_id)
-            # pop until we read --nstatenumber
-            tmp = to_parse.pop(0)
-            number_of_transitions_delimiter = "--n" + str(state_number)
-            # TODO: Improve parsing of parameters and try to add some error handling
-            while tmp != number_of_transitions_delimiter:
-                # parse current attribute
-                regex_no_number = re.compile("[^0-9]+")
-                param_name = regex_no_number.match(tmp.split("--")[1]).group()
-                if param_name == "rwm":
-                    param_val = int(to_parse.pop(0))
-                else:
-                    param_val = float(to_parse.pop(0))
-                state.behavior.params[param_name] = param_val
+            if number_of_states > 1:  # HOTFIX: if there is only one state there is no number of transitions
+                # TODO: Find better solution than this hotfix
+                # pop until we read --nstatenumber
                 tmp = to_parse.pop(0)
-            number_of_transitions = int(to_parse.pop(0))
+                number_of_transitions_delimiter = "--n" + str(state_number)
+                # TODO: Improve parsing of parameters and try to add some error handling
+                while tmp != number_of_transitions_delimiter:
+                    # parse current attribute
+                    regex_no_number = re.compile("[^0-9]+")
+                    param_name = regex_no_number.match(tmp.split("--")[1]).group()
+                    if param_name == "rwm":
+                        param_val = int(to_parse.pop(0))
+                    else:
+                        param_val = float(to_parse.pop(0))
+                    state.behavior.params[param_name] = param_val
+                    tmp = to_parse.pop(0)
+                number_of_transitions = int(to_parse.pop(0))
 
         def parse_transition():
             transition_id = [int(x) for x in token.split("--n")[1].split("x")]
@@ -210,7 +213,7 @@ class FSM(AutoMoDeControllerABC):
         while to_parse:
             token = to_parse.pop(0)
             if token == "--nstates":
-                parse_number_of_states()
+                number_of_states = parse_number_of_states()
             elif "--s" in token:
                 # token contains the string for a state
                 parse_state()
@@ -479,16 +482,14 @@ class FSM(AutoMoDeControllerABC):
     # Utility functions
     # ******************************************************************************************************************
 
-    '''A recursive function that find articulation points 
-    	using DFS traversal
-    	u --> The vertex to be visited next
-    	visited[] --> keeps tract of visited vertices
-    	disc[] --> Stores discovery times of visited vertices
-    	parent[] --> Stores parent vertices in DFS tree
-    	ap[] --> Store articulation points'''
-
     def APUtil(self, u, visited, ap, parent, low, disc):
-
+        '''A recursive function that find articulation points
+            	using DFS traversal
+            	u --> The vertex to be visited next
+            	visited[] --> keeps tract of visited vertices
+            	disc[] --> Stores discovery times of visited vertices
+            	parent[] --> Stores parent vertices in DFS tree
+            	ap[] --> Store articulation points'''
         # Count of children in current node
         children = 0
 
