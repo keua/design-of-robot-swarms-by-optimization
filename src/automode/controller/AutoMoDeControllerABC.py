@@ -1,5 +1,5 @@
 from abc import ABCMeta, abstractmethod
-from execution import ExecutorFactory
+import execution
 import random
 from config import configuration
 import logging
@@ -8,14 +8,14 @@ import logging
 class AutoMoDeControllerABC:
     __metaclass__ = ABCMeta
 
-    def __init__(self):
+    def __init__(self, minimal=False):
         self.score = float("inf")
         # parameters used to keep track of the local search
         self.mut_history = []
         self.evaluated_instances = {}
-        self.executor = ExecutorFactory.get_executor()
+        self.executor = execution.get_executor()
 
-        if configuration.Configuration.instance.initial_controller == "minimal":
+        if minimal:
             self.create_minimal_controller()
 
         self.id = -1

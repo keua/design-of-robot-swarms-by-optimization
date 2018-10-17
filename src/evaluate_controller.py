@@ -1,5 +1,6 @@
 import sys
 import random
+import logging
 import localsearch_setup
 from automode.controller.AutoMoDeBT import BT
 from automode.controller.AutoMoDeFSM import FSM
@@ -26,7 +27,7 @@ def evaluate_controller(controller_args):
     for i in range(0, 10):  # TODO: Make this dependent from Configuration
         seed_window.append(random.randint(0, 2147483647))
     controller.evaluate(seed_window)
-    print(controller.score)
+    logging.debug(controller.score)
 
 
 def evaluate_all_controllers(controller_file):

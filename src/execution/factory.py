@@ -3,16 +3,26 @@ from execution.automode_executor import AutoMoDeExecutor
 
 class ExecutorFactory:
 
+    _instance = None
+
     def __init__(self):
         self._executor = AutoMoDeExecutor()
+        ExecutorFactory._instance = self
 
-    def get_executor(self):
-        return self._executor
+    @staticmethod
+    def get_executor():
+        return ExecutorFactory._instance._executor
 
-    def set_scenario(self, scenario):
-        self._executor.scenario_file = scenario
+    @staticmethod
+    def set_scenario(scenario):
+        ExecutorFactory._instance.scenario_file = scenario
 
-    def set_seed_window(self, size, movement):
-        self._executor.seed_window_size = size
-        self._executor.seed_window_move = movement
-        self._executor.create_seeds()
+    @staticmethod
+    def set_seed_window(size, movement):
+        ExecutorFactory._instance._executor.seed_window_size = size
+        ExecutorFactory._instance._executor.seed_window_move = movement
+        ExecutorFactory._instance._executor.create_seeds()
+
+
+if ExecutorFactory._instance is None:
+    ExecutorFactory()

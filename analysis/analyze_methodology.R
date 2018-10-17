@@ -12,7 +12,6 @@ load_from_file <- function(file){
 build_file_name <- function(controller, scenario, initial, count) {
   folder_name <- paste(controller, scenario, initial, count, sep="_")
   file_name <- paste(result_folder, folder_name, file_location, sep="/")
-  # print(file_name)
   return(file_name)
 }
 
@@ -85,7 +84,6 @@ load_all_results <- function(scenario) {
   improving <- load_irace_localsearch(scenario)
   irace <- load_irace(scenario)
   all_df <- data.frame(minimal_df, improving, irace)
-  print(all_df)
   return(all_df)
 }
 

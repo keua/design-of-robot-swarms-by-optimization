@@ -122,9 +122,9 @@ class BT(AutoMoDeControllerABC):
                   "minimal_condition": "Fail",
                   "minimal_behavior": "Fail"}
 
-    def __init__(self):        
+    def __init__(self, minimal=False):
         self.root = RootNode()
-        super().__init__()
+        super().__init__(minimal=minimal)
 
     def create_minimal_controller(self):
         """

@@ -2,43 +2,66 @@ import argparse
 from config.configuration import Configuration
 from automode.controller.AutoMoDeFSM import FSM
 from automode.controller.AutoMoDeBT import BT
-from execution import AutoMoDeExecutor
+import execution
 import logging
+import localsearch.utilities
 
 
-def set_parameters_fsm():
+def set_parameters_fsm(config):
     # parameters for the evaluation
-    FSM.scenario_file = Configuration.instance.path_to_scenario
+    FSM.scenario_file = config.path_to_scenario
     # parameters for the FSM
-    FSM.parameters["max_states"] = Configuration.instance.FSM_max_states
-    FSM.parameters["max_transitions"] = Configuration.instance.FSM_max_transitions
-    FSM.parameters["max_transitions_per_state"] = Configuration.instance.FSM_max_transitions_per_state
-    FSM.parameters["no_self_transition"] = Configuration.instance.FSM_no_self_transition
-    FSM.parameters["initial_state_behavior"] = Configuration.instance.controller_minimal_behavior
-    FSM.parameters["random_parameter_initialization"] = Configuration.instance.random_parameter_initialization
+    FSM.parameters["max_states"] = config.FSM_max_states
+    FSM.parameters["max_transitions"] = config.FSM_max_transitions
+    FSM.parameters["max_transitions_per_state"] = config.FSM_max_transitions_per_state
+    FSM.parameters["no_self_transition"] = config.FSM_no_self_transition
+    FSM.parameters["initial_state_behavior"] = config.controller_minimal_behavior
+    FSM.parameters["random_parameter_initialization"] = config.random_parameter_initialization
 
 
-def set_parameters_bt():
+def set_parameters_bt(config):
     # parameters for the evaluation
-    BT.scenario_file = Configuration.instance.path_to_scenario
+    BT.scenario_file = config.path_to_scenario
     # parameters for the BT
-    BT.parameters["max_actions"] = Configuration.instance.BT_max_actions
-    BT.parameters["minimal_behavior"] = Configuration.instance.controller_minimal_behavior
-    BT.parameters["minimal_condition"] = Configuration.instance.controller_minimal_condition
-    BT.parameters["random_parameter_initialization"] = Configuration.instance.random_parameter_initialization
+    BT.parameters["max_actions"] = config.BT_max_actions
+    BT.parameters["minimal_behavior"] = config.controller_minimal_behavior
+    BT.parameters["minimal_condition"] = config.controller_minimal_condition
+    BT.parameters["random_parameter_initialization"] = config.random_parameter_initialization
 
 
-def set_controller_parameters():
+def set_controller_parameters(config):
     # Initialize all controller types
-    set_parameters_fsm()
-    set_parameters_bt()
+    set_parameters_fsm(config)
+    set_parameters_bt(config)
 
 
-def load_config(file_name):
-    Configuration.load_from_file(file_name)
+def set_execution_parameters(controller_type, config):
+    execution.use_mpi = config.MPI
+    execution.set_scenario(config.path_to_scenario)
+    execution.set_seed_window(config.seed_window_size, config.seed_window_movement)
+    executor = execution.get_executor()
+    executor.controller_type = controller_type
+    if controller_type == "BT":
+        executor.path_to_AutoMoDe_executable = config.BT_path_to_AutoMoDe
+    else:
+        executor.path_to_AutoMoDe_executable = config.FSM_path_to_AutoMoDe
+
+
+def set_localsearch_parameters(args, config):
+    localsearch.utilities.initial_controller = args["initial_controller"]
+    localsearch.utilities.job_name = args["job_name"]
+    localsearch.utilities.result_directory = args["result_directory"]
+    localsearch.utilities.config_file_name = args["config_file_name"]
+
+
+def load_config(args):
+    config = Configuration.load_from_file(args["config_file_name"])
     # TODO: Set the right log level here
     # SimpleLogger.instance.log_level = SimpleLogger.LogLevel[Configuration.instance.log_level]
-    set_controller_parameters()
+    set_controller_parameters(config)
+    set_execution_parameters(args["controller_type"], config)
+    set_localsearch_parameters(args, config)
+    # Configuration.instance.src_directory = "src/"
 
 
 def parse_input():
@@ -73,42 +96,11 @@ def parse_input():
     return arguments
 
 
-def setup_executor(controller_type, scenario):
-    executor = AutoMoDeExecutor()
-    executor.use_mpi = Configuration.instance.MPI
-    if controller_type == "BT":
-        executor.path_to_AutoMoDe_executable = Configuration.instance.BT_path_to_AutoMoDe
-    else:
-        executor.path_to_AutoMoDe_executable = Configuration.instance.FSM_path_to_AutoMoDe
-    executor.scenario_file = scenario
-
-
-def setup_configuration():
-    """
-        Creates an empty (default) configuration
-    """
-    config = Configuration()
-
-
 def setup_localsearch():
     args = parse_input()
-    load_config(args["config_file_name"])
-    # TODO: Don't save this in the config
-    Configuration.instance.path_to_scenario = args["path_to_scenario"]
-    Configuration.instance.config_file_name = args["config_file_name"]
-    Configuration.instance.src_directory = "src/"
-    Configuration.instance.result_directory = args["result_directory"]
-    Configuration.instance.initial_controller = args["initial_controller"]
-    Configuration.instance.job_name = args["job_name"]
-    Configuration.instance.controller_type = args["controller_type"]
-    setup_executor(args["controller_type"], args["path_to_scenario"])
+    load_config(args)
 
 
 def setup_evaluation(controller_type, scenario):
     load_config("/home/jkuckling/AutoMoDe-LocalSearch/src/config/config_evaluation.ini")
-    setup_executor(controller_type, scenario)
 
-
-# things that always need to be done
-#   generate an empty configuration
-setup_configuration()

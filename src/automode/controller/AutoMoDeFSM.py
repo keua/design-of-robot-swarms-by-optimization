@@ -102,11 +102,11 @@ class FSM(AutoMoDeControllerABC):
                   "initial_state_behavior": "Fail",
                   "random_parameter_initialization": True}
 
-    def __init__(self):
+    def __init__(self, minimal=False):
         self.initial_state = None
         self.states = []
         self.transitions = []
-        super().__init__()
+        super().__init__(minimal=minimal)
 
         # used to find articulation points, find better place then here
         self.aputils_time = 0
@@ -492,7 +492,7 @@ class FSM(AutoMoDeControllerABC):
         # Count of children in current node
         children = 0
 
-        # Mark the current node as visited and print it
+        # Mark the current node as visited
         visited[u] = True
 
         # Initialize discovery time and low value

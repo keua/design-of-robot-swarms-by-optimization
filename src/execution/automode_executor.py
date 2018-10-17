@@ -15,24 +15,24 @@ class AutoMoDeExecutor:
         self.path_to_AutoMoDe_executable = "/tmp/"
         self.scenario_file = "/tmp/"
 
+        self.controller_type = "undefined"
+
         self.seed_window_size = 0
         self.seed_window_move = 0
-        self.seeds = self.create_seeds()
+        self.seeds = list()
+        self.create_seeds()
 
     def create_seeds(self):
         """
         Creates a list of self.seed_window_size seeds
-        :return: The list of seeds
         """
-        seed_window = list()
+        self.seeds = list()
         for i in range(0, self.seed_window_size):
-            seed_window.append(random.randint(0, 2147483647))
-        return seed_window
+            self.seeds.append(random.randint(0, 2147483647))
 
     def advance_seeds(self):
         """
         Moves the self.seeds by self.seed_window_move seeds.
-        :return: nothing
         """
         for i in range(0, self.seed_window_move):
             self.seeds.pop(0)
@@ -91,7 +91,7 @@ class AutoMoDeExecutor:
         :return: The score of controller with the given seed (which is also saved in the controller)
         """
         # print("Evaluating BT " + str(self.id) + " on seed " + str(seed))
-        logging.debug("Evaluating BT " + " on seed " + str(seed))
+        logging.debug("Evaluating controller " + " on seed " + str(seed))
         # prepare the command line
         args = [self.path_to_AutoMoDe_executable, "-n", "-c", self.scenario_file, "--seed", str(seed)]
         args.extend(controller.convert_to_commandline_args())

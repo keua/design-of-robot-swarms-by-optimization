@@ -3,9 +3,10 @@ import os
 import copy
 import logging
 from config.configuration import Configuration
-from execution import ExecutorFactory
+import execution
+import math
 
-budget = 0
+budget = 50000
 
 
 def iterative_improvement(initial_controller):
@@ -14,13 +15,14 @@ def iterative_improvement(initial_controller):
     :param initial_controller: The controller that is used to first improve from
     :return: The best controller after the iterative improvement
     """
+    executor = execution.get_executor()
+    max_improvements = math.floor(budget/(executor.seed_window_size + executor.seed_window_move))
     best = initial_controller
     start_time = datetime.now()
     logging.info("Started at " + str(start_time))
     if not os.path.isdir("scores"):
         os.mkdir("scores")
     with open("scores/best_score.csv", "w") as file:
-        executor = ExecutorFactory.get_executor()
         executor.create_seeds()
         best.evaluate()
         logging.debug("Initial best score " + str(best.score))
