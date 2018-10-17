@@ -3,7 +3,7 @@ from config.configuration import Configuration
 from automode.controller.AutoMoDeFSM import FSM
 from automode.controller.AutoMoDeBT import BT
 from execution import AutoMoDeExecutor
-from simple_logging import SimpleLogger
+import logging
 
 
 def set_parameters_fsm():
@@ -36,7 +36,8 @@ def set_controller_parameters():
 
 def load_config(file_name):
     Configuration.load_from_file(file_name)
-    SimpleLogger.instance.log_level = SimpleLogger.LogLevel[Configuration.instance.log_level]
+    # TODO: Set the right log level here
+    # SimpleLogger.instance.log_level = SimpleLogger.LogLevel[Configuration.instance.log_level]
     set_controller_parameters()
 
 
@@ -82,14 +83,6 @@ def setup_executor(controller_type, scenario):
     executor.scenario_file = scenario
 
 
-def setup_logger():
-    """
-        Creats the default logger
-    """
-    print("Logger generated")
-    logger = SimpleLogger()
-
-
 def setup_configuration():
     """
         Creates an empty (default) configuration
@@ -117,7 +110,5 @@ def setup_evaluation(controller_type, scenario):
 
 
 # things that always need to be done
-#   generate a logger
-setup_logger()
 #   generate an empty configuration
 setup_configuration()

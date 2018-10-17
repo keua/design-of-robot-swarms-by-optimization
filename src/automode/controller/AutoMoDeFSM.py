@@ -1,11 +1,12 @@
 from automode.modules.chocolate import Behavior, Condition
 import random
 import graphviz as gv
-from simple_logging.simple_logging import SimpleLogger
+import logging
 import re
 from automode.controller.AutoMoDeControllerABC import AutoMoDeControllerABC
 
 # TODO: Write documentation for methods and classes
+
 
 class State:
     count = 0
@@ -26,7 +27,7 @@ class State:
             elif param == "rwm":
                 pval = str(self.behavior.params[param])
             else:
-                SimpleLogger.instance.log_error("Undefined parameter")
+                logging.error("Undefined parameter")
                 pval = 0
             args.extend(["--" + param + str(self.ext_id), pval])
         return args
@@ -197,7 +198,7 @@ class FSM(AutoMoDeControllerABC):
                     param_val = int(to_parse.pop(0))
                 else:
                     param_val = float(to_parse.pop(0))
-                SimpleLogger.instance.log_debug("{}: {}".format(param_name, param_val))
+                logging.debug("{}: {}".format(param_name, param_val))
                 t.condition.params[param_name] = param_val
 
         # Setting up a completely empty FSM

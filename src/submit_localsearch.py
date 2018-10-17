@@ -27,7 +27,7 @@ def prepare_submission_script(identifier, config_file):
     def prepare_output_file():
         return "$TMPDIR/output-{job_name}.txt"
 
-    dummy_data = {  # used for the first replacement, adding mpi, cmd and args
+    dummy_data = {  # used for the first replacement, adding mpi, cmd and args  # TODO: Find better handling
         "MPI_setup": prepare_mpi(),
         "prepared_cmd": prepare_cmd(),
         "prepared_args": prepare_args(),

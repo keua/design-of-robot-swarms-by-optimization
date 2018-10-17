@@ -2,7 +2,7 @@ from datetime import datetime
 import os
 import random
 import copy
-from simple_logging.simple_logging import SimpleLogger
+import logging
 from config.configuration import Configuration
 
 
@@ -14,7 +14,7 @@ def iterative_improvement(initial_controller):
     """
     best = initial_controller
     start_time = datetime.now()
-    SimpleLogger.instance.log("Started at " + str(start_time))
+    logging.info("Started at " + str(start_time))
     if not os.path.isdir("scores"):
         os.mkdir("scores")
     with open("scores/best_score.csv", "w") as file:
@@ -22,7 +22,7 @@ def iterative_improvement(initial_controller):
         for i in range(0, Configuration.instance.seed_window_size):
             seed_window.append(random.randint(0, 2147483647))
         best.evaluate(seed_window)
-        SimpleLogger.instance.log_verbose("Initial best score " + str(best.score))
+        logging.debug("Initial best score " + str(best.score))
         for i in range(0, Configuration.instance.max_improvements):
             # move the window
             for j in range(0, Configuration.instance.seed_window_movement):
@@ -40,17 +40,17 @@ def iterative_improvement(initial_controller):
             # save the scores to file
             file.write(str(best.score) + ", " + str(mutated_controller.score) + ", " +
                        mutated_controller.mut_history[len(mutated_controller.mut_history) - 1].__name__ + "\n")
-            SimpleLogger.instance.log_verbose(
+            logging.debug(
                 "Best score " + str(best.score) + " and new score " + str(mutated_controller.score))
             if best.score < mutated_controller.score:  # < for max
-                SimpleLogger.instance.log_verbose(
+                logging.debug(
                     mutated_controller.mut_history[len(mutated_controller.mut_history) - 1].__name__)
                 mutated_controller.draw(str(i))
                 best = mutated_controller
             if i % Configuration.instance.snapshot_frequency == 0:
                 best.draw(str(i))
         end_time = datetime.now()
-    SimpleLogger.instance.log("Finished at " + str(end_time))
+    logging.info("Finished at " + str(end_time))
     time_diff = end_time - start_time
-    SimpleLogger.instance.log_verbose("Took " + str(time_diff))
+    logging.info("Took " + str(time_diff))
     return best

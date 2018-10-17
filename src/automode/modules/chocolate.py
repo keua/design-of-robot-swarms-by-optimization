@@ -1,6 +1,6 @@
 import random
 from automode.modules.modulesABC import ABCBehavior, ABCCondition
-from simple_logging.simple_logging import SimpleLogger
+import logging
 
 
 class Behavior (ABCBehavior):
@@ -30,7 +30,7 @@ class Behavior (ABCBehavior):
         elif b_id == 5:
             b_name = "Repulsion"
         else:
-            SimpleLogger.instance.log_error("Unknown id " + str(b_id) + " for a behavior.")
+            logging.error("Unknown id " + str(b_id) + " for a behavior.")
         return Behavior(b_name)
 
     @staticmethod
@@ -48,8 +48,6 @@ class Behavior (ABCBehavior):
             return {}
         elif name == "Repulsion":
             return {"rep": Behavior.random_parameter("Repulsion.rep")}  # real value in [1,5]
-        # elif name == "":
-        #    return {}
         return {}
 
     @staticmethod
@@ -66,7 +64,7 @@ class Behavior (ABCBehavior):
             return random.randint(0, 100)
         if p == "rep":
             return random.uniform(1, 5)
-            SimpleLogger.instance.log_error("Invalid combination of behavior and parameter " + name)
+        logging.error("Invalid combination of behavior and parameter " + name)
         return 0
 
     @property
@@ -84,7 +82,7 @@ class Behavior (ABCBehavior):
             return 4
         elif self.name == "Repulsion":
             return 5
-        SimpleLogger.instance.log_error("Unknown name " + self.name + " for a behavior.")
+        logging.error("Unknown name " + self.name + " for a behavior.")
         return -1
 
     """This list contains all possible behaviors that exist in AutoMoDe Chocolate"""
@@ -131,7 +129,7 @@ class Condition (ABCCondition):
         elif t_id == 5:
             t_name = "FixedProbability"
         else:
-            SimpleLogger.instance.log_error("Unknown id " + str(t_id) + " for a condition.")
+            logging.error("Unknown id " + str(t_id) + " for a condition.")
         return Condition(t_name)
 
     @staticmethod
@@ -164,14 +162,14 @@ class Condition (ABCCondition):
         if c == "BlackFloor" or c == "GrayFloor" or c == "WhiteFloor" or c == "FixedProbability":
             if p == "p":
                 return random.uniform(0, 1)
-            SimpleLogger.instance.log_error("Invalid parameter " + p + " for condition " + c)
+            logging.error("Invalid parameter " + p + " for condition " + c)
         if c == "NeighborsCount" or c == "InvertedNeighborsCount":
             if p == "w":
                 return random.uniform(0, 20)
             if p == "p":
                 return random.randint(1, 10)
-            SimpleLogger.instance.log_error("Invalid parameter " + p + " for condition " + c)
-        SimpleLogger.instance.log_error("Invalid combination of condition and parameter " + name)
+            logging.error("Invalid parameter " + p + " for condition " + c)
+        logging.error("Invalid combination of condition and parameter " + name)
         return 0
 
     @property
@@ -189,7 +187,7 @@ class Condition (ABCCondition):
             return 4
         elif self.name == "FixedProbability":
             return 5
-        SimpleLogger.instance.log_error("Unknown name " + self.name + " for a condition")
+        logging.error("Unknown name " + self.name + " for a condition")
         return -1
 
     """This list contains all possible conditions that exist in AutoMoDe Chocolate"""

@@ -1,6 +1,6 @@
 import statistics
 import subprocess
-from simple_logging.simple_logging import SimpleLogger
+import logging
 from mpi4py.futures import MPIPoolExecutor
 
 
@@ -72,11 +72,11 @@ class AutoMoDeExecutor:
         :return: The score of controller with the given seed (which is also saved in the controller)
         """
         # print("Evaluating BT " + str(self.id) + " on seed " + str(seed))
-        SimpleLogger.instance.log_debug("Evaluating BT " + " on seed " + str(seed))
+        logging.debug("Evaluating BT " + " on seed " + str(seed))
         # prepare the command line
         args = [self.path_to_AutoMoDe_executable, "-n", "-c", self.scenario_file, "--seed", str(seed)]
         args.extend(controller.convert_to_commandline_args())
-        SimpleLogger.instance.log_debug(args)
+        logging.debug(args)
         # Run and capture output
         p = subprocess.Popen(args, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         (stdout, stderr) = p.communicate()
@@ -84,15 +84,15 @@ class AutoMoDeExecutor:
         output = stdout.decode('utf-8')
         lines = output.splitlines()
         try:
-            SimpleLogger.instance.log_debug(lines[len(lines) - 1])
+            logging.debug(lines[len(lines) - 1])
             score = float(lines[len(lines) - 1].split(" ")[1])
         except:
             score = -1  # Just to be sure
-            SimpleLogger.instance.log_error("Args: " + str(args))
-            SimpleLogger.instance.log_error("Stderr: " + stderr.decode('utf-8'))
-            SimpleLogger.instance.log_error("Stdout: " + stdout.decode('utf-8'))
+            logging.error("Args: " + str(args))
+            logging.error("Stderr: " + stderr.decode('utf-8'))
+            logging.error("Stdout: " + stdout.decode('utf-8'))
             raise
         controller.evaluated_instances[seed] = score
-        SimpleLogger.instance.log_verbose("Controller {} on seed {} returned score: {}".format(
+        logging.debug("Controller {} on seed {} returned score: {}".format(
             "", seed, controller.evaluated_instances[seed]))
         return seed, score
