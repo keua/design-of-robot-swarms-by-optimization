@@ -20,8 +20,44 @@ class ABCNode:
 
     def __init__(self):
         self.children = []
-        self.id = ABCNode.count
+        self.id = ""
         ABCNode.count += 1
+
+    def set_id(self, new_id):
+        """
+        Recursively sets the new id. Call this on the root node to update all ids
+        :param new_id:
+        :return:
+        """
+        self.id = new_id
+        for i in range(len(self.children)):
+            self.children[i].set_id(new_id + str(i))
+
+    def set_child(self, child_node, index=-1):
+        """
+        Sets the node as a child to this node. If index is not specified it will be appended,
+        otherwise inserted at index
+        :param child_node:
+        :param index:
+        :return: Nothing
+        """
+        if index < 0:
+            self.children.append(child_node)
+            child_node.id.set_id(self.id + str(len(self.children)))
+        else:
+            # TODO: Check that index is not breaking anything
+            self.children.insert(index, child_node)
+            self.set_id(self.id)
+
+    def remove_child(self, child_node):
+        """
+
+        :param child_node:
+        :return:
+        """
+        self.children.remove(child_node)
+        self.set_id(self.id)
+        pass
 
     @property
     @abstractmethod
@@ -40,7 +76,7 @@ class RootNode(ABCNode):
 
     @property
     def name(self):
-        return "Root_"  # + str(self.id)
+        return "root"  # + str(self.id)
 
     def draw(self, graph):
         self.children[0].draw(graph)
@@ -53,7 +89,7 @@ class SequenceStarNode(ABCNode):
 
     @property
     def name(self):
-        return "Sequence*_" + str(self.id)
+        return "sequence*_" + str(self.id)
 
     def draw(self, graph):
         graph.node(self.name, shape="square", label="->*")
@@ -69,7 +105,7 @@ class SelectorNode(ABCNode):
 
     @property
     def name(self):
-        return "Selector_" + str(self.id)
+        return "selector_" + str(self.id)
 
     def draw(self, graph):
         graph.node(self.name, shape="square", label="?")
@@ -86,13 +122,13 @@ class ActionNode(ABCNode):
 
     @property
     def name(self):
-        return self.action.name + "_" + str(self.id)
+        return self.action.name + "_" + self.id
 
     def draw(self, graph):
         graph.node(self.name, shape="circle", label=self.caption())
 
     def caption(self):
-        caption = self.action.name  # + "_" + str(self.id)
+        caption = self.action.name  # + "_" + self.id
         caption += self.action.get_parameter_for_caption()
         return caption
 
@@ -105,7 +141,7 @@ class ConditionNode(ABCNode):
 
     @property
     def name(self):
-        return self.condition.name + "_" + str(self.id)
+        return self.condition.name + "_" + self.id
 
     def draw(self, graph):
         graph.node(self.name, shape="diamond", label=self.caption())
@@ -131,11 +167,11 @@ class BT(AutoMoDeControllerABC):
         Sets up a minimal controller. That is a BT with a single action and a single condition.
         """
         sequence = SequenceStarNode()
-        self.root.children.append(sequence)
+        self.root.set_child(sequence)
         sel1 = SelectorNode()
-        sel1.children.append(ConditionNode(BT.parameters["minimal_condition"]))
-        sel1.children.append(ActionNode(BT.parameters["minimal_behavior"]))
-        sequence.children.append(sel1)
+        sel1.set_child(ConditionNode(BT.parameters["minimal_condition"]))
+        sel1.set_child(ActionNode(BT.parameters["minimal_behavior"]))
+        sequence.set_child(sel1)
 
     def draw(self, graph_name):
         graph = gv.Digraph(format='svg')
@@ -148,7 +184,7 @@ class BT(AutoMoDeControllerABC):
         def parse_top_level_node():
             to_parse.pop(0)  # --rootnode
             top_level_type = int(to_parse.pop(0))  # 0
-            behavior_tree.root.children.append(SequenceStarNode())
+            behavior_tree.root.set_child(SequenceStarNode())
             to_parse.pop(0)  # --nchildsroot
             top_level_children_count = int(to_parse.pop(0))  # not really needed, iterating over subtrees should work fine
 
@@ -191,9 +227,9 @@ class BT(AutoMoDeControllerABC):
                 else:
                     param_val = float(to_parse.pop(0))
                 action_node.action.params[param_name] = param_val
-            selector.children.append(condition_node)
-            selector.children.append(action_node)
-            behavior_tree.root.children[0].children.append(selector)
+            selector.set_child(condition_node)
+            selector.set_child(action_node)
+            behavior_tree.root.children[0].set_child(selector)
 
         #
         regex_action_node = re.compile("--a[0-9]")
@@ -268,16 +304,16 @@ class BT(AutoMoDeControllerABC):
         # Create random condition and action
         new_condition = ConditionNode(random.choice(Condition.condition_list))
         new_action = ActionNode(random.choice(Behavior.behavior_list))
-        new_selector.children.append(new_condition)
-        new_selector.children.append(new_action)
+        new_selector.set_child(new_condition)
+        new_selector.set_child(new_action)
         # Add new node at random position
         copied_list = list(self.top_node.children)
         copied_list.append(None)
         new_position = random.choice(copied_list)
         if new_position is None:
-            self.top_node.children.append(new_selector)
+            self.top_node.set_child(new_selector)
         else:
-            self.top_node.children.insert(self.top_node.children.index(new_position), new_selector)
+            self.top_node.set_child(new_selector, self.top_node.children.index(new_position))
         return True
 
     def mut_remove_subtree(self):
@@ -287,7 +323,7 @@ class BT(AutoMoDeControllerABC):
         if len(self.top_node.children) <= 1:
             return False  # trying to remove the last subtree is forbidden
         to_remove = random.choice(self.top_node.children)
-        self.top_node.children.remove(to_remove)
+        self.top_node.remove_child(to_remove)
         return True
 
     def mut_change_subtree_order(self):
@@ -307,13 +343,13 @@ class BT(AutoMoDeControllerABC):
         if remove_index >= len(self.top_node.children):
             remove_index -= len(self.top_node.children)
         remove_element = self.top_node.children[remove_index]
-        self.top_node.children.remove(remove_element)
+        self.top_node.remove_child(remove_element)
         # now put it at the right position
         if remove_element == new_pos:
-            self.top_node.children.insert(0, remove_element)
+            self.top_node.set_child(remove_element, 0)
         else:
             put_index = self.top_node.children.index(new_pos) + 1
-            self.top_node.children.insert(put_index, remove_element)
+            self.top_node.set_child(remove_element, put_index)
         return True
 
     def mut_change_action_node_behavior(self):
