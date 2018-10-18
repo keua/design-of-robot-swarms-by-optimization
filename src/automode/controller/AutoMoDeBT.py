@@ -181,6 +181,8 @@ class BT(AutoMoDeControllerABC):
     @staticmethod
     def parse_from_commandline_args(cmd_args):
 
+        # TODO: Adjust for new BT structure
+
         def parse_top_level_node():
             to_parse.pop(0)  # --rootnode
             top_level_type = int(to_parse.pop(0))  # 0
@@ -248,18 +250,19 @@ class BT(AutoMoDeControllerABC):
 
     def convert_to_commandline_args(self):
         """Converts this BT to a format that is readable by the AutoMoDe command line"""
-        # always start with "--bt-config --rootnode 0"
-        args = ["--bt-config", "--rootnode", "0"]
+        # always start with "--bt-config --nroot 3"
+        args = ["--bt-config", "--nroot", "3"]
         # report the number of subtrees for the top_node
-        args.extend(["--nchildsroot", str(len(self.top_node.children))])  # the "rootnode" of the cmd args is in reality just the top_node
+        args.extend(["--nchildroot", str(len(self.top_node.children))])  # the "rootnode" of the cmd args is in reality just the top_node
         for i in range(0, len(self.top_node.children)):
             # process the child
             num_conditions = 1
             selector = self.top_node.children[i]
-            child_args = ["--n{}".format(i), "0", "--nc{}".format(i), "{}".format(num_conditions)]  # we only care for exactly one condition
+            child_args = ["--n{}".format(i), "0", "--nchild{}".format(i), "{}".format(num_conditions+1)]  # we only care for exactly one condition
             for j in range(0, num_conditions):
                 condition_node = selector.children[j]
-                condition_args = ["--c{}x{}".format(i, j), str(condition_node.condition.int)]
+                condition_id = "{}{}".format(i, j)
+                condition_args = ["--n{}".format(condition_id), "6", "--c{}".format(condition_id), str(condition_node.condition.int)]
                 for param in condition_node.condition.params:
                     c = condition_node.condition.name
                     if c == "BlackFloor" or c == "GrayFloor" or c == "WhiteFloor" or c == "FixedProbability":
@@ -270,10 +273,11 @@ class BT(AutoMoDeControllerABC):
                             pval = "%.2f" % condition_node.condition.params[param]
                         if param == "p":
                             pval = str(condition_node.condition.params[param])
-                    condition_args.extend(["--{}{}x{}".format(param, i, j), pval])
+                    condition_args.extend(["--{}{}".format(param, condition_id), pval])
                 child_args.extend(condition_args)
             action_node = selector.children[num_conditions]
-            action_args = ["--a{}".format(i), str(action_node.action.int)]
+            action_id = "{}{}".format(i, num_conditions)
+            action_args = ["--n{}".format(action_id), "5", "--a{}".format(action_id), str(action_node.action.int)]
             for param in action_node.action.params:
                 if param == "att" or param == "rep":
                     pval = "%.2f" % action_node.action.params[param]
@@ -283,6 +287,8 @@ class BT(AutoMoDeControllerABC):
                     logging.error("Undefined parameter")
                     pval = 0
                 action_args.extend(["--{}{}".format(param, i), pval])
+            # Now we also need to include the success probability
+            action_args.extend(["--p{}".format(action_id), "0"])
             child_args.extend(action_args)
             args.extend(child_args)
         return args
