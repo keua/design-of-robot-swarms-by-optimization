@@ -17,6 +17,7 @@ def iterative_improvement(initial_controller):
     """
     executor = execution.get_executor()
     max_improvements = math.floor(budget/(executor.seed_window_size + executor.seed_window_move))
+    logging.warning("{}".format(max_improvements))
     best = initial_controller
     start_time = datetime.now()
     logging.info("Started at " + str(start_time))
@@ -26,7 +27,8 @@ def iterative_improvement(initial_controller):
         executor.create_seeds()
         best.evaluate()
         logging.debug("Initial best score " + str(best.score))
-        for i in range(0, Configuration.instance.max_improvements):
+        for i in range(0, max_improvements):
+            logging.warning("{}".format(i))
             # move the window
             executor.advance_seeds()
             # create a mutated FSM

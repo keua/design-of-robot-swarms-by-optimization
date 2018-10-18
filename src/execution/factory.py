@@ -15,7 +15,7 @@ class ExecutorFactory:
 
     @staticmethod
     def set_scenario(scenario):
-        ExecutorFactory._instance.scenario_file = scenario
+        ExecutorFactory._instance._executor.scenario_file = scenario
 
     @staticmethod
     def set_seed_window(size, movement):

@@ -58,6 +58,7 @@ def set_localsearch_parameters(args):
     localsearch.utilities.job_name = args["job_name"]
     localsearch.utilities.result_directory = args["result_directory"]
     localsearch.utilities.config_file_name = args["config_file_name"]
+    localsearch.localsearch.budget = args["budget"]
 
 
 def load_config(file_name):

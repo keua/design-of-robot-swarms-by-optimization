@@ -43,7 +43,7 @@ class ABCNode:
         """
         if index < 0:
             self.children.append(child_node)
-            child_node.id.set_id(self.id + str(len(self.children)))
+            child_node.set_id(self.id + str(len(self.children)))
         else:
             # TODO: Check that index is not breaking anything
             self.children.insert(index, child_node)
@@ -286,7 +286,7 @@ class BT(AutoMoDeControllerABC):
                 else:
                     logging.error("Undefined parameter")
                     pval = 0
-                action_args.extend(["--{}{}".format(param, i), pval])
+                action_args.extend(["--{}{}".format(param, action_id), pval])
             # Now we also need to include the success probability
             action_args.extend(["--p{}".format(action_id), "0"])
             child_args.extend(action_args)
