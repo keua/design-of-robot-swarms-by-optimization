@@ -25,7 +25,7 @@ def automode_localsearch():
     best_controller = result.convert_to_commandline_args()
     logging.info(best_controller)
     with open("best_controller.txt", mode="w") as file:
-        file.write(best_controller)
+        file.write(" ".join(best_controller))
 
 
 if __name__ == "__main__":
