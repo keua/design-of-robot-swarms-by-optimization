@@ -1,13 +1,13 @@
+"""
+    The main.py script can be called from various sources to start a local search.
+    It guarantees that all necessary resources are always created.
+"""
+
 import logging
 
 import localsearch_setup
 from localsearch import iterative_improvement
 import localsearch.utilities
-
-"""
-    The main.py script can be called from various sources to start a local search.
-    It guarantees that all necessary resources are always created.
-"""
 
 
 def run_local_search(controller):
