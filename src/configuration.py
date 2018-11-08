@@ -175,7 +175,8 @@ def set_execution_parameters(controller_type, parallel, scenario, config):
         executor.path_to_AutoMoDe_executable = config.FSM_path_to_AutoMoDe
 
 
-def set_localsearch_parameters(initial_controller, job_name, result_directory, config_file_name, budget):
+def set_localsearch_parameters(initial_controller, job_name, result_directory, config_file_name, budget,
+                               snapshot_frequency):
     """
     Sets the configuration parameters in the localsearch module
     :param initial_controller:
@@ -183,12 +184,14 @@ def set_localsearch_parameters(initial_controller, job_name, result_directory, c
     :param result_directory:
     :param config_file_name:
     :param budget:
+    :param snapshot_frequency:
     """
     localsearch.utilities.initial_controller = initial_controller
     localsearch.utilities.job_name = job_name
     localsearch.utilities.result_directory = result_directory
     localsearch.utilities.config_file_name = config_file_name
     localsearch.localsearch.budget = budget
+    localsearch.localsearch.snapshot_frequency = snapshot_frequency
 
 
 def apply_configuration(args, config):
@@ -215,4 +218,4 @@ def apply_configuration(args, config):
     set_controller_parameters(config)
     set_execution_parameters(args["controller_type"], args["parallel"], args["path_to_scenario"], config)
     set_localsearch_parameters(args["initial_controller"], args["job_name"], args["result_directory"],
-                               args["config_file_name"], args["budget"])
+                               args["config_file_name"], args["budget"], config["snapshot_frequency"])
