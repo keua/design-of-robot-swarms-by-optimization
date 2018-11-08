@@ -9,6 +9,9 @@ result/*
 venv*/*
 venv
 
+# Ignore the pylint file
+src/.pylintrc
+
 # Ignore the specific config.ini file
 # */config.ini
 
