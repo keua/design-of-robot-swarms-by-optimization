@@ -14,7 +14,6 @@ import execution
 import localsearch.utilities
 
 
-@property
 def default_configuration():
     """
     This function returns a dummy configuration.
@@ -59,40 +58,40 @@ def load_configuration_from_file(config_file_name):
     # TODO: Add checks to values
 
     def load_default_values():
-        config.default_path_to_scenario = config_parser["Default Values"]["path_to_scenario"]
-        config.default_result_directory = config_parser["Default Values"]["result_directory"]
-        config.default_budget = int(config_parser["Default Values"]["budget"])
+        config["default_path_to_scenario"] = config_parser["Default Values"]["path_to_scenario"]
+        config["default_result_directory"] = config_parser["Default Values"]["result_directory"]
+        config["default_budget"] = int(config_parser["Default Values"]["budget"])
 
     def load_run_configuration():
         # parse the window size and movement
-        config.seed_window_size = int(config_parser["Execution"]["seed_window_size"])
-        config.seed_window_movement = int(config_parser["Execution"]["seed_window_movement"])
+        config["seed_window_size"] = int(config_parser["Execution"]["seed_window_size"])
+        config["seed_window_movement"] = int(config_parser["Execution"]["seed_window_movement"])
 
     def load_controller_configuration():
         # parse the controller configuration
-        config.controller_minimal_behavior = config_parser["Controller"]["minimal_behavior"]
-        config.controller_minimal_condition = config_parser["Controller"]["minimal_condition"]
-        config.random_parameter_initialization = config_parser["Controller"].getboolean(
+        config["controller_minimal_behavior"] = config_parser["Controller"]["minimal_behavior"]
+        config["controller_minimal_condition"] = config_parser["Controller"]["minimal_condition"]
+        config["random_parameter_initialization"] = config_parser["Controller"].getboolean(
             "random_parameter_initialization")
         # parse information related to the FSM
-        config.FSM_path_to_AutoMoDe = config_parser["FSM"]["path_to_AutoMoDe"]
-        config.FSM_max_states = int(config_parser["FSM"]["max_states"])
-        config.FSM_max_transitions = float(config_parser["FSM"]["max_transitions"])
-        config.FSM_max_transitions_per_state = int(config_parser["FSM"]["max_transitions_per_state"])
-        config.FSM_no_self_transition = config_parser["FSM"].getboolean("no_self_transition")
+        config["FSM_path_to_AutoMoDe"] = config_parser["FSM"]["path_to_AutoMoDe"]
+        config["FSM_max_states"] = int(config_parser["FSM"]["max_states"])
+        config["FSM_max_transitions"] = float(config_parser["FSM"]["max_transitions"])
+        config["FSM_max_transitions_per_state"] = int(config_parser["FSM"]["max_transitions_per_state"])
+        config["FSM_no_self_transition"] = config_parser["FSM"].getboolean("no_self_transition")
         # parse information related to the BT
-        config.BT_path_to_AutoMoDe = config_parser["BT"]["path_to_AutoMoDe"]
-        config.BT_max_actions = int(config_parser["BT"]["max_actions"])
+        config["BT_path_to_AutoMoDe"] = config_parser["BT"]["path_to_AutoMoDe"]
+        config["BT_max_actions"] = int(config_parser["BT"]["max_actions"])
 
-    config = default_configuration
+    config = default_configuration()
     config_parser = configparser.ConfigParser()
     config_parser.read(config_file_name)
     load_default_values()
     load_run_configuration()
     load_controller_configuration()
     # parse logging configuration
-    config.snapshot_frequency = int(config_parser["Logging"]["snapshot_frequency"])
-    config.log_level = config_parser["Logging"]["log_level"]
+    config["snapshot_frequency"] = int(config_parser["Logging"]["snapshot_frequency"])
+    config["log_level"] = config_parser["Logging"]["log_level"]
     return config
 
 
@@ -166,13 +165,13 @@ def set_execution_parameters(controller_type, parallel, scenario, config):
     else:
         execution.mpi_enabled = False
     execution.set_scenario(scenario)
-    execution.set_seed_window(config.seed_window_size, config.seed_window_movement)
+    execution.set_seed_window(config["seed_window_size"], config["seed_window_movement"])
     executor = execution.get_executor()
     executor.controller_type = controller_type
     if controller_type == "BT":
-        executor.path_to_AutoMoDe_executable = config.BT_path_to_AutoMoDe
+        executor.path_to_AutoMoDe_executable = config["BT_path_to_AutoMoDe"]
     else:
-        executor.path_to_AutoMoDe_executable = config.FSM_path_to_AutoMoDe
+        executor.path_to_AutoMoDe_executable = config["FSM_path_to_AutoMoDe"]
 
 
 def set_localsearch_parameters(initial_controller, job_name, result_directory, config_file_name, budget,
@@ -202,11 +201,11 @@ def apply_configuration(args, config):
     :param config: A dictionary containing the configuration data
     """
     if args["budget"] == BUDGET_DEFAULT:
-        args["budget"] = config.default_budget
+        args["budget"] = config["default_budget"]
     if args["path_to_scenario"] == SCENARIO_DEFAULT:
-        args["path_to_scenario"] = config.default_path_to_scenario
+        args["path_to_scenario"] = config["default_path_to_scenario"]
     if args["result_directory"] == RESULT_DEFAULT:
-        args["result_directory"] = config.default_result_directory
+        args["result_directory"] = config["default_result_directory"]
         print(args["result_directory"])
     if args["job_name"] == JOB_NAME_DEFAULT:
         args["job_name"] = "{}-{}-{}-{}".format(args["controller_type"],

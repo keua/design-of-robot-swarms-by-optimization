@@ -6,7 +6,10 @@ Use this script to start the local search. Run start_localsearch.py -h for more 
 
 import argparse
 import logging
-from configuration import BUDGET_DEFAULT, SCENARIO_DEFAULT, RESULT_DEFAULT, JOB_NAME_DEFAULT
+from configuration import BUDGET_DEFAULT, SCENARIO_DEFAULT, RESULT_DEFAULT, JOB_NAME_DEFAULT,\
+    load_configuration_from_file, apply_configuration
+from localsearch import iterative_improvement
+import localsearch.utilities
 
 
 def load_experiment_file(experiment_file):
@@ -33,11 +36,24 @@ def submit():
     pass
 
 
-def execute_localsearch():
+def execute_localsearch(args):
     """
     Executes a single run of the localsearch
+    :param args:
     """
-    pass
+    # TODO: Load config and setup parameters
+    config = load_configuration_from_file(args["config_file_name"])
+    apply_configuration(args, config)
+    localsearch.utilities.create_directory()
+    # Run local search
+    initial_controller = localsearch.utilities.get_initial_controller()
+    initial_controller.draw("initial")
+    result = iterative_improvement(initial_controller)
+    result.draw("final")
+    best_controller = result.convert_to_commandline_args()
+    logging.info(best_controller)
+    with open("best_controller.txt", mode="w") as file:
+        file.write(" ".join(best_controller))
 
 
 def parse_arguments():
@@ -110,7 +126,16 @@ def parse_arguments():
     elif input_args.execution_subcommand == "submit":
         submit()
     elif input_args.execution_subcommand == "run":
-        execute_localsearch()
+        arguments = {"config_file_name": input_args.config_file,
+                     "controller_type": input_args.controller_type,
+                     "path_to_scenario": input_args.scenario_file,
+                     "budget": input_args.budget,
+                     "initial_controller": input_args.initial_controller,
+                     "job_name": input_args.job_name,
+                     "result_directory": input_args.result_dir,
+                     "parallel": input_args.parallel,
+                     }
+        execute_localsearch(arguments)
     else:
         logging.error(" Could not recognize subcommand {}."
                       "Please check the help for more information"

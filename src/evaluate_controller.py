@@ -1,7 +1,7 @@
 import sys
 import random
 import logging
-import localsearch_setup
+from deprecated import localsearch_setup
 from automode.controller.AutoMoDeBT import BT
 from automode.controller.AutoMoDeFSM import FSM
 
