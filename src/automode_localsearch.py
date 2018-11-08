@@ -20,14 +20,21 @@ def load_experiment_file(experiment_file):
 
 def run_local(experiment_file):
     """
-    Run a local instance of the program on this machine
+    Reads the experiments_file and performs the experiment on the local machine
     """
     experiment_setup = load_experiment_file(experiment_file)
 
 
 def submit():
     """
-    Submits the program to the scheduling system
+    Reads the experiments_file and submits the experiment to the scheduling system
+    """
+    pass
+
+
+def execute_localsearch():
+    """
+    Executes a single run of the localsearch
     """
     pass
 
@@ -36,19 +43,23 @@ def parse_arguments():
     """This method parses the arguments to this script"""
     parser = argparse.ArgumentParser()
     subparsers = parser.add_subparsers(title="execution", dest="execution_subcommand")
-    parser_run = subparsers.add_parser('run', help='run a local search locally')
-    parser_run.add_argument("-e", dest="experiment_file",
-                            help="(relative) path to the experiment file")
+    parser_local = subparsers.add_parser('local', help='run an experiment locally')
+    parser_local.add_argument("-e", dest="experiment_file",
+                              help="(relative) path to the experiment file")
     parser_submit = subparsers.add_parser('submit',
-                                          help='submit the local search to a scheduling system')
+                                          help='submit an experiment to a scheduling system')
     parser_submit.add_argument("-e", dest="experiment_file",
                                help="(relative) path to the experiment file")
+    parser_local = subparsers.add_parser('run', help='run a single execution of the local search')
+    # TODO: Add run configuration (or load it from the helper)
     input_args = parser.parse_args()
     logging.warning(input_args)
-    if input_args.execution_subcommand == "run":
+    if input_args.execution_subcommand == "local":
         run_local(input_args.experiment_file)
     elif input_args.execution_subcommand == "submit":
         submit()
+    elif input_args.execution_subcommand == "run":
+        execute_localsearch()
     else:
         logging.error(" Could not recognize subcommand {}."
                       "Please check the help for more information"

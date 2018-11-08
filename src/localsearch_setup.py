@@ -1,9 +1,8 @@
 import argparse
-from config.configuration import Configuration
+from configuration import Configuration
 from automode.controller.AutoMoDeFSM import FSM
 from automode.controller.AutoMoDeBT import BT
 import execution
-import logging
 import localsearch.utilities
 import os
 

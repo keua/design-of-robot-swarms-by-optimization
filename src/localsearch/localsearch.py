@@ -2,7 +2,7 @@ from datetime import datetime
 import os
 import copy
 import logging
-from config.configuration import Configuration
+from configuration import Configuration
 import execution
 import math
 

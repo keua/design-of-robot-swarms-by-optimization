@@ -6,7 +6,7 @@ src/result/*
 result/*
 
 # Ignore any venv folder and the possible venv symlink
-venv*/*
+*/venv*/*
 venv
 
 # Ignore the pylint file
