@@ -5,7 +5,7 @@
 
 import logging
 
-import localsearch_setup
+from deprecated import localsearch_setup
 from localsearch import iterative_improvement
 import localsearch.utilities
 
