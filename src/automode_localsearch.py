@@ -19,6 +19,12 @@ def load_experiment_file(experiment_file):
     :return: A dictionary containing the values defined in the experiment file
     """
     # TODO: Load the experiment file here
+    with open(experiment_file, mode="r") as file:
+        content = file.readlines()
+    content = [x.strip() for x in content]  # Remove whitespaces
+    for line in content:
+        if not line.startswith("#"):  # ignore lines with # at the beginning
+            logging.warning(line)
     return {}
 
 
@@ -39,9 +45,9 @@ def submit():
 def execute_localsearch(args):
     """
     Executes a single run of the localsearch
-    :param args:
+    :param args: A dictionary with the following keys: "config_file_name", "controller_type", "path_to_scenario",
+                "budget", "initial_controller", "job_name", "result_directory", "parallel"
     """
-    # TODO: Load config and setup parameters
     config = load_configuration_from_file(args["config_file_name"])
     apply_configuration(args, config)
     localsearch.utilities.create_directory()
@@ -120,7 +126,6 @@ def parse_arguments():
     create_subparser_submit()
     create_subparser_run()
     input_args = parser.parse_args()
-    logging.warning(input_args)
     if input_args.execution_subcommand == "local":
         run_local(input_args.experiment_file)
     elif input_args.execution_subcommand == "submit":

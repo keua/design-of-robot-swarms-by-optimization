@@ -1,0 +1,3 @@
+# This line is ignored
+ # This line is also ignored
+BT_agg_minimal 10 ./config/config50k.ini /home/jkuckling/AutoMoDe-LocalSearch/experiments/vanilla/aggregation_bt.argos BT
