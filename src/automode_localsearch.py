@@ -71,8 +71,11 @@ def parse_arguments():
         This subcommand will execute a whole experiment on the local machine.
         """
         parser_local = subparsers.add_parser('local', help='run an experiment locally')
-        parser_local.add_argument("-e", dest="experiment_file",
-                                  help="(relative) path to the experiment file")
+        group = parser_local.add_mutually_exclusive_group(required=True)
+        group.add_argument("-e", dest="experiment_file",
+                           help="(relative) path to the experiment file")
+        group.add_argument("--experiment_preset", choices=["example", "minimal", "random", "improvement"],
+                           help="one of the following presets: example, minimal, random, improvement")
 
     def create_subparser_submit():
         """
