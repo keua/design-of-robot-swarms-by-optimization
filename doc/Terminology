@@ -1,5 +1,5 @@
 SCENARIO - the .argos file for the simulator
-EXPERIMENT - a .txt file containing information on how to execute a set of localsearches that belong together
+EXPERIMENT - a .txt file containing information on how to execute a set of localsearches that belong together (in json format)
 CONFIGURATION - a .ini file that contains information on how to execute a single localsearch
 
 LOCALSEARCH - a single execution of the program (one initial controller, improved for some time)

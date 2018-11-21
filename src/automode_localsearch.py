@@ -6,6 +6,8 @@ Use this script to start the local search. Run start_localsearch.py -h for more 
 
 import argparse
 import logging
+import json
+
 from configuration import BUDGET_DEFAULT, SCENARIO_DEFAULT, RESULT_DEFAULT, JOB_NAME_DEFAULT,\
     load_configuration_from_file, apply_configuration
 from localsearch import iterative_improvement
@@ -22,10 +24,12 @@ def load_experiment_file(experiment_file):
     with open(experiment_file, mode="r") as file:
         content = file.readlines()
     content = [x.strip() for x in content]  # Remove whitespaces
+    json_content = ""
     for line in content:
         if not line.startswith("#"):  # ignore lines with # at the beginning
-            logging.warning(line)
-    return {}
+            json_content += "{}\n".format(line)
+    data = json.loads(json_content)
+    return data
 
 
 def run_local(experiment_file):
