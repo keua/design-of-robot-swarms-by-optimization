@@ -20,7 +20,7 @@ def load_experiment_file(experiment_file):
     :param experiment_file:
     :return: A dictionary containing the values defined in the experiment file
     """
-    # TODO: Load the experiment file here
+    # Load the experiment file here
     with open(experiment_file, mode="r") as file:
         content = file.readlines()
     content = [x.strip() for x in content]  # Remove whitespaces
@@ -28,8 +28,22 @@ def load_experiment_file(experiment_file):
     for line in content:
         if not line.startswith("#"):  # ignore lines with # at the beginning
             json_content += "{}\n".format(line)
+    print(json_content)
     data = json.loads(json_content)
     return data
+    """
+    Structure of the experiment file: A set of dictionaries that describe subexperiments.
+    Each subexperiment has the following information:
+    job_name is the key of the dictionary for the subexperiment
+    The following entries are in the dictionary (they are the same that can be read as args)
+        - repetitions: how often this subexperiment is repeated
+        - config: the path to the config file
+        - scenario: the path to the scenario file
+        - initial_controller: the initial controller (or file if it is read from the file)
+        - architecture: BT or FSM
+        - budget
+        
+    """
 
 
 def run_local(experiment_file):
@@ -49,7 +63,7 @@ def submit():
 def execute_localsearch(args):
     """
     Executes a single run of the localsearch
-    :param args: A dictionary with the following keys: "config_file_name", "controller_type", "path_to_scenario",
+    :param args: A dictionary with the following keys: "config_file_name", "architecture", "path_to_scenario",
                 "budget", "initial_controller", "job_name", "result_directory", "parallel"
     """
     config = load_configuration_from_file(args["config_file_name"])
@@ -101,7 +115,7 @@ def parse_arguments():
         parser_run.add_argument('-c', '--config', dest="config_file", required=True,
                                 help="The configuration file for the local search algorithm. "
                                 " (REQUIRED)")
-        parser_run.add_argument('-t', '--controller_type', dest="controller_type", default="FSM", required=True,
+        parser_run.add_argument('-a', '--architecture', dest="architecture", default="FSM", required=True,
                                 help="The type of controller used (FSM or BT). "
                                 "(REQUIRED)")
         # Recommended arguments
@@ -139,7 +153,7 @@ def parse_arguments():
         submit()
     elif input_args.execution_subcommand == "run":
         arguments = {"config_file_name": input_args.config_file,
-                     "controller_type": input_args.controller_type,
+                     "architecture": input_args.architecture,
                      "path_to_scenario": input_args.scenario_file,
                      "budget": input_args.budget,
                      "initial_controller": input_args.initial_controller,

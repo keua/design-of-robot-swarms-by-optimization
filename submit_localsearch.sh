@@ -20,16 +20,16 @@ config=${3:-'./config/config.ini'}
 # sixth parameter is the path to the scenario file
 scenario_file=${4:-'missing_scenario.argos'}
 # fourth parameter is the type of controller (FSM or BT)
-controller_type=${5:?The controller type needs to be specified}
+architecture=${5:?The controller architecture needs to be specified}
 # fifth parameter is the path to the controller file
 controller_file=${6:-'empty'}
 
 
 #get the correct version of AutoMoDe
-if [ ${controller_type} = 'FSM' ]
+if [ ${architecture} = 'FSM' ]
 then
     automode=${AutoMoDe_FSM}
-elif [ ${controller_type} = 'BT' ]
+elif [ ${architecture} = 'BT' ]
 then
     automode=${AutoMoDe_BT}
 fi
@@ -45,6 +45,6 @@ do
     fi
     job_id=${job_name}_${i}
     # submit the job
-    qsub -v job_name=${job_id},config=${config},scenario=${scenario_file},initial=${controller},executable=${automode},controller_type=${controller_type} automode_localsearch.sh
+    qsub -v job_name=${job_id},config=${config},scenario=${scenario_file},initial=${controller},executable=${automode},architecture=${architecture} automode_localsearch.sh
     # sleep 60
 done

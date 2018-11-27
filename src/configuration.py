@@ -150,10 +150,10 @@ def set_controller_parameters(config):
                       config["controller_minimal_condition"], config["random_parameter_initialization"])
 
 
-def set_execution_parameters(controller_type, parallel, scenario, config):
+def set_execution_parameters(architecture, parallel, scenario, config):
     """
     Sets the configuration parameters in the execution module
-    :param controller_type:
+    :param architecture:
     :param parallel:
     :param scenario:
     :param config:
@@ -167,8 +167,8 @@ def set_execution_parameters(controller_type, parallel, scenario, config):
     execution.set_scenario(scenario)
     execution.set_seed_window(config["seed_window_size"], config["seed_window_movement"])
     executor = execution.get_executor()
-    executor.controller_type = controller_type
-    if controller_type == "BT":
+    executor.architecture = architecture
+    if architecture == "BT":
         executor.path_to_AutoMoDe_executable = config["BT_path_to_AutoMoDe"]
     else:
         executor.path_to_AutoMoDe_executable = config["FSM_path_to_AutoMoDe"]
@@ -208,13 +208,13 @@ def apply_configuration(args, config):
         args["result_directory"] = config["default_result_directory"]
         print(args["result_directory"])
     if args["job_name"] == JOB_NAME_DEFAULT:
-        args["job_name"] = "{}-{}-{}-{}".format(args["controller_type"],
+        args["job_name"] = "{}-{}-{}-{}".format(args["architecture"],
                                                 # get the file name (os.path.split(...)[1])
                                                 # and the file without ending (split(".")[0])
                                                 os.path.split(args["path_to_scenario"])[1].split(".")[0],
                                                 args["budget"], args["initial_controller"])
     # TODO: Set the right log level here
     set_controller_parameters(config)
-    set_execution_parameters(args["controller_type"], args["parallel"], args["path_to_scenario"], config)
+    set_execution_parameters(args["architecture"], args["parallel"], args["path_to_scenario"], config)
     set_localsearch_parameters(args["initial_controller"], args["job_name"], args["result_directory"],
                                args["config_file_name"], args["budget"], config["snapshot_frequency"])

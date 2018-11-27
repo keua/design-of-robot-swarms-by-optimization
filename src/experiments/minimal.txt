@@ -1,5 +1,11 @@
-# This line is ignored
- # This line is also ignored
- {
-"test": "BT_agg_minimal 10 ./config/config50k.ini /home/jkuckling/AutoMoDe-LocalSearch/experiments/vanilla/aggregation_bt.argos BT"
+# Experiment file for all experiments (aggregation, foraging) and all control architectures (BT, FSM) starting from
+# a minimal controller
+{
+    # BT
+    "BT_agg_minimal": {
+        "repetitions": "10",
+        "config": "./config/config50k.ini",
+        "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/experiments/vanilla/aggregation_bt.argos",
+        "architecture": "BT"
+    }
 }

@@ -17,5 +17,5 @@ def set_seed_window(size, movement):
     ExecutorFactory.set_seed_window(size, movement)
 
 
-def get_controller_type():
-    return ExecutorFactory.get_executor().controller_type
+def get_architecture():
+    return ExecutorFactory.get_executor().architecture

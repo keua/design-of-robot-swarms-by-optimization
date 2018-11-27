@@ -28,13 +28,13 @@ def create_directory():
 
 
 def get_controller_class():
-    controller_type = execution.get_controller_type()
-    if controller_type == "FSM":
+    architecture = execution.get_architecture()
+    if architecture == "FSM":
         return FSM
-    elif controller_type == "BT":
+    elif architecture == "BT":
         return BT
     else:
-        logging.warning("WARNING: The specified type {} is not known.".format(controller_type))
+        logging.warning("WARNING: The specified type {} is not known.".format(architecture))
         return None
 
 
