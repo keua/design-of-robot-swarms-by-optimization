@@ -1,4 +1,3 @@
-import statistics
 import subprocess
 import logging
 from mpi4py.futures import MPIPoolExecutor
@@ -9,8 +8,6 @@ import random
 class AutoMoDeExecutor:
 
     def __init__(self):
-        # TODO: Configure this
-        self.score_aggregation = statistics.mean  # this can be any function to get a single data point out of
 
         self.path_to_AutoMoDe_executable = "/tmp/"
         self.scenario_file = "/tmp/"
@@ -80,8 +77,8 @@ class AutoMoDeExecutor:
         # return the score
         for seed in self.seeds:
             scores.append(controller.evaluated_instances[seed])
-        controller.score = self.score_aggregation(scores)
-        return controller.score
+        controller.scores = scores
+        return controller.scores
 
     def execute_controller(self, controller, seed):
         """

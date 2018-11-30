@@ -9,7 +9,8 @@ class AutoMoDeControllerABC:
     __metaclass__ = ABCMeta
 
     def __init__(self, minimal=False):
-        self.score = float("inf")
+        self.scores = float("inf")
+        self.agg_score = ("type", float("inf"))
         # parameters used to keep track of the local search
         self.mut_history = []
         self.evaluated_instances = {}
