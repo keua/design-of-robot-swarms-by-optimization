@@ -98,11 +98,11 @@ display_comparison <- function() {
   
   load_all_results <- function(scenario) {
     minimal_df <- load_minimal(scenario)
-    # random_df <- load_random(scenario)
+    random_df <- load_random(scenario)
     improving <- load_irace_localsearch(scenario)
     # irace <- load_irace(scenario)
     # evostick <- load_evostick(scenario)
-    all_df <- data.frame(minimal_df, improving)
+    all_df <- data.frame(minimal_df, random_df, improving)
     # all_df <- data.frame(minimal_df, random_df, improving, irace)
     return(all_df)
   }

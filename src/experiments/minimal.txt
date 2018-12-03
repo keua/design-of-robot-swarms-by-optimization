@@ -3,10 +3,20 @@
 {
     # BT
     "BT_agg_minimal": {
-        "repetitions": 10,
+        "repetitions": 1,
         "config": "./config/config50k.ini",
         "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/scenarios/vanilla/aggregation_bt.argos",
         "architecture": "BT",
+        "budget": 50,
+        "initial_controller": "minimal",
+        "result_directory": "/home/jkuckling/AutoMoDe-LocalSearch/result/",
+        "parallel": 0
+    },
+    "FSM_agg_minimal": {
+        "repetitions": 1,
+        "config": "./config/config50k.ini",
+        "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/scenarios/vanilla/aggregation.argos",
+        "architecture": "FSM",
         "budget": 50,
         "initial_controller": "minimal",
         "result_directory": "/home/jkuckling/AutoMoDe-LocalSearch/result/",
