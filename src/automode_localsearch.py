@@ -28,7 +28,7 @@ def load_experiment_file(experiment_file):
     for line in content:
         if not line.startswith("#"):  # ignore lines with # at the beginning
             json_content += "{}\n".format(line)
-    print(json_content)
+    logging.debug(json_content)
     data = json.loads(json_content)
     return data
     """
@@ -42,7 +42,8 @@ def load_experiment_file(experiment_file):
         - initial_controller: the initial controller (or file if it is read from the file)
         - architecture: BT or FSM
         - budget
-        
+        - result_directory
+        - parallel
     """
 
 
@@ -51,6 +52,24 @@ def run_local(experiment_file):
     Reads the experiments_file and performs the experiment on the local machine
     """
     experiment_setup = load_experiment_file(experiment_file)
+    for setup_key in experiment_setup:  # Execute each experiment
+        print(setup_key)
+        setup = experiment_setup[setup_key]
+        for i in range(0, setup["repetitions"]):  # Execute the repetitions of an experiment
+            # retrieve important information
+            experiment = {
+                "config_file_name": setup["config"],
+                "architecture": setup["architecture"],
+                "path_to_scenario": setup["scenario"],
+                "budget": setup["budget"],
+                "initial_controller": setup["initial_controller"],
+                "job_name": "{}_{}".format(setup_key, i),  # create correct jobname
+                "result_directory": setup["result_directory"],
+                "parallel": setup["parallel"],
+            }
+            print(experiment["job_name"])
+            # execute localsearch
+            execute_localsearch(experiment)
 
 
 def submit():
@@ -78,6 +97,7 @@ def execute_localsearch(args):
     logging.info(best_controller)
     with open("best_controller.txt", mode="w") as file:
         file.write(" ".join(best_controller))
+    localsearch.utilities.return_to_src_directory()
 
 
 def parse_arguments():

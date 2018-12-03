@@ -3,9 +3,13 @@
 {
     # BT
     "BT_agg_minimal": {
-        "repetitions": "10",
+        "repetitions": 10,
         "config": "./config/config50k.ini",
-        "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/experiments/vanilla/aggregation_bt.argos",
-        "architecture": "BT"
+        "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/scenarios/vanilla/aggregation_bt.argos",
+        "architecture": "BT",
+        "budget": 50,
+        "initial_controller": "minimal",
+        "result_directory": "/home/jkuckling/AutoMoDe-LocalSearch/result/",
+        "parallel": 0
     }
 }

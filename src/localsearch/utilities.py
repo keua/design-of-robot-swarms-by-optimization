@@ -27,6 +27,14 @@ def create_directory():
         src_directory, config_file_name), "{}/{}".format(os.getcwd(), new_config_filename))
 
 
+def return_to_src_directory():
+    """
+    Move the cwd back to the src directory (for the next run of the LS)
+    TODO: Find better naming here
+    :return:
+    """
+    os.chdir(src_directory)
+
 def get_controller_class():
     architecture = execution.get_architecture()
     if architecture == "FSM":
