@@ -30,6 +30,13 @@ def load_experiment_file(experiment_file):
             json_content += "{}\n".format(line)
     logging.debug(json_content)
     data = json.loads(json_content)
+    # Handle required and optional parameters like when parsing from sys.argv
+    if not data.contains("budget"):
+        data["budget"] = BUDGET_DEFAULT
+    if not data.contains("scenario"):
+        data["scenario"] = SCENARIO_DEFAULT
+    if not data.contains("result_directory"):
+        data["result_directory"] = RESULT_DEFAULT
     return data
     """
     Structure of the experiment file: A set of dictionaries that describe subexperiments.
