@@ -27,14 +27,22 @@ def create_directory():
         src_directory, config_file_name), "{}/{}".format(os.getcwd(), new_config_filename))
 
 
+def return_to_src_directory():
+    """
+    Move the cwd back to the src directory (for the next run of the LS)
+    TODO: Find better naming here
+    :return:
+    """
+    os.chdir(src_directory)
+
 def get_controller_class():
-    controller_type = execution.get_controller_type()
-    if controller_type == "FSM":
+    architecture = execution.get_architecture()
+    if architecture == "FSM":
         return FSM
-    elif controller_type == "BT":
+    elif architecture == "BT":
         return BT
     else:
-        logging.warning("WARNING: The specified type {} is not known.".format(controller_type))
+        logging.warning("WARNING: The specified type {} is not known.".format(architecture))
         return None
 
 

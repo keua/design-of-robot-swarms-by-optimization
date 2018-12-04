@@ -1,7 +1,6 @@
 from abc import ABCMeta, abstractmethod
 import execution
 import random
-from config import configuration
 import logging
 
 

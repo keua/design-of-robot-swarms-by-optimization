@@ -1,13 +1,13 @@
 import sys
 import random
 import logging
-import localsearch_setup
+# from deprecated import localsearch_setup
 from automode.controller.AutoMoDeBT import BT
 from automode.controller.AutoMoDeFSM import FSM
 
 # TODO: Guess this from controller file name
 path_to_scenario = "/home/jkuckling/AutoMoDe-LocalSearch/experiments/vanilla/aggregation.argos"
-controller_type = "FSM"
+architecture = "FSM"
 default_controller_file = "/home/jkuckling/AutoMoDe-LocalSearch/controller/FSM/agg/FSM-agg-50k.txt"
 
 
@@ -48,7 +48,7 @@ if __name__ == "__main__":
         For one argument, read all controllers from the file and evaluate them.
         The results are printed to the terminal
     """
-    localsearch_setup.setup_evaluation(controller_type, path_to_scenario)
+    localsearch_setup.setup_evaluation(architecture, path_to_scenario)
     if len(sys.argv) == 1:
         evaluate_all_controllers(default_controller_file)
     elif len(sys.argv) > 2:

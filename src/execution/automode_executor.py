@@ -15,7 +15,7 @@ class AutoMoDeExecutor:
         self.path_to_AutoMoDe_executable = "/tmp/"
         self.scenario_file = "/tmp/"
 
-        self.controller_type = "undefined"
+        self.architecture = "undefined"
 
         self.seed_window_size = 0
         self.seed_window_move = 0

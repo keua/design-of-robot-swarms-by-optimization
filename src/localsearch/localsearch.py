@@ -2,11 +2,11 @@ from datetime import datetime
 import os
 import copy
 import logging
-from config.configuration import Configuration
 import execution
 import math
 
 budget = 50000
+snapshot_frequency = 1
 
 
 def iterative_improvement(initial_controller):
@@ -50,7 +50,7 @@ def iterative_improvement(initial_controller):
                     mutated_controller.mut_history[len(mutated_controller.mut_history) - 1].__name__)
                 mutated_controller.draw(str(i))
                 best = mutated_controller
-            if i % Configuration.instance.snapshot_frequency == 0:
+            if i % snapshot_frequency == 0:
                 best.draw(str(i))
         end_time = datetime.now()
     logging.info("Finished at " + str(end_time))
