@@ -294,10 +294,10 @@ class BT(AutoMoDeControllerABC):
         return args
 
     # ******************************************************************************************************************
-    # Mutation operators
+    # perturbation operators
     # ******************************************************************************************************************
 
-    def mut_add_subtree(self):
+    def perturb_add_subtree(self):
         """
         Adds a new condition/action subtree to the BT
         The new subtree will be added as a random child to the sequence* node.
@@ -322,7 +322,7 @@ class BT(AutoMoDeControllerABC):
             self.top_node.set_child(new_selector, self.top_node.children.index(new_position))
         return True
 
-    def mut_remove_subtree(self):
+    def perturb_remove_subtree(self):
         """
         Removes a random subtree from the BT
         """
@@ -332,7 +332,7 @@ class BT(AutoMoDeControllerABC):
         self.top_node.remove_child(to_remove)
         return True
 
-    def mut_change_subtree_order(self):
+    def perturb_change_subtree_order(self):
         """
         Selects one subtree and moves it to a new position
         """
@@ -358,9 +358,9 @@ class BT(AutoMoDeControllerABC):
             self.top_node.set_child(remove_element, put_index)
         return True
 
-    def mut_change_action_node_behavior(self):
+    def perturb_change_action_node_behavior(self):
         """
-        Mutation for the local search of BT
+        Perturbation for the local search of BT
         Changes a random behavior module in the BT
         TODO: More documentation
         :return:
@@ -376,9 +376,9 @@ class BT(AutoMoDeControllerABC):
         action_parent.children[1].action = new_behavior
         return True
 
-    def mut_change_action_node_parameters(self):
+    def perturb_change_action_node_parameters(self):
         """
-        Mutation for the local search of BT
+        Perturbation for the local search of BT
         TODO: More documentation
         """
         # Check that there is at least one child to the top-node (it should be there; but better check)
@@ -398,7 +398,7 @@ class BT(AutoMoDeControllerABC):
         # There was no state that had a changeable parameter
         return False
 
-    def mut_change_condition_node_condition(self):
+    def perturb_change_condition_node_condition(self):
         """Swaps the condition of a random condition node"""
         # TODO: Check that there is at least one child to the top-node (it should be there but better check)
         # choose a random condition node
@@ -409,7 +409,7 @@ class BT(AutoMoDeControllerABC):
         condition_parent.children[0].condition = new_condition
         return True
 
-    def mut_change_condition_node_parameters(self):
+    def perturb_change_condition_node_parameters(self):
         """Changes a single parameter for one of the conditions"""
         # TODO: Check that there is at least one child to the top-node (it should be there but better check)
         possible_condition_parents = list(self.top_node.children)

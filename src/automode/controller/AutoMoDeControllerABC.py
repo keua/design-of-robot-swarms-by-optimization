@@ -11,7 +11,7 @@ class AutoMoDeControllerABC:
         self.scores = float("inf")
         self.agg_score = ("type", float("inf"))
         # parameters used to keep track of the local search
-        self.mut_history = []
+        self.perturb_history = []
         self.evaluated_instances = {}
         self.executor = execution.get_executor()
 
@@ -41,27 +41,27 @@ class AutoMoDeControllerABC:
         """Run this FSM in Argos and receive a score to compute the efficiency of the FSM"""
         return self.executor.evaluate_controller(self)
 
-    def get_mutation_operators(self):
-        """Returns all methods that start with mut_ indicating that they are indeed mutation operators."""
-        method_names = [method_name for method_name in dir(self) if callable(getattr(self, method_name)) and method_name.startswith("mut_")]
+    def get_perturbation_operators(self):
+        """Returns all methods that start with perturb_ indicating that they are indeed perturbation operators."""
+        method_names = [method_name for method_name in dir(self) if callable(getattr(self, method_name)) and method_name.startswith("perturb_")]
         methods = [getattr(self, x) for x in method_names]
         return methods
 
-    def mutate(self):
+    def perturb(self):
         """
-        Apply a random mutation operator to this controller.
+        Apply a random perturbation operator to this controller.
 
-        In order for this to work, all possible mutation operators need to start with mut_
+        In order for this to work, all possible perturbation operators need to start with perturb_
         """
-        mutation_operators = self.get_mutation_operators()
-        while mutation_operators:
-            mutation_operator = random.choice(mutation_operators)
-            # execute mutation
-            result = mutation_operator()
+        perturbation_operators = self.get_perturbation_operators()
+        while perturbation_operators:
+            perturbation_operator = random.choice(perturbation_operators)
+            # execute perturbation
+            result = perturbation_operator()
             # remove operator from list so it is not chosen again if it failed
-            mutation_operators.remove(mutation_operator)
+            perturbation_operators.remove(perturbation_operator)
             if result:
-                self.mut_history.append(mutation_operator)
+                self.perturb_history.append(perturbation_operator)
                 return
         # We cannot apply any operator -> how can this even happen?
-        logging.error("A critical error appeared. We cannot apply any mutation at his point.")
+        logging.error("A critical error appeared. We cannot apply any perturbation at his point.")

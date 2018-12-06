@@ -35,40 +35,40 @@ def iterative_improvement(initial_controller):
             logging.warning("{}".format(i))
             # move the window
             executor.advance_seeds()
-            # create a mutated FSM
-            mutated_controller = copy.deepcopy(best_controller)
+            # create a perturbed controller
+            perturbed_controller = copy.deepcopy(best_controller)
             # it is necessary to remove all evaluations from here
-            mutated_controller.evaluated_instances.clear()
-            mutated_controller.id = i
-            mutated_controller.mutate()
+            perturbed_controller.evaluated_instances.clear()
+            perturbed_controller.id = i
+            perturbed_controller.perturb()
             # evaluate both FSMs on the seed_window
             best_controller.evaluate()
-            mutated_controller.evaluate()
+            perturbed_controller.evaluate()
             # Evaluate criterion
             criterion = \
-                acceptance(best_controller.scores, mutated_controller.scores)
+                acceptance(best_controller.scores, perturbed_controller.scores)
             # save the scores to file and update contrllers
             best_controller.agg_score = (criterion.type, criterion.best_outcome)
-            mutated_controller.agg_score = (criterion.type, criterion.mut_outcome)
+            perturbed_controller.agg_score = (criterion.type, criterion.perturb_outcome)
             file.write(
                 str(best_controller.scores) +
                 ", " + criterion.type + " = " + str(criterion.best_outcome) +
-                ", " + str(mutated_controller.scores) +
-                ", " + criterion.type + " = " + str(criterion.mut_outcome) +
-                ", " + mutated_controller.mut_history[len(mutated_controller.mut_history) - 1].__name__ +
+                ", " + str(perturbed_controller.scores) +
+                ", " + criterion.type + " = " + str(criterion.perturb_outcome) +
+                ", " + perturbed_controller.perturb_history[len(perturbed_controller.perturb_history) - 1].__name__ +
                 "\n"
             )
             logging.debug(
                 "Best score " + str(best_controller.scores) +
-                " and new score " + str(mutated_controller.scores)
+                " and new score " + str(perturbed_controller.scores)
             )
             if criterion.acceptance:
                 logging.debug(
-                    mutated_controller.mut_history[len(
-                        mutated_controller.mut_history) - 1].__name__
+                    perturbed_controller.perturb_history[len(
+                        perturbed_controller.perturb_history) - 1].__name__
                 )
-                mutated_controller.draw(str(i))
-                best_controller = mutated_controller
+                perturbed_controller.draw(str(i))
+                best_controller = perturbed_controller
             if i % snapshot_frequency == 0:
                 best_controller.draw(str(i))
         end_time = datetime.now()

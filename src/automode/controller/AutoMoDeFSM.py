@@ -257,10 +257,10 @@ class FSM(AutoMoDeControllerABC):
         return args
 
     # ******************************************************************************************************************
-    # Mutation operators
+    # perturbation operators
     # ******************************************************************************************************************
 
-    def mut_change_initial_state(self):
+    def perturb_change_initial_state(self):
         """Changes the initial state of the FSM.
         It is not allowed to keep the same initial state and the new initial state is chosen uniformly at random
         from all possible states.
@@ -274,7 +274,7 @@ class FSM(AutoMoDeControllerABC):
         self.initial_state = random.choice(other_states)
         return True
 
-    def mut_add_state(self):
+    def perturb_add_state(self):
         """Adds a new state to the FSM.
         It will not exceed the maximum number of states. In case that there is no space for a new state it will
         return False. Every added state will contain one ingoing and one outgoing edge."""
@@ -304,7 +304,7 @@ class FSM(AutoMoDeControllerABC):
                 return True
         return False
 
-    def mut_remove_state(self):
+    def perturb_remove_state(self):
         """Removes a state from the FSM.
         Doesn't remove the last state (returns False if there is only one state). Also removes all transitions to and
         from the removed state. Will not remove a state that is an articulation point or that would delete the last
@@ -350,7 +350,7 @@ class FSM(AutoMoDeControllerABC):
         self.states.remove(s)
         return True
 
-    def mut_change_state_behavior(self):
+    def perturb_change_state_behavior(self):
         """Swaps the behavior a random state with a new random behavior.
         The new behavior will not be the same as the replaced behavior."""
         # choose a random state
@@ -362,7 +362,7 @@ class FSM(AutoMoDeControllerABC):
         s.behavior = new_behavior
         return True
 
-    def mut_change_state_behavior_parameters(self):
+    def perturb_change_state_behavior_parameters(self):
         """Changes a single random parameter of the behavior of a random state.
         The parameter is chosen randomly in its range."""
         possible_states = list(self.states)
@@ -378,7 +378,7 @@ class FSM(AutoMoDeControllerABC):
         # There was no state that had a changeable parameter
         return False
 
-    def mut_add_transition(self):
+    def perturb_add_transition(self):
         """Adds a transition to the FSM"""
         if len(self.transitions) >= self.parameters["max_transitions"]:
             return False  # already all transitions used
@@ -403,7 +403,7 @@ class FSM(AutoMoDeControllerABC):
         # All states were tried but no one succeeded
         return False
 
-    def mut_remove_transition(self):
+    def perturb_remove_transition(self):
         """Removes a transition from the FSM"""
         possible_transitions = \
             [t for t in self.transitions
@@ -420,7 +420,7 @@ class FSM(AutoMoDeControllerABC):
         self.transitions.remove(t)
         return True
 
-    def mut_change_transition_begin(self):
+    def perturb_change_transition_begin(self):
         """Changes the starting state of a random transition"""
         possible_transitions = \
             [t for t in self.transitions
@@ -437,7 +437,7 @@ class FSM(AutoMoDeControllerABC):
                     return True
         return False
 
-    def mut_change_transition_end(self):
+    def perturb_change_transition_end(self):
         """Changes the end node of a random transition"""
         possible_transitions = \
             [t for t in self.transitions
@@ -451,7 +451,7 @@ class FSM(AutoMoDeControllerABC):
         t.to_state = random.choice(possible_states)
         return True
 
-    def mut_change_transition_condition(self):
+    def perturb_change_transition_condition(self):
         """Swaps the condition of a random transition"""
         # if no transition exists then report this operation as non-applicable
         if not self.transitions:
@@ -464,7 +464,7 @@ class FSM(AutoMoDeControllerABC):
         t.condition = new_condition
         return True
 
-    def mut_change_transition_condition_parameters(self):
+    def perturb_change_transition_condition_parameters(self):
         # TODO: Retry, but not urgently since all transitions have at least a probability parameter
         """Changes a random parameter of the condition of a random transition"""
         if len(self.transitions) == 0:
