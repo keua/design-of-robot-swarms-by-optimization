@@ -30,13 +30,15 @@ def load_experiment_file(experiment_file):
             json_content += "{}\n".format(line)
     logging.debug(json_content)
     data = json.loads(json_content)
-    # Handle required and optional parameters like when parsing from sys.argv
-    if not data.contains("budget"):
-        data["budget"] = BUDGET_DEFAULT
-    if not data.contains("scenario"):
-        data["scenario"] = SCENARIO_DEFAULT
-    if not data.contains("result_directory"):
-        data["result_directory"] = RESULT_DEFAULT
+    for setup_key in data:
+        experiment_setup = data[setup_key]
+        # Handle required and optional parameters like when parsing from sys.argv
+        if "budget" not in experiment_setup:
+            experiment_setup["budget"] = BUDGET_DEFAULT
+        if "scenario" not in experiment_setup:
+            experiment_setup["scenario"] = SCENARIO_DEFAULT
+        if "result_directory" not in experiment_setup:
+            experiment_setup["result_directory"] = RESULT_DEFAULT
     return data
     """
     Structure of the experiment file: A set of dictionaries that describe subexperiments.
@@ -60,7 +62,6 @@ def run_local(experiment_file):
     """
     experiment_setup = load_experiment_file(experiment_file)
     for setup_key in experiment_setup:  # Execute each experiment
-        print(setup_key)
         setup = experiment_setup[setup_key]
         for i in range(0, setup["repetitions"]):  # Execute the repetitions of an experiment
             # retrieve important information
@@ -74,7 +75,6 @@ def run_local(experiment_file):
                 "result_directory": setup["result_directory"],
                 "parallel": setup["parallel"],
             }
-            print(experiment["job_name"])
             # execute localsearch
             execute_localsearch(experiment)
 
