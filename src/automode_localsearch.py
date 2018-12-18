@@ -7,11 +7,14 @@ Use this script to start the local search. Run start_localsearch.py -h for more 
 import argparse
 import logging
 import json
+import random
 
 from configuration import BUDGET_DEFAULT, SCENARIO_DEFAULT, RESULT_DEFAULT, JOB_NAME_DEFAULT,\
     load_configuration_from_file, apply_configuration
 from localsearch import iterative_improvement
 import localsearch.utilities
+from automode.controller import FSM, BT
+import execution
 
 
 def load_experiment_file(experiment_file):
@@ -107,8 +110,43 @@ def execute_localsearch(args):
     localsearch.utilities.return_to_src_directory()
 
 
+def evaluate_controller(architecture, controller_file):
+    # TODO: Find better handling (not so much lowlevel here)
+
+    with open(controller_file) as file:
+        controllers = file.readlines()
+        for c in controllers:
+            controller_args = c.split(" ")
+            # Guess the type of the controller
+            if architecture == "BT":
+                controller = BT.parse_from_commandline_args(controller_args)
+            else:
+                controller = FSM.parse_from_commandline_args(controller_args)
+            executor = execution.get_executor()
+            # TODO: Properly set up executor here
+            executor.evaluate_controller(controller)
+            logging.warning(controller.scores)
+            print(controller.scores)
+
+
 def parse_arguments():
     """This method parses the arguments to this script"""
+
+    def create_subparser_evaluate():
+        parser_evaluate = subparsers.add_parser('evaluate',
+                                                help='evaluate previously generated control software')
+        parser_evaluate.add_argument('-a', '--architecture', dest="architecture", default="FSM", required=True,
+                                     help="The type of controller used (FSM or BT). "
+                                          "(REQUIRED)")
+        parser_evaluate.add_argument('-cf', '--controller_file', dest="controller_file", default="/dev/null",
+                                     required=True, help="The file that contains the controllers to be evaluated. "
+                                                         "One controller per line. (REQUIRED)")
+        parser_evaluate.add_argument('-s', '--scenario_file', dest="scenario_file", default=SCENARIO_DEFAULT,
+                                     required=True, help="The scenario file for the improvement. "
+                                     "(REQUIRED)")
+        parser_evaluate.add_argument('-c', '--config', dest="config_file", required=True,
+                                     help="The configuration file for the local search algorithm. "
+                                     " (REQUIRED)")
 
     def create_subparser_local():
         """
@@ -173,6 +211,7 @@ def parse_arguments():
     create_subparser_local()
     create_subparser_submit()
     create_subparser_run()
+    create_subparser_evaluate()
     input_args = parser.parse_args()
     if input_args.execution_subcommand == "local":
         run_local(input_args.experiment_file)

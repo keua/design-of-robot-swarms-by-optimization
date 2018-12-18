@@ -78,14 +78,16 @@ display_comparison <- function() {
   
   load_irace <- function(scenario) {
     load_irace_bt <- function() {
-      folder <- paste(RESULT_FOLDER, "BT", sep="/")
-      file = paste(folder, scenario, "irace50k/scores.txt", sep="_")
+      exp_folder <- paste("BT", scenario, "50k", sep="-")
+      file <- paste(RESULT_FOLDER, "irace_runs", exp_folder, "scores.txt", sep="/")
+      print(file)
       dat = read.csv(file, header = FALSE)
       return(dat)
     }
     load_irace_fsm <- function() {
-      folder <- paste(RESULT_FOLDER, "BT", sep="/")
-      file = paste(folder, scenario, "irace50k/scores.txt", sep="_")
+      exp_folder <- paste("FSM", scenario, "50k", sep="-")
+      file <- paste(RESULT_FOLDER, "irace_runs", exp_folder, "scores.txt", sep="/")
+      print(file)
       dat = read.csv(file, header = FALSE)
       return(dat)
     }
@@ -96,14 +98,36 @@ display_comparison <- function() {
     return(results_df)
   }
   
+  load_evostick <- function(scenario) {
+    load_irace_fsm <- function() {
+      
+    }
+    exp_folder <- paste("evostick", scenario, "50k", sep="-")
+    file <- paste(RESULT_FOLDER, "evostick_runs", exp_folder, "scores.txt", sep="/")
+    print(file)
+    results_df = read.csv(file, header = FALSE)
+    results_df <- setNames(results_df, c("Evostick"))
+    return(results_df)
+  }
+  
+  load_genetic_programming <- function(scenario) {
+    folder <- paste(RESULT_FOLDER, "genetic_programming", scenario, sep="/")
+    file = paste(folder, "gp100p50g_scores.txt", sep="/")
+    print(file)
+    results_df = read.csv(file, header = FALSE)
+    results_df <- setNames(results_df, c("GP BT"))
+    return(results_df)
+  }
+  
+  
   load_all_results <- function(scenario) {
     minimal_df <- load_minimal(scenario)
     random_df <- load_random(scenario)
     improving <- load_irace_localsearch(scenario)
-    # irace <- load_irace(scenario)
-    # evostick <- load_evostick(scenario)
-    all_df <- data.frame(minimal_df, random_df, improving)
-    # all_df <- data.frame(minimal_df, random_df, improving, irace)
+    irace <- load_irace(scenario)
+    evostick <- load_evostick(scenario)
+    gp <- load_genetic_programming(scenario)
+    all_df <- data.frame(minimal_df, random_df, improving, irace, evostick, gp)
     return(all_df)
   }
   
