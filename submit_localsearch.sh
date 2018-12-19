@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 #CUSTOMIZE
-AutoMoDe_FSM=/home/jkuckling/AutoMoDe-FSM/bin/automode_main
-AutoMoDe_BT=/home/jkuckling/AutoMoDe-BT/bin/automode_main_bt
+AutoMoDe_FSM=/opt/AutoMoDe-FSM/bin/automode_main
+AutoMoDe_BT=/opt/AutoMoDe-BT/bin/automode_main_bt
 
 #USAGE:
 #./RunLocalSearch.sh job_name number_of_jobs

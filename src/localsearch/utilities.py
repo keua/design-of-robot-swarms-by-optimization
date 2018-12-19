@@ -10,7 +10,7 @@ result_directory = "default/"
 job_name = "LocalSearch"
 config_file_name = "config.ini"
 initial_controller = ""
-src_directory = "/home/jkuckling/AutoMoDe-LocalSearch/src/"  # TODO: Detect this?
+src_directory = "/home/masterulb/masterthesis/localsearch/src/"  # TODO: Detect this?
 
 
 def create_directory():
