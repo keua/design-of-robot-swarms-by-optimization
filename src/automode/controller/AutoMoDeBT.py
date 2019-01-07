@@ -178,8 +178,8 @@ class Unrestricted_BT(AbstractBehaviorTree):
     number of childs, but everything else can be chosen freely)
     """
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, minimal=False):
+        super().__init__(minimal)
 
     def create_minimal_controller(self):
         """
@@ -193,8 +193,8 @@ class Restricted_BT(AbstractBehaviorTree):
     This is the implementation of a restricted BT (just like in Maple)
     """
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, minimal=False):
+        super().__init__(minimal)
 
     def create_minimal_controller(self):
         """

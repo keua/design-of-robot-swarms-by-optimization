@@ -8,8 +8,8 @@ Examples:
 import configparser
 import os
 
-from automode.controller.AutoMoDeFSM import FSM
-from automode.controller.AutoMoDeBT import BT
+from automode.controller import FSM
+from automode.controller import BT
 import execution
 import localsearch.utilities
 
