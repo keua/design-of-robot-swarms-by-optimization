@@ -24,8 +24,8 @@ mkdir -p $TMPDIR
 source venv/bin/activate &> $TMPDIR/output_${job_name}.txt
 cd $SOURCEDIR
 export PYTHONPATH=$PYTHONPATH:/home/jkuckling/AutoMoDe-LocalSearch/src/
-#python3 main.py -c ${config} -r $TMPDIR -s ${scenario} -i ${initial} -exe ${executable} -j ${job_name} -t ${controller_type} &>> $TMPDIR/output_${job_name}.txt
-mpiexec -n 1 python3 -m mpi4py /home/jkuckling/AutoMoDe-LocalSearch/src/main.py -c ${config} -r $TMPDIR -s ${scenario} -i ${initial} -exe ${executable} -j ${job_name} -t ${controller_type} &>> $TMPDIR/output_${job_name}.txt
+python3 main.py -c ${config} -r $TMPDIR -s ${scenario} -i ${initial} -exe ${executable} -j ${job_name} -a ${architecture} &>> $TMPDIR/output_${job_name}.txt
+#mpiexec -n 1 python3 -m mpi4py /home/jkuckling/AutoMoDe-LocalSearch/src/main.py -c ${config} -r $TMPDIR -s ${scenario} -i ${initial} -exe ${executable} -j ${job_name} -a ${architecture} &>> $TMPDIR/output_${job_name}.txt
 RET=$?
 mv $TMPDIR/* $RESULTDIR
 cd $JOBDIR

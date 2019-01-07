@@ -1,56 +1,68 @@
-import sys
 import random
-import localsearch_setup
-from automode.controller.AutoMoDeBT import Restricted_BT as BT
-from automode.controller.AutoMoDeFSM import FSM
-
-# TODO: Guess this from controller file name
-path_to_scenario = "/home/jkuckling/AutoMoDe-loopfunctions/scenarios/guided-shelter/shelter-with-big-offset/guided_shelter.argos"
-controller_type = "FSM"
-default_controller_file = "/media/data/controller/guided-shelter/big_offset/FSM-irace-50k/FSM-irace-50k.txt"
+import argparse
+import subprocess
+import logging
+import statistics
 
 
-def evaluate_controller(controller_args):
-    """
-    Parses a controller. Tries to guess the type of the controller from the passed controller_args
-    :param controller_args:
-    :return:
-    """
-    # Guess the type of the controller
-    if controller_args[0] == "--rootnode":
-        controller = BT.parse_from_commandline_args(controller_args)
-    else:
-        controller = FSM.parse_from_commandline_args(controller_args)
-    # TODO: This is duplicated code from localsearch.py -- maybe find a solution to move this out of the method?
-    seed_window = list()
-    for i in range(0, 10):  # TODO: Make this dependent from Configuration
+def evaluate_controller(path_to_AutoMoDe_executable, scenario_file, controller_config_constant, controller):
+
+    # TODO: Handle seed window better?
+    seed_window = []
+    scores = []
+    for i in range(0, 10):
         seed_window.append(random.randint(0, 2147483647))
-    controller.evaluate(seed_window)
-    print(controller.score)
+    for seed in seed_window:
+        args = [path_to_AutoMoDe_executable, "-n", "-c", scenario_file, "--seed", str(seed), controller_config_constant]
+        args.extend(controller.split(" "))
+        p = subprocess.Popen(args, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        (stdout, stderr) = p.communicate()
+        # Analyse result
+        output = stdout.decode('utf-8')
+        lines = output.splitlines()
+        try:
+            logging.debug(lines[len(lines) - 1])
+            score = float(lines[len(lines) - 1].split(" ")[1])
+        except:
+            score = -1  # Just to be sure
+            logging.error("Args: " + str(args))
+            logging.error("Stderr: " + stderr.decode('utf-8'))
+            logging.error("Stdout: " + stdout.decode('utf-8'))
+            raise
+        scores.append(score)
+    print(scores)
+    return scores
 
 
-def evaluate_all_controllers(controller_file):
-    """
+def evaluate_all_controllers(controller_file, automode, scenario, architecture="BT"):
 
-    :param controller_file:
-    :return:
-    """
+    if architecture == "BT":
+        controller_config_constant = "--bt-config"
+    elif architecture == "FSM":
+        controller_config_constant = "--fsm-config"
+    else:
+        print("Unknown architecture {}".format(architecture))
     with open(controller_file) as file:
         controllers = file.readlines()
         for controller in controllers:
-            evaluate_controller(controller.split(" "))
+            controller = controller.strip()
+            print(controller)
+            scores = evaluate_controller(automode, scenario, controller_config_constant, controller)
+            # TODO: Use scores
+            print(statistics.mean(scores))
 
 
 if __name__ == "__main__":
-    """
-        For more than one argument, parse the parameters as a controller.
-        For one argument, read all controllers from the file and evaluate them.
-        The results are printed to the terminal
-    """
-    localsearch_setup.setup_evaluation(controller_type, path_to_scenario)
-    if len(sys.argv) == 1:
-        evaluate_all_controllers(default_controller_file)
-    elif len(sys.argv) > 2:
-        evaluate_controller(sys.argv)
-    else:
-        evaluate_all_controllers(sys.argv[1])
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-a', '--architecture', dest="architecture", required=True,
+                        help="The type of controller used (FSM or BT)."
+                             " (REQUIRED)")
+    parser.add_argument('-cf', '--controller_file', dest="controller_file", required=True,
+                        help="The file that contains the controllers to be evaluated. One controller per line."
+                             " (REQUIRED)")
+    parser.add_argument('-s', '--scenario_file', dest="scenario_file", required=True,
+                        help="The scenario file for the improvement. (REQUIRED)")
+    parser.add_argument('-exe', '--executable', dest="executable", required=True,
+                        help="The path to the automode executable (REQUIRED)")
+    input_args = parser.parse_args()
+    evaluate_all_controllers(input_args.controller_file, input_args.executable, input_args.scenario_file, input_args.architecture)

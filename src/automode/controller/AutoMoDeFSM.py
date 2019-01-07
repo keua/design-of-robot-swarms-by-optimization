@@ -1,11 +1,12 @@
 from automode.modules.chocolate import Behavior, Condition
 import random
 import graphviz as gv
-from simple_logging import Logger
+import logging
 import re
 from automode.controller.AutoMoDeControllerABC import AutoMoDeControllerABC
 
 # TODO: Write documentation for methods and classes
+
 
 class State:
     count = 0
@@ -26,7 +27,7 @@ class State:
             elif param == "rwm":
                 pval = str(self.behavior.params[param])
             else:
-                Logger.instance.log_error("Undefined parameter")
+                logging.error("Undefined parameter")
                 pval = 0
             args.extend(["--" + param + str(self.ext_id), pval])
         return args
@@ -101,11 +102,11 @@ class FSM(AutoMoDeControllerABC):
                   "initial_state_behavior": "Fail",
                   "random_parameter_initialization": True}
 
-    def __init__(self):
+    def __init__(self, minimal=False):
         self.initial_state = None
         self.states = []
         self.transitions = []
-        super().__init__()
+        super().__init__(minimal=minimal)
 
         # used to find articulation points, find better place then here
         self.aputils_time = 0
@@ -146,6 +147,7 @@ class FSM(AutoMoDeControllerABC):
                 s = State(stop_behavior)
                 s.ext_id = i
                 finite_state_machine.states.append(s)
+            return number_of_states
 
         def parse_state():
             state_number = int(token.split("--s")[1])  # take only the number
@@ -154,21 +156,23 @@ class FSM(AutoMoDeControllerABC):
             state = [s for s in finite_state_machine.states if s.ext_id == state_number][0]
             # set the correct behavior
             state.behavior = Behavior.get_by_id(state_behavior_id)
-            # pop until we read --nstatenumber
-            tmp = to_parse.pop(0)
-            number_of_transitions_delimiter = "--n" + str(state_number)
-            # TODO: Improve parsing of parameters and try to add some error handling
-            while tmp != number_of_transitions_delimiter:
-                # parse current attribute
-                regex_no_number = re.compile("[^0-9]+")
-                param_name = regex_no_number.match(tmp.split("--")[1]).group()
-                if param_name == "rwm":
-                    param_val = int(to_parse.pop(0))
-                else:
-                    param_val = float(to_parse.pop(0))
-                state.behavior.params[param_name] = param_val
+            if number_of_states > 1:  # HOTFIX: if there is only one state there is no number of transitions
+                # TODO: Find better solution than this hotfix
+                # pop until we read --nstatenumber
                 tmp = to_parse.pop(0)
-            number_of_transitions = int(to_parse.pop(0))
+                number_of_transitions_delimiter = "--n" + str(state_number)
+                # TODO: Improve parsing of parameters and try to add some error handling
+                while tmp != number_of_transitions_delimiter:
+                    # parse current attribute
+                    regex_no_number = re.compile("[^0-9]+")
+                    param_name = regex_no_number.match(tmp.split("--")[1]).group()
+                    if param_name == "rwm":
+                        param_val = int(to_parse.pop(0))
+                    else:
+                        param_val = float(to_parse.pop(0))
+                    state.behavior.params[param_name] = param_val
+                    tmp = to_parse.pop(0)
+                number_of_transitions = int(to_parse.pop(0))
 
         def parse_transition():
             transition_id = [int(x) for x in token.split("--n")[1].split("x")]
@@ -197,7 +201,7 @@ class FSM(AutoMoDeControllerABC):
                     param_val = int(to_parse.pop(0))
                 else:
                     param_val = float(to_parse.pop(0))
-                Logger.instance.log_debug("{}: {}".format(param_name, param_val))
+                logging.debug("{}: {}".format(param_name, param_val))
                 t.condition.params[param_name] = param_val
 
         # Setting up a completely empty FSM
@@ -209,7 +213,7 @@ class FSM(AutoMoDeControllerABC):
         while to_parse:
             token = to_parse.pop(0)
             if token == "--nstates":
-                parse_number_of_states()
+                number_of_states = parse_number_of_states()
             elif "--s" in token:
                 # token contains the string for a state
                 parse_state()
@@ -253,10 +257,10 @@ class FSM(AutoMoDeControllerABC):
         return args
 
     # ******************************************************************************************************************
-    # Mutation operators
+    # perturbation operators
     # ******************************************************************************************************************
 
-    def mut_change_initial_state(self):
+    def perturb_change_initial_state(self):
         """Changes the initial state of the FSM.
         It is not allowed to keep the same initial state and the new initial state is chosen uniformly at random
         from all possible states.
@@ -270,7 +274,7 @@ class FSM(AutoMoDeControllerABC):
         self.initial_state = random.choice(other_states)
         return True
 
-    def mut_add_state(self):
+    def perturb_add_state(self):
         """Adds a new state to the FSM.
         It will not exceed the maximum number of states. In case that there is no space for a new state it will
         return False. Every added state will contain one ingoing and one outgoing edge."""
@@ -300,7 +304,7 @@ class FSM(AutoMoDeControllerABC):
                 return True
         return False
 
-    def mut_remove_state(self):
+    def perturb_remove_state(self):
         """Removes a state from the FSM.
         Doesn't remove the last state (returns False if there is only one state). Also removes all transitions to and
         from the removed state. Will not remove a state that is an articulation point or that would delete the last
@@ -346,7 +350,7 @@ class FSM(AutoMoDeControllerABC):
         self.states.remove(s)
         return True
 
-    def mut_change_state_behavior(self):
+    def perturb_change_state_behavior(self):
         """Swaps the behavior a random state with a new random behavior.
         The new behavior will not be the same as the replaced behavior."""
         # choose a random state
@@ -358,7 +362,7 @@ class FSM(AutoMoDeControllerABC):
         s.behavior = new_behavior
         return True
 
-    def mut_change_state_behavior_parameters(self):
+    def perturb_change_state_behavior_parameters(self):
         """Changes a single random parameter of the behavior of a random state.
         The parameter is chosen randomly in its range."""
         possible_states = list(self.states)
@@ -374,7 +378,7 @@ class FSM(AutoMoDeControllerABC):
         # There was no state that had a changeable parameter
         return False
 
-    def mut_add_transition(self):
+    def perturb_add_transition(self):
         """Adds a transition to the FSM"""
         if len(self.transitions) >= self.parameters["max_transitions"]:
             return False  # already all transitions used
@@ -399,7 +403,7 @@ class FSM(AutoMoDeControllerABC):
         # All states were tried but no one succeeded
         return False
 
-    def mut_remove_transition(self):
+    def perturb_remove_transition(self):
         """Removes a transition from the FSM"""
         possible_transitions = \
             [t for t in self.transitions
@@ -416,7 +420,7 @@ class FSM(AutoMoDeControllerABC):
         self.transitions.remove(t)
         return True
 
-    def mut_change_transition_begin(self):
+    def perturb_change_transition_begin(self):
         """Changes the starting state of a random transition"""
         possible_transitions = \
             [t for t in self.transitions
@@ -433,7 +437,7 @@ class FSM(AutoMoDeControllerABC):
                     return True
         return False
 
-    def mut_change_transition_end(self):
+    def perturb_change_transition_end(self):
         """Changes the end node of a random transition"""
         possible_transitions = \
             [t for t in self.transitions
@@ -447,7 +451,7 @@ class FSM(AutoMoDeControllerABC):
         t.to_state = random.choice(possible_states)
         return True
 
-    def mut_change_transition_condition(self):
+    def perturb_change_transition_condition(self):
         """Swaps the condition of a random transition"""
         # if no transition exists then report this operation as non-applicable
         if not self.transitions:
@@ -460,7 +464,7 @@ class FSM(AutoMoDeControllerABC):
         t.condition = new_condition
         return True
 
-    def mut_change_transition_condition_parameters(self):
+    def perturb_change_transition_condition_parameters(self):
         # TODO: Retry, but not urgently since all transitions have at least a probability parameter
         """Changes a random parameter of the condition of a random transition"""
         if len(self.transitions) == 0:
@@ -478,20 +482,18 @@ class FSM(AutoMoDeControllerABC):
     # Utility functions
     # ******************************************************************************************************************
 
-    '''A recursive function that find articulation points 
-    	using DFS traversal
-    	u --> The vertex to be visited next
-    	visited[] --> keeps tract of visited vertices
-    	disc[] --> Stores discovery times of visited vertices
-    	parent[] --> Stores parent vertices in DFS tree
-    	ap[] --> Store articulation points'''
-
     def APUtil(self, u, visited, ap, parent, low, disc):
-
+        '''A recursive function that find articulation points
+            	using DFS traversal
+            	u --> The vertex to be visited next
+            	visited[] --> keeps tract of visited vertices
+            	disc[] --> Stores discovery times of visited vertices
+            	parent[] --> Stores parent vertices in DFS tree
+            	ap[] --> Store articulation points'''
         # Count of children in current node
         children = 0
 
-        # Mark the current node as visited and print it
+        # Mark the current node as visited
         visited[u] = True
 
         # Initialize discovery time and low value

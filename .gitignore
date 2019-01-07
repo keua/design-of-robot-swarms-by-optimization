@@ -6,8 +6,11 @@ src/result/*
 result/*
 
 # Ignore any venv folder and the possible venv symlink
-venv*/*
+*/venv*/*
 venv
+
+# Ignore the pylint file
+src/.pylintrc
 
 # Ignore the specific config.ini file
 # */config.ini
@@ -21,5 +24,6 @@ src/automode/__pycache__/*
 src/automode/controller/__pycache__/*
 src/automode/modules/__pycache__/*
 
-# Ignore the image folder in the analysis part
-analysis/images/*
+# Ignore analysis folder, except for the scripts
+analysis/*
+!analysis/scripts/*
