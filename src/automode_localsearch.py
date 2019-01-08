@@ -7,14 +7,12 @@ Use this script to start the local search. Run start_localsearch.py -h for more 
 import argparse
 import logging
 import json
-import random
+import subprocess
 
 from configuration import BUDGET_DEFAULT, SCENARIO_DEFAULT, RESULT_DEFAULT, JOB_NAME_DEFAULT,\
     load_configuration_from_file, apply_configuration
 from localsearch import iterative_improvement
 import localsearch.utilities
-from automode.controller import FSM, BT
-import execution
 
 
 def load_experiment_file(experiment_file):
@@ -82,11 +80,72 @@ def run_local(experiment_file):
             execute_localsearch(experiment)
 
 
-def submit():
+def submit(experiment_file):
     """
     Reads the experiments_file and submits the experiment to the scheduling system
     """
-    pass
+    experiment_setup = load_experiment_file(experiment_file)
+    for setup_key in experiment_setup:  # Execute each experiment
+        setup = experiment_setup[setup_key]
+        for i in range(0, setup["repetitions"]):  # Execute the repetitions of an experiment
+            # retrieve important information
+            experiment = {
+                "config_file_name": setup["config"],
+                "architecture": setup["architecture"],
+                "path_to_scenario": setup["scenario"],
+                "budget": setup["budget"],
+                "initial_controller": setup["initial_controller"],
+                "job_name": "{}_{}".format(setup_key, i),  # create correct jobname
+                "result_directory": setup["result_directory"],
+                "parallel": setup["parallel"],
+            }
+            submit_localsearch(experiment)
+
+
+def submit_localsearch(args):
+    """
+    Create a submission script for the cluster and submit it to the scheduling system
+    :param args: A dictionary with the following keys: "config_file_name", "architecture", "path_to_scenario",
+                "budget", "initial_controller", "job_name", "result_directory", "parallel"
+    """
+    # TODO: Make the following blob a little bit more customizable
+    submit_cmd = """#!/bin/bash
+#$ -N {job_name}
+#$ -l long
+#$ -m ase
+#      b     Mail is sent at the beginning of the job.
+#      e     Mail is sent at the end of the job.
+#      a     Mail is sent when the job is aborted or rescheduled.
+#      s     Mail is sent when the job is suspended.
+#$ -M jonas.kuckling@ulb.ac.be
+#$ -cwd
+
+USERNAME=`whoami`
+TMPDIR=/tmp/$USERNAME/LocalSearch_results_${job_name}
+JOBDIR=/home/$USERNAME/AutoMoDe-LocalSearch
+SOURCEDIR=$JOBDIR/src
+RESULTDIR=$JOBDIR/result
+
+mkdir -p $TMPDIR
+source venv/bin/activate &> $TMPDIR/output_${job_name}.txt
+cd $SOURCEDIR
+export PYTHONPATH=$PYTHONPATH:/home/jkuckling/AutoMoDe-LocalSearch/src/
+
+python3 automode_localsearch.py run -c {} -a {} -s {} -b {} -i {} -j {job_name} -r {}
+
+RET=$?
+mv $TMPDIR/* $RESULTDIR
+cd $JOBDIR
+rmdir -p $TMPDIR &> /dev/null
+""".format(args["config_file_name"], args["architecture"], args["path_to_scenario"], args["budget"],
+           args["initial_controller"], args["result_directory"], job_name=args["job_name"])
+    # print(submit_cmd)
+    args = ["qsub", submit_cmd]
+    p = subprocess.Popen(args, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+    (stdout, stderr) = p.communicate()
+    print(stdout.decode('utf-8'))
+    print(stderr.decode('utf-8'))
+
 
 
 def execute_localsearch(args):
@@ -108,25 +167,6 @@ def execute_localsearch(args):
     with open("best_controller.txt", mode="w") as file:
         file.write(" ".join(best_controller))
     localsearch.utilities.return_to_src_directory()
-
-
-def evaluate_controller(architecture, controller_file):
-    # TODO: Find better handling (not so much lowlevel here)
-
-    with open(controller_file) as file:
-        controllers = file.readlines()
-        for c in controllers:
-            controller_args = c.split(" ")
-            # Guess the type of the controller
-            if architecture == "BT":
-                controller = BT.parse_from_commandline_args(controller_args)
-            else:
-                controller = FSM.parse_from_commandline_args(controller_args)
-            executor = execution.get_executor()
-            # TODO: Properly set up executor here
-            executor.evaluate_controller(controller)
-            logging.warning(controller.scores)
-            print(controller.scores)
 
 
 def parse_arguments():
@@ -216,7 +256,7 @@ def parse_arguments():
     if input_args.execution_subcommand == "local":
         run_local(input_args.experiment_file)
     elif input_args.execution_subcommand == "submit":
-        submit()
+        submit(input_args.experiment_file)
     elif input_args.execution_subcommand == "run":
         arguments = {"config_file_name": input_args.config_file,
                      "architecture": input_args.architecture,
