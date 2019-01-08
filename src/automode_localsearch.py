@@ -139,13 +139,13 @@ cd $JOBDIR
 rmdir -p $TMPDIR &> /dev/null
 """.format(args["config_file_name"], args["architecture"], args["path_to_scenario"], args["budget"],
            args["initial_controller"], args["result_directory"], job_name=args["job_name"])
-
-    args = ["qsub"]
-    p = subprocess.Popen(args, stdin=subprocess.PIPE, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-    (stdout, stderr) = p.communicate(submit_cmd)
+    with open("submit_localsearch_{}.sh".format(args["job_name"]), "w") as submit_file:
+        submit_file.write(submit_cmd)
+    args = ["qsub", "submit_localsearch_{}.sh".format(args["job_name"])]
+    p = subprocess.Popen(args, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+    (stdout, stderr) = p.communicate()
     print(stdout.decode('utf-8'))
     print(stderr.decode('utf-8'))
-
 
 
 def execute_localsearch(args):
