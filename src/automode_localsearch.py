@@ -131,7 +131,7 @@ source $JOBDIR/venv/bin/activate &> $TMPDIR/output_${job_name}.txt
 cd $SOURCEDIR
 export PYTHONPATH=$PYTHONPATH:/home/jkuckling/AutoMoDe-LocalSearch/src/
 
-python3 automode_localsearch.py run -c {} -a {} -s {} -b {} -i {} -j {job_name} -r {}
+python3 automode_localsearch.py run -c {} -a {} -s {} -b {} -i {} -j {job_name} -r {} &>> $TMPDIR/output_${job_name}.txt
 
 RET=$?
 mv $TMPDIR/* $RESULTDIR
@@ -142,8 +142,8 @@ rmdir -p $TMPDIR &> /dev/null
     with open("submit_localsearch_{}.sh".format(args["job_name"]), "w") as submit_file:
         submit_file.write(submit_cmd)
     args = ["qsub", "submit_localsearch_{}.sh".format(args["job_name"])]
-    p = subprocess.Popen(args, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
-    (stdout, stderr) = p.communicate()
+    qsub_process = subprocess.Popen(args, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+    (stdout, stderr) = qsub_process.communicate()
     print(stdout.decode('utf-8'))
     print(stderr.decode('utf-8'))
 
