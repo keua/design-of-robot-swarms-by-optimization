@@ -127,7 +127,7 @@ SOURCEDIR=$JOBDIR/src
 RESULTDIR=$JOBDIR/result
 
 mkdir -p $TMPDIR
-source $JOBDIR/venv/bin/activate &> $TMPDIR/output_${job_name}.txt
+source $JOBDIR/venv/bin/activate &> $TMPDIR/output_{job_name}.txt
 cd $SOURCEDIR
 export PYTHONPATH=$PYTHONPATH:/home/jkuckling/AutoMoDe-LocalSearch/src/
 
