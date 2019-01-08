@@ -4,6 +4,8 @@ from mpi4py.futures import MPIPoolExecutor
 import execution
 import random
 
+import stats
+
 
 class AutoMoDeExecutor:
 
@@ -94,8 +96,10 @@ class AutoMoDeExecutor:
         args.extend(controller.convert_to_commandline_args())
         logging.debug(args)
         # Run and capture output
+        stats.time.start_simulation()
         p = subprocess.Popen(args, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
         (stdout, stderr) = p.communicate()
+        stats.time.end_simulation()
         # Analyse result
         output = stdout.decode('utf-8')
         lines = output.splitlines()

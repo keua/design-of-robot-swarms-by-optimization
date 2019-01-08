@@ -1,9 +1,11 @@
-from datetime import datetime
 import os
 import copy
 import logging
 import execution
 import math
+
+import stats
+
 
 from . import acceptance_criteria as ac
 
@@ -23,8 +25,8 @@ def iterative_improvement(initial_controller):
     logging.warning("{}".format(max_improvements))
     best_controller = initial_controller
     acceptance = ac.mean
-    start_time = datetime.now()
-    logging.info("Started at " + str(start_time))
+    stats.time.start_run()
+    logging.info("Started at " + str(stats.time.start_time))
     if not os.path.isdir("scores"):
         os.mkdir("scores")
     with open("scores/best_score.csv", "w") as file:
@@ -71,8 +73,10 @@ def iterative_improvement(initial_controller):
                 best_controller = perturbed_controller
             if i % snapshot_frequency == 0:
                 best_controller.draw(str(i))
-        end_time = datetime.now()
-    logging.info("Finished at " + str(end_time))
-    time_diff = end_time - start_time
-    logging.info("Took " + str(time_diff))
+        stats.time.end_run()
+        logging.info("Finished at " + str(stats.time.end_time))
+    logging.warning("Total time: " + str(stats.time.elapsed_time()))
+    logging.warning("Time in simulation: " + str(stats.time.simulation_time))
+    stats.save()
+    stats.reset()
     return best_controller
