@@ -141,7 +141,7 @@ EOF
 """.format(args["config_file_name"], args["architecture"], args["path_to_scenario"], args["budget"],
            args["initial_controller"], args["result_directory"], job_name=args["job_name"])
     # print(submit_cmd)
-    args = ["qsub", "<<EOF", submit_cmd]
+    args = ["exec", "qsub", "<<EOF", submit_cmd]
     p = subprocess.Popen(args, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
     (stdout, stderr) = p.communicate()
     print(stdout.decode('utf-8'))
