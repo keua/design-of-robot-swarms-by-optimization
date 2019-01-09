@@ -172,7 +172,7 @@ class AbstractBehaviorTree(AutoMoDeControllerABC):
         filename = graph.render(filename='img/graph_' + graph_name, view=False)
 
 
-class Unrestricted_BT(AbstractBehaviorTree):
+class UnrestrictedBehaviorTree(AbstractBehaviorTree):
     """
     This is the implementation for an unrestricted BT (there are still restrictions on the number of levels and the
     number of childs, but everything else can be chosen freely)
@@ -187,8 +187,53 @@ class Unrestricted_BT(AbstractBehaviorTree):
         """
         self.root.children.append((ActionNode(AbstractBehaviorTree.parameters["minimal_behavior"])))
 
+    @staticmethod
+    def parse_from_commandline_args(cmd_args):
+        """
+        Parses a unrestricted behavior tree from cmd args
+        :param cmd_args:
+        :return:
+        """
+        raise NotImplementedError
 
-class Restricted_BT(AbstractBehaviorTree):
+    def convert_to_commandline_args(self):
+        """Converts this BT to a format that is readable by the AutoMoDe command line"""
+        raise NotImplementedError
+
+    # ******************************************************************************************************************
+    # perturbation operators
+    # ******************************************************************************************************************
+
+    def perturb_reorder_subtrees(self):
+        """
+        :return:
+        """
+        raise NotImplementedError
+        # TODO: select CFN with at least two children
+        # TODO: select two random children
+        # TODO: swap their positions
+
+    def perturb_change_control_flow_node(self):
+        """
+
+        :return:
+        """
+        # TODO: select CFN
+        # TODO: change type of CFN
+        raise NotImplementedError
+
+    def perturb_change_leaf_node(self):
+        """
+
+        :return:
+        """
+        # TODO: select leaf
+        # TODO: check if it can be transformed in an action or condition
+        # TODO: if both types possible, then choose one type
+        # TODO: if type is chosen (or only one possible), then select random instance of that type
+
+
+class RestrictedBehaviorTree(AbstractBehaviorTree):
     """
     This is the implementation of a restricted BT (just like in Maple)
     """

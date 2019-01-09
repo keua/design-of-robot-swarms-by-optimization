@@ -1,7 +1,8 @@
 from abc import ABCMeta, abstractmethod
-import execution
 import random
 import logging
+
+import execution
 
 
 class AutoMoDeArchitectureABC:
@@ -43,7 +44,8 @@ class AutoMoDeArchitectureABC:
 
     def get_perturbation_operators(self):
         """Returns all methods that start with perturb_ indicating that they are indeed perturbation operators."""
-        method_names = [method_name for method_name in dir(self) if callable(getattr(self, method_name)) and method_name.startswith("perturb_")]
+        method_names = [method_name for method_name in dir(self)
+                        if callable(getattr(self, method_name)) and method_name.startswith("perturb_")]
         methods = [getattr(self, x) for x in method_names]
         return methods
 

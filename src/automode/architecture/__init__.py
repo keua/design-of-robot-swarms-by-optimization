@@ -2,8 +2,8 @@
 This package provides access to abstractions for all implemented control architectures of AutoMoDe
 """
 
-from automode.architecture.AutoMoDeFSM import FSM
-from automode.architecture.AutoMoDeBT import Restricted_BT as BT
-from automode.architecture.AutoMoDeArchitectureABC import AutoMoDeArchitectureABC
+from automode.architecture.finite_state_machine import FSM
+from automode.architecture.behavior_tree import RestrictedBehaviorTree as BT
+from automode.architecture.abstract_architecture import AutoMoDeArchitectureABC
 
 __all__ = ["AutoMoDeArchitectureABC", "FSM", "BT"]
