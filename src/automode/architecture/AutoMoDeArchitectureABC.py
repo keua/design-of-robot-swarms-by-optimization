@@ -4,7 +4,7 @@ import random
 import logging
 
 
-class AutoMoDeControllerABC:
+class AutoMoDeArchitectureABC:
     __metaclass__ = ABCMeta
 
     def __init__(self, minimal=False):

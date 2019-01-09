@@ -3,7 +3,7 @@ import random
 import graphviz as gv
 import logging
 import re
-from automode.controller.AutoMoDeControllerABC import AutoMoDeControllerABC
+from automode.architecture.AutoMoDeControllerABC import AutoMoDeControllerABC
 
 # TODO: Write documentation for methods and classes
 

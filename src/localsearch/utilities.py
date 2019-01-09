@@ -3,7 +3,7 @@ import logging
 import shutil
 from datetime import datetime
 import execution
-from automode.controller import FSM, BT
+from automode.architecture import FSM, BT
 
 
 result_directory = "default/"
