@@ -139,7 +139,7 @@ source $JOBDIR/venv/bin/activate &> $TMPDIR/output_{job_name}.txt
 cd $SOURCEDIR
 export PYTHONPATH=$PYTHONPATH:/home/jkuckling/AutoMoDe-LocalSearch/src/
 
-python3 automode_localsearch.py run -c {} -a {} -s {} -b {} -i {} -j {job_name} -r {} &>> $TMPDIR/output_${job_name}.txt
+python3 automode_localsearch.py run -c {} -a {} -s {} -b {} -i {} -j {job_name} -r {} &>> $TMPDIR/output_{job_name}.txt
 
 RET=$?
 mv $TMPDIR/* $RESULTDIR
