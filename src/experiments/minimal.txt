@@ -1,21 +1,30 @@
 # Experiment file for all experiments (aggregation, foraging) and all control architectures (BT, FSM) starting from
 # a minimal controller
 {
-    # BT
-    "BT_agg_minimal": {
-        "repetitions": 1,
+    "BT_for_minimal": {
+        "repetitions": 10,
         "config": "./config/config50k.ini",
-        "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/scenarios/vanilla/aggregation_bt.argos",
+        "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/scenarios/vanilla/for250sec/foraging_bt.argos",
         "architecture": "BT",
         "budget": 50000,
         "initial_controller": "minimal",
         "result_directory": "/home/jkuckling/AutoMoDe-LocalSearch/result/",
         "parallel": 0
     },
-    "BT_for_minimal": {
-        "repetitions": 1,
+    "FSM_for_minimal": {
+        "repetitions": 10,
         "config": "./config/config50k.ini",
-        "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/scenarios/vanilla/foraging_bt.argos",
+        "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/scenarios/vanilla/for250sec/foraging.argos",
+        "architecture": "FSM",
+        "budget": 50000,
+        "initial_controller": "minimal",
+        "result_directory": "/home/jkuckling/AutoMoDe-LocalSearch/result/",
+        "parallel": 0
+    },
+    "BT_agg_minimal": {
+        "repetitions": 10,
+        "config": "./config/config50k.ini",
+        "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/scenarios/vanilla/agg250sec/aggregation_bt.argos",
         "architecture": "BT",
         "budget": 50000,
         "initial_controller": "minimal",
@@ -23,19 +32,49 @@
         "parallel": 0
     },
     "FSM_agg_minimal": {
-        "repetitions": 1,
+        "repetitions": 10,
         "config": "./config/config50k.ini",
-        "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/scenarios/vanilla/aggregation.argos",
+        "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/scenarios/vanilla/agg250sec/aggregation.argos",
         "architecture": "FSM",
         "budget": 50000,
         "initial_controller": "minimal",
         "result_directory": "/home/jkuckling/AutoMoDe-LocalSearch/result/",
         "parallel": 0
     },
-    "FSM_for_minimal": {
-        "repetitions": 1,
+    "BT_AAC_minimal": {
+        "repetitions": 10,
         "config": "./config/config50k.ini",
-        "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/scenarios/vanilla/foraging.argos",
+        "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/scenarios/chocolate/AAC/aac_bt.argos",
+        "architecture": "BT",
+        "budget": 50000,
+        "initial_controller": "minimal",
+        "result_directory": "/home/jkuckling/AutoMoDe-LocalSearch/result/",
+        "parallel": 0
+    },
+    "FSM_AAC_minimal": {
+        "repetitions": 10,
+        "config": "./config/config50k.ini",
+        "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/scenarios/chocolate/AAC/aac_fsm.argos",
+        "architecture": "FSM",
+        "budget": 50000,
+        "initial_controller": "minimal",
+        "result_directory": "/home/jkuckling/AutoMoDe-LocalSearch/result/",
+        "parallel": 0
+    },
+    "BT_SCA_minimal": {
+        "repetitions": 10,
+        "config": "./config/config50k.ini",
+        "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/scenarios/chocolate/SCA/sca_bt.argos",
+        "architecture": "BT",
+        "budget": 50000,
+        "initial_controller": "minimal",
+        "result_directory": "/home/jkuckling/AutoMoDe-LocalSearch/result/",
+        "parallel": 0
+    },
+    "FSM_SCA_minimal": {
+        "repetitions": 10,
+        "config": "./config/config50k.ini",
+        "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/scenarios/chocolate/SCA/sca_fsm.argos",
         "architecture": "FSM",
         "budget": 50000,
         "initial_controller": "minimal",
