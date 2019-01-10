@@ -30,7 +30,7 @@ def evaluate_controller(path_to_AutoMoDe_executable, scenario_file, controller_c
             logging.error("Stdout: " + stdout.decode('utf-8'))
             raise
         scores.append(score)
-    print(scores)
+    # print(scores)
     return scores
 
 
@@ -46,7 +46,7 @@ def evaluate_all_controllers(controller_file, automode, scenario, architecture="
         controllers = file.readlines()
         for controller in controllers:
             controller = controller.strip()
-            print(controller)
+            # print(controller)
             scores = evaluate_controller(automode, scenario, controller_config_constant, controller)
             # TODO: Use scores
             print(statistics.mean(scores))
