@@ -66,12 +66,16 @@ def run_local(experiment_file):
         setup = experiment_setup[setup_key]
         for i in range(0, setup["repetitions"]):  # Execute the repetitions of an experiment
             # retrieve important information
+            initial_controller = setup["initial_controller"]
+            if not initial_controller == "minimal":
+                initial_controller = "{}:{}".format(initial_controller,
+                                                    i)  # add the current repetition if it is not minimal
             experiment = {
                 "config_file_name": setup["config"],
                 "architecture": setup["architecture"],
                 "path_to_scenario": setup["scenario"],
                 "budget": setup["budget"],
-                "initial_controller": setup["initial_controller"],
+                "initial_controller": initial_controller,
                 "job_name": "{}_{}".format(setup_key, i),  # create correct jobname
                 "result_directory": setup["result_directory"],
                 "parallel": setup["parallel"],
@@ -89,12 +93,16 @@ def submit(experiment_file):
         setup = experiment_setup[setup_key]
         for i in range(0, setup["repetitions"]):  # Execute the repetitions of an experiment
             # retrieve important information
+            initial_controller = setup["initial_controller"]
+            if not initial_controller == "minimal":
+                initial_controller = "{}:{}".format(initial_controller,
+                                                    i)  # add the current repetition if it is not minimal
             experiment = {
                 "config_file_name": setup["config"],
                 "architecture": setup["architecture"],
                 "path_to_scenario": setup["scenario"],
                 "budget": setup["budget"],
-                "initial_controller": setup["initial_controller"],
+                "initial_controller": initial_controller,
                 "job_name": "{}_{}".format(setup_key, i),  # create correct jobname
                 "result_directory": setup["result_directory"],
                 "parallel": setup["parallel"],

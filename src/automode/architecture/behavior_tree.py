@@ -1,4 +1,4 @@
-from automode.architecture.AutoMoDeControllerABC import AutoMoDeControllerABC
+from automode.architecture.abstract_architecture import AutoMoDeControllerABC
 from abc import ABCMeta, abstractmethod
 from enum import Enum
 import graphviz as gv
