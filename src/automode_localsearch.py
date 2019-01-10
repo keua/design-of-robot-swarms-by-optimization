@@ -129,7 +129,7 @@ def submit_localsearch(args):
 #$ -cwd
 
 USERNAME=`whoami`
-TMPDIR=/tmp/$USERNAME/LocalSearch_results_${job_name}
+TMPDIR=/tmp/$USERNAME/LocalSearch_results_{job_name}
 JOBDIR=/home/$USERNAME/AutoMoDe-LocalSearch
 SOURCEDIR=$JOBDIR/src
 RESULTDIR=$JOBDIR/result
