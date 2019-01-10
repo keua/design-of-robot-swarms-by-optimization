@@ -35,7 +35,7 @@
         <epuck_ground implementation="rot_z_only" noise_level="0.05" calibrated="true"/>
         <epuck_omnidirectional_camera implementation="rot_z_only" medium="leds" show_rays="false"/>
       </sensors>
-    <params/>
+      <params fsm-config="--nstates 1 --s0 1"/>
     </automode_controller>
   </controllers>
 
@@ -204,6 +204,5 @@
       </camera>
     </qt-opengl>
   </visualization>
-  <!--visualization/-->
 
 </argos-configuration>
