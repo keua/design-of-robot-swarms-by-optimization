@@ -7,7 +7,7 @@
         "config": "./config/config50k.ini",
         "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/scenarios/vanilla/aggregation_bt.argos",
         "architecture": "BT",
-        "budget": 5000,
+        "budget": 50000,
         "initial_controller": "minimal",
         "result_directory": "/home/jkuckling/AutoMoDe-LocalSearch/result/",
         "parallel": 0
@@ -17,7 +17,7 @@
         "config": "./config/config50k.ini",
         "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/scenarios/vanilla/foraging_bt.argos",
         "architecture": "BT",
-        "budget": 5000,
+        "budget": 50000,
         "initial_controller": "minimal",
         "result_directory": "/home/jkuckling/AutoMoDe-LocalSearch/result/",
         "parallel": 0
@@ -27,7 +27,7 @@
         "config": "./config/config50k.ini",
         "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/scenarios/vanilla/aggregation.argos",
         "architecture": "FSM",
-        "budget": 5000,
+        "budget": 50000,
         "initial_controller": "minimal",
         "result_directory": "/home/jkuckling/AutoMoDe-LocalSearch/result/",
         "parallel": 0
@@ -37,7 +37,7 @@
         "config": "./config/config50k.ini",
         "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/scenarios/vanilla/foraging.argos",
         "architecture": "FSM",
-        "budget": 5000,
+        "budget": 50000,
         "initial_controller": "minimal",
         "result_directory": "/home/jkuckling/AutoMoDe-LocalSearch/result/",
         "parallel": 0

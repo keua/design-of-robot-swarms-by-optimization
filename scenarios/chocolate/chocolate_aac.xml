@@ -11,7 +11,7 @@
   <!-- ****************** -->
   <!-- * Loop functions * -->
   <!-- ****************** -->
-  <loop_functions library="/home/jkuckling/Documents/argos3-AutoMoDe/build/loop-functions/chocolate/AAC/libchocolate_aac_loopfunc.so"
+  <loop_functions library="/home/jkuckling/argos3-dist/build/loop-functions/chocolate/AAC/libchocolate_aac_loopfunc.so"
    label="chocolate_aac_loop_functions">
    <params dist_radius="1.2" number_robots="20"/>
   </loop_functions>
@@ -22,7 +22,7 @@
   <controllers>
 	<!-- TRANSMITTER -->
     <automode_controller id="automode"
-                        library="/home/jkuckling/Documents/argos3-AutoMoDe/build/src/libautomode.so">
+                        library="/home/jkuckling/AutoMoDe-FSM/build/src/libautomode.so">
       <actuators>
         <epuck_wheels implementation="default" noise_std_dev="0.05"/>
         <epuck_rgb_leds implementation="default" medium="leds"/>
