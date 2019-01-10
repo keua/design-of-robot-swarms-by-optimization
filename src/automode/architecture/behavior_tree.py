@@ -1,4 +1,4 @@
-from automode.architecture.abstract_architecture import AutoMoDeControllerABC
+from automode.architecture.abstract_architecture import AutoMoDeArchitectureABC
 from abc import ABCMeta, abstractmethod
 from enum import Enum
 import graphviz as gv
@@ -152,7 +152,7 @@ class ConditionNode(ABCNode):
         return caption
 
 
-class AbstractBehaviorTree(AutoMoDeControllerABC):
+class AbstractBehaviorTree(AutoMoDeArchitectureABC):
 
     """This class is used as a base class for behavior trees. It should implemenet feature for both the restricted
     (Maple) version and a less restricted version.
