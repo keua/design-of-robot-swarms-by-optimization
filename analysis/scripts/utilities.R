@@ -1,4 +1,5 @@
 RESULT_FOLDER = "/home/jkuckling/AutoMoDe-LocalSearch/result/Version_3"
+DATA_FOLDER = "/home/jkuckling/AutoMoDe-LocalSearch/analysis/data"
 EXP_COUNT = 10
 
 transpose <- function(df) {
@@ -16,4 +17,11 @@ load_score_file <- function(folder, columns=c("best", "new")) {
   dat = read.csv(file_name, header = FALSE)
   dat <- setNames(dat, c("best", "new", "mutation"))
   dat <- dat[,columns]
+}
+
+load_data_score_file <- function(folder) {
+  file_name <- paste(DATA_FOLDER, folder, "scores.csv", sep="/")
+  print(file_name)
+  dat = read.csv(file_name, header = TRUE)
+  return(dat)
 }

@@ -2,29 +2,26 @@ source(file="/home/jkuckling/AutoMoDe-LocalSearch/analysis/scripts/utilities.R")
 
 display_comparison <- function() {
   
-  get_best_values <- function(controller, scenario, initial) {
-    final_results <- 1:EXP_COUNT
-    for (i in 1:EXP_COUNT) {
-      exp_name <- paste(controller, scenario, initial, i, sep="_")
-      data <- load_score_file(exp_name)
-      final_results[i] <- data[nrow(data),"best"]
-    }
-    return(final_results)
+  load_data <- function(architecture, scenario, method) {
+    folder_name <- paste(architecture, scenario, method, sep="_")
+    data <- load_data_score_file(folder_name)
+    return(data)
   }
   
   load_minimal <- function(scenario) {
     load_minimal_bt <- function() {
-      best <- get_best_values("BT", scenario, "minimal")
+      best <- load_data("BT", scenario, "minimal")
       return(best)
     }
     load_minimal_fsm <- function() {
-      best <- get_best_values("FSM", scenario, "minimal")
+      best <- load_data("FSM", scenario, "minimal")
       return(best)
     }
-    bt_results <- load_minimal_bt()
+    # bt_results <- load_minimal_bt()
     fsm_results <- load_minimal_fsm()
-    results_df <- data.frame(bt_results, fsm_results)
-    results_df <- setNames(results_df, c("Minimal BT", "Minimal FSM"))
+    results_df <- data.frame(fsm_results)
+    # results_df <- data.frame(bt_results, fsm_results)
+    # results_df <- setNames(results_df, c("Minimal BT", "Minimal FSM"))
     return(results_df)
   }
   
@@ -34,13 +31,14 @@ display_comparison <- function() {
       return(best)
     }
     load_improving_fsm <- function() {
-      best <- get_best_values("FSM", scenario, "irace")
+      best <- load_data("FSM", scenario, "irace")
       return(best)
     }
-    bt_results <- load_improving_bt()
+    # bt_results <- load_improving_bt()
     fsm_results <- load_improving_fsm()
-    results_df <- data.frame(bt_results, fsm_results)
-    results_df <- setNames(results_df, c("Irace+LS BT", "Irace+LS FSM"))
+    results_df <- data.frame(fsm_results)
+    # results_df <- data.frame(bt_results, fsm_results)
+    # results_df <- setNames(results_df, c("Irace+LS BT", "Irace+LS FSM"))
     return(results_df)
   }
   
@@ -50,29 +48,14 @@ display_comparison <- function() {
       return(best)
     }
     load_random_fsm <- function() {
-      best <- get_best_values("FSM", scenario, "random")
+      best <- load_data("FSM", scenario, "random")
       return(best)
     }
-    bt_results <- load_random_bt()
+    # bt_results <- load_random_bt()
     fsm_results <- load_random_fsm()
-    results_df <- data.frame(bt_results, fsm_results)
-    results_df <- setNames(results_df, c("Random BT", "Random FSM"))
-    return(results_df)
-  }
-  
-  load_irace_localsearch <- function(scenario) {
-    load_improving_bt <- function() {
-      best <- get_best_values("BT", scenario, "irace")
-      return(best)
-    }
-    load_improving_fsm <- function() {
-      best <- get_best_values("FSM", scenario, "irace")
-      return(best)
-    }
-    bt_results <- load_improving_bt()
-    fsm_results <- load_improving_fsm()
-    results_df <- data.frame(bt_results, fsm_results)
-    results_df <- setNames(results_df, c("Irace+LS BT", "Irace+LS FSM"))
+    results_df <- data.frame(fsm_results)
+    # results_df <- data.frame(bt_results, fsm_results)
+    # results_df <- setNames(results_df, c("Random BT", "Random FSM"))
     return(results_df)
   }
   

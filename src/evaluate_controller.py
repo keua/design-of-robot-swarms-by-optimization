@@ -34,7 +34,7 @@ def evaluate_controller(path_to_AutoMoDe_executable, scenario_file, controller_c
     return scores
 
 
-def evaluate_all_controllers(controller_file, automode, scenario, architecture="BT"):
+def evaluate_all_controllers(controller_file, automode, scenario, architecture="BT", output_file=""):
 
     if architecture == "BT":
         controller_config_constant = "--bt-config"
@@ -50,6 +50,9 @@ def evaluate_all_controllers(controller_file, automode, scenario, architecture="
             scores = evaluate_controller(automode, scenario, controller_config_constant, controller)
             # TODO: Use scores
             print(statistics.mean(scores))
+            if output_file:
+                with open(output_file, "a") as output:
+                    output.write(str(statistics.mean(scores)) + "\n")
 
 
 if __name__ == "__main__":
@@ -64,5 +67,8 @@ if __name__ == "__main__":
                         help="The scenario file for the improvement. (REQUIRED)")
     parser.add_argument('-exe', '--executable', dest="executable", required=True,
                         help="The path to the automode executable (REQUIRED)")
+    parser.add_argument('-o', '--output', dest="output", required=False, default="",
+                        help="An optional argument to write the output to.")
     input_args = parser.parse_args()
-    evaluate_all_controllers(input_args.controller_file, input_args.executable, input_args.scenario_file, input_args.architecture)
+    evaluate_all_controllers(input_args.controller_file, input_args.executable, input_args.scenario_file,
+                             input_args.architecture, input_args.output)
