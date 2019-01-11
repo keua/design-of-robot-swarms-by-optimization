@@ -263,6 +263,45 @@ class RestrictedBehaviorTree(AbstractBehaviorTree):
             to_parse.pop(0)  # --nchildroot
             top_level_children_count = int(to_parse.pop(0))  # not really needed, iterating over subtrees should work fine
 
+        def parse_condition_node():
+            node_id_string = to_parse.pop(0)  # --n[]
+            node_type = int(to_parse.pop(0))  # 6
+            condition_label = to_parse.pop(0)  # --c[]
+            condition_type = int(to_parse.pop(0))
+            condition_node = ConditionNode("FixedProbability")
+            condition_node.condition = Condition.get_by_id(condition_type)
+            # Parse parameters until the next node is found
+            while not to_parse[0].startswith("--n"):
+                param_string = to_parse.pop(0)  # param identifier
+                param_name = regex_no_number.match(param_string.split("--")[1]).group()
+                if isinstance(condition_node.condition.params[param_name], int):
+                    param_val = int(to_parse.pop(0))
+                else:
+                    param_val = float(to_parse.pop(0))
+                condition_node.condition.params[param_name] = param_val
+            return condition_node
+
+        def parse_action_node():
+            node_id_string = to_parse.pop(0)  # --n[]
+            node_type = int(to_parse.pop(0))  # 5
+            action_label = to_parse.pop(0)  # --a[]
+            action_type = int(to_parse.pop(0))
+            action_node = ActionNode("Stop")
+            action_node.action = Behavior.get_by_id(action_type)
+            # Parse parameters until the next node is found, or the list is empty
+            while to_parse and not to_parse[0].startswith("--n"):
+                param_string = to_parse.pop(0)  # param identifier
+                param_name = regex_no_number.match(param_string.split("--")[1]).group()
+                if param_name == "p":  # Ignore any p here
+                    success_probability = to_parse.pop(0)  # 0
+                else:
+                    if param_name == "rwm":
+                        param_val = int(to_parse.pop(0))
+                    else:
+                        param_val = float(to_parse.pop(0))
+                    action_node.action.params[param_name] = param_val
+            return action_node
+
         def parse_selector_subtree():
             """
             The parsing of the parameters in this function is a very dirty fix.
@@ -273,40 +312,11 @@ class RestrictedBehaviorTree(AbstractBehaviorTree):
             # parse selector node
             selector_id_string = to_parse.pop(0)  # --n[]
             selector_type = int(to_parse.pop(0))  # 0
-            num_children_string = to_parse.pop(0)  # --nchildren[]
+            num_children_string = to_parse.pop(0)  # --nchild[]
             num_children = int(to_parse.pop(0))  # 2
             selector = SelectorNode()
-            first_child_id_string = to_parse.pop(0)  # --n[]
-            first_child_type = int(to_parse.pop(0))  # 6
-            condition_label = to_parse.pop(0)  # --c[]
-            condition_type = int(to_parse.pop(0))
-            condition_node = ConditionNode("FixedProbability")
-            condition_node.condition = Condition.get_by_id(condition_type)
-            # TODO: FIX: parse condition parameters
-            for condition_param in condition_node.condition.params:
-                param_string = to_parse.pop(0)  # param identifier
-                param_name = regex_no_number.match(param_string.split("--")[1]).group()
-                if isinstance(condition_node.condition.params[param_name], int):
-                    param_val = int(to_parse.pop(0))
-                else:
-                    param_val = float(to_parse.pop(0))
-                condition_node.condition.params[param_name] = param_val
-            second_child_id_string = to_parse.pop(0)  # --n[]
-            second_child_type = int(to_parse.pop(0))  # 5
-            action_label = to_parse.pop(0)  # --a[]
-            action_type = int(to_parse.pop(0))
-            action_node = ActionNode("Stop")
-            action_node.action = Behavior.get_by_id(action_type)
-            # TODO: FIX: parse action parameters
-            for action_param in action_node.action.params:
-                param_string = to_parse.pop(0)  # param identifier
-                param_name = regex_no_number.match(param_string.split("--")[1]).group()
-                if not param_name == "p":  # Ignore any p here
-                    if param_name == "rwm":
-                        param_val = int(to_parse.pop(0))
-                    else:
-                        param_val = float(to_parse.pop(0))
-                    action_node.action.params[param_name] = param_val
+            condition_node = parse_condition_node()
+            action_node = parse_action_node()
             selector.set_child(condition_node)
             selector.set_child(action_node)
             behavior_tree.root.children[0].set_child(selector)
