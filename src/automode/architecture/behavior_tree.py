@@ -57,7 +57,6 @@ class ABCNode:
         """
         self.children.remove(child_node)
         self.set_id(self.id)
-        pass
 
     @property
     @abstractmethod
@@ -258,26 +257,28 @@ class RestrictedBehaviorTree(AbstractBehaviorTree):
         # TODO: Adjust for new BT structure
 
         def parse_top_level_node():
-            to_parse.pop(0)  # --rootnode
-            top_level_type = int(to_parse.pop(0))  # 0
+            to_parse.pop(0)  # --nroot
+            top_level_type = int(to_parse.pop(0))  # 3
             behavior_tree.root.set_child(SequenceStarNode())
-            to_parse.pop(0)  # --nchildsroot
+            to_parse.pop(0)  # --nchildroot
             top_level_children_count = int(to_parse.pop(0))  # not really needed, iterating over subtrees should work fine
 
         def parse_selector_subtree():
             """
-                The parsing of the parameters in this function is a very dirty fix.
-                Once back from holidays, try and find a better way to handle it.
-                At  the moment it just iterates over the length of the parameters and 
-                reads one parameter from the parse_list.
+            The parsing of the parameters in this function is a very dirty fix.
+            Once back from holidays, try and find a better way to handle it.
+            At  the moment it just iterates over the length of the parameters and
+            reads one parameter from the parse_list.
             """
             # parse selector node
             selector_id_string = to_parse.pop(0)  # --n[]
             selector_type = int(to_parse.pop(0))  # 0
-            num_conditions_string = to_parse.pop(0)  # --nc[]
-            num_conditions = int(to_parse.pop(0))  # 1
+            num_children_string = to_parse.pop(0)  # --nchildren[]
+            num_children = int(to_parse.pop(0))  # 2
             selector = SelectorNode()
-            condition_label = to_parse.pop(0)  # --c[]x[]
+            first_child_id_string = to_parse.pop(0)  # --n[]
+            first_child_type = int(to_parse.pop(0))  # 6
+            condition_label = to_parse.pop(0)  # --c[]
             condition_type = int(to_parse.pop(0))
             condition_node = ConditionNode("FixedProbability")
             condition_node.condition = Condition.get_by_id(condition_type)
@@ -290,6 +291,8 @@ class RestrictedBehaviorTree(AbstractBehaviorTree):
                 else:
                     param_val = float(to_parse.pop(0))
                 condition_node.condition.params[param_name] = param_val
+            second_child_id_string = to_parse.pop(0)  # --n[]
+            second_child_type = int(to_parse.pop(0))  # 5
             action_label = to_parse.pop(0)  # --a[]
             action_type = int(to_parse.pop(0))
             action_node = ActionNode("Stop")
@@ -298,11 +301,12 @@ class RestrictedBehaviorTree(AbstractBehaviorTree):
             for action_param in action_node.action.params:
                 param_string = to_parse.pop(0)  # param identifier
                 param_name = regex_no_number.match(param_string.split("--")[1]).group()
-                if param_name == "rwm":
-                    param_val = int(to_parse.pop(0))
-                else:
-                    param_val = float(to_parse.pop(0))
-                action_node.action.params[param_name] = param_val
+                if not param_name == "p":  # Ignore any p here
+                    if param_name == "rwm":
+                        param_val = int(to_parse.pop(0))
+                    else:
+                        param_val = float(to_parse.pop(0))
+                    action_node.action.params[param_name] = param_val
             selector.set_child(condition_node)
             selector.set_child(action_node)
             behavior_tree.root.children[0].set_child(selector)
@@ -311,7 +315,7 @@ class RestrictedBehaviorTree(AbstractBehaviorTree):
         regex_action_node = re.compile("--a[0-9]")
         regex_no_number = re.compile("[^0-9]+")
         # create an emtpy BT
-        behavior_tree = Restricted_BT()
+        behavior_tree = RestrictedBehaviorTree()
         behavior_tree.root.children.clear()  # could also clear the root node, but the root node is invariant
         # prepare the arguments
         to_parse = list(cmd_args)
