@@ -69,7 +69,7 @@ def run_local(experiment_file):
             initial_controller = setup["initial_controller"]
             if not initial_controller == "minimal":
                 initial_controller = "{}:{}".format(initial_controller,
-                                                    i)  # add the current repetition if it is not minimal
+                                                    i+1)  # add the current repetition if it is not minimal
             experiment = {
                 "config_file_name": setup["config"],
                 "architecture": setup["architecture"],
@@ -96,7 +96,7 @@ def submit(experiment_file):
             initial_controller = setup["initial_controller"]
             if not initial_controller == "minimal":
                 initial_controller = "{}:{}".format(initial_controller,
-                                                    i)  # add the current repetition if it is not minimal
+                                                    i+1)  # add the current repetition if it is not minimal
             experiment = {
                 "config_file_name": setup["config"],
                 "architecture": setup["architecture"],
