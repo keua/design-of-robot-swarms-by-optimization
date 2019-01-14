@@ -1,4 +1,3 @@
-import os
 import copy
 import logging
 import execution
@@ -6,11 +5,12 @@ import math
 
 import stats
 
-
-from . import acceptance_criteria as ac
+import localsearch.acceptance_criteria as ac
 
 budget = 50000
 snapshot_frequency = 1
+
+logging.getLogger().setLevel(logging.INFO)
 
 
 def iterative_improvement(initial_controller):
@@ -22,61 +22,45 @@ def iterative_improvement(initial_controller):
     executor = execution.get_executor()
     max_improvements = math.floor(
         budget/(executor.seed_window_size + executor.seed_window_move))
-    logging.warning("{}".format(max_improvements))
+    logging.info("number of iterations: {}".format(max_improvements))
     best_controller = initial_controller
     acceptance = ac.mean
     stats.time.start_run()
-    logging.info("Started at " + str(stats.time.start_time))
-    if not os.path.isdir("scores"):
-        os.mkdir("scores")
-    with open("scores/best_score.csv", "w") as file:
-        executor.create_seeds()
+    logging.info("Started at {}".format(stats.time.start_time))
+    stats.performance.prepare_score_files()
+    executor.create_seeds()
+    best_controller.evaluate()
+    logging.debug("Initial best scores {}".format(best_controller.scores))
+    for i in range(0, max_improvements):
+        logging.debug("Iteration {}".format(i))
+        # move the window
+        executor.advance_seeds()
+        # create a perturbed controller
+        perturbed_controller = copy.deepcopy(best_controller)
+        # it is necessary to remove all evaluations from here
+        perturbed_controller.evaluated_instances.clear()
+        perturbed_controller.id = i
+        perturbed_controller.perturb()
+        # evaluate both FSMs on the seed_window
         best_controller.evaluate()
-        logging.debug("Initial best scores " + str(best_controller.scores))
-        for i in range(0, max_improvements):
-            logging.warning("{}".format(i))
-            # move the window
-            executor.advance_seeds()
-            # create a perturbed controller
-            perturbed_controller = copy.deepcopy(best_controller)
-            # it is necessary to remove all evaluations from here
-            perturbed_controller.evaluated_instances.clear()
-            perturbed_controller.id = i
-            perturbed_controller.perturb()
-            # evaluate both FSMs on the seed_window
-            best_controller.evaluate()
-            perturbed_controller.evaluate()
-            # Evaluate criterion
-            criterion = \
-                acceptance(best_controller.scores, perturbed_controller.scores)
-            # save the scores to file and update contrllers
-            best_controller.agg_score = (criterion.type, criterion.best_outcome)
-            perturbed_controller.agg_score = (criterion.type, criterion.perturb_outcome)
-            file.write(
-                str(best_controller.scores) +
-                ", " + criterion.type + " = " + str(criterion.best_outcome) +
-                ", " + str(perturbed_controller.scores) +
-                ", " + criterion.type + " = " + str(criterion.perturb_outcome) +
-                ", " + perturbed_controller.perturb_history[len(perturbed_controller.perturb_history) - 1].__name__ +
-                "\n"
-            )
-            logging.debug(
-                "Best score " + str(best_controller.scores) +
-                " and new score " + str(perturbed_controller.scores)
-            )
-            if criterion.acceptance:
-                logging.debug(
-                    perturbed_controller.perturb_history[len(
-                        perturbed_controller.perturb_history) - 1].__name__
-                )
-                perturbed_controller.draw(str(i))
-                best_controller = perturbed_controller
-            if i % snapshot_frequency == 0:
-                best_controller.draw(str(i))
-        stats.time.end_run()
-        logging.info("Finished at " + str(stats.time.end_time))
-    logging.warning("Total time: " + str(stats.time.elapsed_time()))
-    logging.warning("Time in simulation: " + str(stats.time.simulation_time))
+        perturbed_controller.evaluate()
+        # Evaluate criterion
+        criterion = acceptance(best_controller.scores, perturbed_controller.scores)
+        # save the scores to file and update controllers
+        best_controller.agg_score = (criterion.type, criterion.best_outcome)
+        perturbed_controller.agg_score = (criterion.type, criterion.perturb_outcome)
+        logging.info("Best score {} and new score {}".format(best_controller.agg_score, perturbed_controller.agg_score))
+        stats.performance.save_results(best_controller, perturbed_controller)
+        if criterion.accepted:
+            logging.debug(perturbed_controller.perturb_history[len(perturbed_controller.perturb_history) - 1].__name__)
+            perturbed_controller.draw(str(i))
+            best_controller = perturbed_controller
+        if i % snapshot_frequency == 0:
+            best_controller.draw(str(i))
+    stats.time.end_run()
+    logging.info("Finished at {}".format(stats.time.end_time))
+    logging.warning("Total time: {}".format(stats.time.elapsed_time()))
+    logging.warning("Time in simulation: {}".format(stats.time.simulation_time))
     stats.save()
     stats.reset()
     return best_controller

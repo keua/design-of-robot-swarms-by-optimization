@@ -9,12 +9,12 @@ class AutoMoDeArchitectureABC:
     __metaclass__ = ABCMeta
 
     def __init__(self, minimal=False):
-        self.scores = float("inf")
-        self.agg_score = ("type", float("inf"))
+        self.scores = []  # this will be a list of tuples (seed, score)
+        self.agg_score = ("type", float("inf"))  # the aggregated score with respect to the fitness function, useful for short debugging
         # parameters used to keep track of the local search
-        self.perturb_history = []
-        self.evaluated_instances = {}
-        self.executor = execution.get_executor()
+        self.perturb_history = []  # a list of all applied operators -> TODO: transform this into a list of strings
+        self.evaluated_instances = {}  # a dictionary with keys of seeds and entries are the scores
+        self.executor = execution.get_executor()  # the executor, don't know if it really is needed here
 
         if minimal:
             self.create_minimal_controller()

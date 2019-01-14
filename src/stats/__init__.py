@@ -5,6 +5,7 @@ This module tracks different stats over the run of a single local search
 import json
 
 import stats.time
+import stats.performance
 
 
 def reset():
