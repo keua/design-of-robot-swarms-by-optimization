@@ -69,7 +69,6 @@ class AutoMoDeArchitectureABC(ArchitectureABC):
         # parameters used to keep track of the local search
         self.perturb_history = []  # a list of all applied operators -> TODO: transform this into a list of strings
         self.evaluated_instances = {}  # a dictionary with keys of seeds and entries are the scores
-        self.executor = execution.get_executor()  # the executor, don't know if it really is needed here
 
         if minimal:
             self.create_minimal_controller()
@@ -86,5 +85,7 @@ class AutoMoDeArchitectureABC(ArchitectureABC):
         pass
 
     def evaluate(self):
-        """Run this FSM in Argos and receive a score to compute the efficiency of the FSM"""
-        return self.executor.evaluate_controller(self)
+        """Run this controller in Argos and receive a score to compute the efficiency of the controller"""
+        self.scores = execution.evaluate_controller(self)
+        print(self.scores)
+        return self.scores

@@ -1,21 +1,21 @@
-from execution.factory import ExecutorFactory
+from execution.automode_executor import SequentialExecutor
 
 # TODO: Maybe hide this? At least make it read only
 mpi_enabled = False
 parallel = 0
 
-
-def get_executor():
-    return ExecutorFactory.get_executor()
+_executor = None
 
 
-def set_scenario(scenario_file):
-    ExecutorFactory.set_scenario(scenario_file)
+def setup(path_to_AutoMoDe, scenario_file):
+    global _executor
+    if parallel == 0:  # no parallelization
+        _executor = SequentialExecutor(path_to_AutoMoDe, scenario_file)
 
 
-def set_seed_window(size, movement):
-    ExecutorFactory.set_seed_window(size, movement)
+def evaluate_controller(controller):
+    return _executor.evaluate_controller(controller)
 
 
-def get_architecture():
-    return ExecutorFactory.get_executor().architecture
+def advance_seeds():
+    _executor.advance_seeds()

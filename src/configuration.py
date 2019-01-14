@@ -12,6 +12,7 @@ from automode.architecture import FSM
 from automode.architecture import BT
 import execution
 import localsearch.utilities
+import settings
 
 
 def default_configuration():
@@ -164,14 +165,16 @@ def set_execution_parameters(architecture, parallel, scenario, config):
         execution.parallel = parallel
     else:
         execution.mpi_enabled = False
-    execution.set_scenario(scenario)
-    execution.set_seed_window(config["seed_window_size"], config["seed_window_movement"])
-    executor = execution.get_executor()
-    executor.architecture = architecture
+
+    settings.architecture = architecture
+    settings.seed_window_size = config["seed_window_size"]
+    settings.seed_window_movement = config["seed_window_movement"]
+
     if architecture == "BT":
-        executor.path_to_AutoMoDe_executable = config["BT_path_to_AutoMoDe"]
+        path_to_AutoMoDe_executable = config["BT_path_to_AutoMoDe"]
     else:
-        executor.path_to_AutoMoDe_executable = config["FSM_path_to_AutoMoDe"]
+        path_to_AutoMoDe_executable = config["FSM_path_to_AutoMoDe"]
+    execution.setup(path_to_AutoMoDe_executable, scenario)
 
 
 def set_localsearch_parameters(initial_controller, job_name, result_directory, config_file_name, budget,

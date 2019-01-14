@@ -1,11 +1,12 @@
 import copy
 import logging
-import execution
 import math
 
 import stats
 
 import localsearch.acceptance_criteria as ac
+import settings
+import execution
 
 budget = 50000
 snapshot_frequency = 1
@@ -19,22 +20,20 @@ def iterative_improvement(initial_controller):
     :param initial_controller: The controller that is used to first improve from
     :return: The best controller after the iterative improvement
     """
-    executor = execution.get_executor()
     max_improvements = math.floor(
-        budget/(executor.seed_window_size + executor.seed_window_move))
+        budget/(settings.seed_window_size + settings.seed_window_movement))
     logging.info("number of iterations: {}".format(max_improvements))
     best_controller = initial_controller
     acceptance = ac.mean
     stats.time.start_run()
     logging.info("Started at {}".format(stats.time.start_time))
     stats.performance.prepare_score_files()
-    executor.create_seeds()
     best_controller.evaluate()
     logging.debug("Initial best scores {}".format(best_controller.scores))
     for i in range(0, max_improvements):
         logging.debug("Iteration {}".format(i))
         # move the window
-        executor.advance_seeds()
+        execution.advance_seeds()
         # create a perturbed controller
         perturbed_controller = copy.deepcopy(best_controller)
         # it is necessary to remove all evaluations from here
