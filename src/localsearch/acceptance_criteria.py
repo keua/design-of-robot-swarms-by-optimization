@@ -52,8 +52,8 @@ def minc(best_cntrl_scores, perturb_cntrl_scores):
 
 def tstudent_test(best_cntrl_scores, perturb_cntrl_scores, confidence=0.05):
     _, p = scistats.ttest_ind(best_cntrl_scores, perturb_cntrl_scores)
-    perturb_out = stats.mean(perturb_cntrl_scores)
-    best_out = stats.mean(best_cntrl_scores)
+    perturb_out = statistics.mean(perturb_cntrl_scores)
+    best_out = statistics.mean(best_cntrl_scores)
     # < for max
     return Criterion(
         'TStudent', best_out, perturb_out, best_out < perturb_out and p < confidence
@@ -62,8 +62,8 @@ def tstudent_test(best_cntrl_scores, perturb_cntrl_scores, confidence=0.05):
 
 def wilcoxon_test(best_cntrl_scores, perturb_cntrl_scores, confidence=0.05):
     _, p = scistats.wilcoxon(best_cntrl_scores, perturb_cntrl_scores)
-    perturb_out = stats.mean(perturb_cntrl_scores)
-    best_out = stats.mean(best_cntrl_scores)
+    perturb_out = statistics.mean(perturb_cntrl_scores)
+    best_out = statistics.mean(best_cntrl_scores)
     # < for max
     return Criterion(
         'Wilcoxon', best_out, perturb_out, best_out < perturb_out and p < confidence
