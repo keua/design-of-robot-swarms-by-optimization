@@ -87,5 +87,4 @@ class AutoMoDeArchitectureABC(ArchitectureABC):
     def evaluate(self):
         """Run this controller in Argos and receive a score to compute the efficiency of the controller"""
         self.scores = execution.evaluate_controller(self)
-        print(self.scores)
         return self.scores

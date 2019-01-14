@@ -2,12 +2,12 @@
 # a minimal controller
 {
     # BT
-    "BT_agg_minimal": {
+    "BT_for_minimal": {
         "repetitions": 1,
         "config": "./config/config50k.ini",
-        "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/scenarios/vanilla/aggregation_bt.argos",
+        "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/scenarios/vanilla/for250sec/foraging_bt.argos",
         "architecture": "BT",
-        "budget": 50,
+        "budget": 500,
         "initial_controller": "minimal",
         "result_directory": "/home/jkuckling/AutoMoDe-LocalSearch/result/",
         "parallel": 0
@@ -15,9 +15,9 @@
     "FSM_agg_minimal": {
         "repetitions": 1,
         "config": "./config/config50k.ini",
-        "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/scenarios/vanilla/aggregation.argos",
+        "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/scenarios/vanilla/agg250sec/aggregation.argos",
         "architecture": "FSM",
-        "budget": 50,
+        "budget": 500,
         "initial_controller": "minimal",
         "result_directory": "/home/jkuckling/AutoMoDe-LocalSearch/result/",
         "parallel": 0
