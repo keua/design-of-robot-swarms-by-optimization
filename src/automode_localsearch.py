@@ -164,6 +164,7 @@ def execute_localsearch(args):
     """
     config = load_configuration_from_file(args["config_file_name"])
     apply_configuration(args, config)
+    logging.info(args["job_name"])
     localsearch.utilities.create_directory()
     # Run local search
     initial_controller = localsearch.utilities.get_initial_controller()
