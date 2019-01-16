@@ -4,7 +4,7 @@
     # BT
     "BT_for_minimal": {
         "repetitions": 1,
-        "config": "./config/config50k.ini",
+        "config": "./config/config_short.ini",
         "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/scenarios/vanilla/for250sec/foraging_bt.argos",
         "architecture": "BT",
         "budget": 500,
@@ -14,7 +14,7 @@
     },
     "FSM_agg_minimal": {
         "repetitions": 1,
-        "config": "./config/config50k.ini",
+        "config": "./config/config_short.ini",
         "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/scenarios/vanilla/agg250sec/aggregation.argos",
         "architecture": "FSM",
         "budget": 500,

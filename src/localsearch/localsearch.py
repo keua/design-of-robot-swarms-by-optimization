@@ -11,8 +11,6 @@ import execution
 budget = 50000
 snapshot_frequency = 1
 
-logging.getLogger().setLevel(logging.INFO)
-
 
 def iterative_improvement(initial_controller):
     """

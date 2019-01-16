@@ -3,7 +3,7 @@
 {
     "BT_for_irace": {
         "repetitions": 10,
-        "config": "./config/config50k.ini",
+        "config": "./config/config25k.ini",
         "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/scenarios/vanilla/for250sec/foraging_bt.argos",
         "architecture": "BT",
         "budget": 25000,
@@ -13,7 +13,7 @@
     },
     "FSM_for_irace": {
         "repetitions": 10,
-        "config": "./config/config50k.ini",
+        "config": "./config/config25k.ini",
         "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/scenarios/vanilla/for250sec/foraging.argos",
         "architecture": "FSM",
         "budget": 25000,
@@ -23,7 +23,7 @@
     },
     "BT_agg_irace": {
         "repetitions": 10,
-        "config": "./config/config50k.ini",
+        "config": "./config/config25k.ini",
         "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/scenarios/vanilla/agg250sec/aggregation_bt.argos",
         "architecture": "BT",
         "budget": 25000,
@@ -33,7 +33,7 @@
     },
     "FSM_agg_irace": {
         "repetitions": 10,
-        "config": "./config/config50k.ini",
+        "config": "./config/config25k.ini",
         "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/scenarios/vanilla/agg250sec/aggregation.argos",
         "architecture": "FSM",
         "budget": 25000,
@@ -43,7 +43,7 @@
     },
     "BT_AAC_irace": {
         "repetitions": 10,
-        "config": "./config/config50k.ini",
+        "config": "./config/config25k.ini",
         "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/scenarios/chocolate/AAC/aac_bt.argos",
         "architecture": "BT",
         "budget": 25000,
@@ -53,7 +53,7 @@
     },
     "FSM_AAC_irace": {
         "repetitions": 10,
-        "config": "./config/config50k.ini",
+        "config": "./config/config25k.ini",
         "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/scenarios/chocolate/AAC/aac_fsm.argos",
         "architecture": "FSM",
         "budget": 25000,
@@ -63,7 +63,7 @@
     },
     "BT_SCA_irace": {
         "repetitions": 10,
-        "config": "./config/config50k.ini",
+        "config": "./config/config25k.ini",
         "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/scenarios/chocolate/SCA/sca_bt.argos",
         "architecture": "BT",
         "budget": 25000,
@@ -73,7 +73,7 @@
     },
     "FSM_SCA_irace": {
         "repetitions": 10,
-        "config": "./config/config50k.ini",
+        "config": "./config/config25k.ini",
         "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/scenarios/chocolate/SCA/sca_fsm.argos",
         "architecture": "FSM",
         "budget": 25000,

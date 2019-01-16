@@ -9,8 +9,8 @@ import logging
 import json
 import subprocess
 
-from configuration import BUDGET_DEFAULT, SCENARIO_DEFAULT, RESULT_DEFAULT, JOB_NAME_DEFAULT,\
-    load_configuration_from_file, apply_configuration
+from settings import BUDGET_DEFAULT, SCENARIO_DEFAULT, RESULT_DEFAULT, JOB_NAME_DEFAULT
+import configuration
 from localsearch import iterative_improvement
 import localsearch.utilities
 
@@ -162,8 +162,9 @@ def execute_localsearch(args):
     :param args: A dictionary with the following keys: "config_file_name", "architecture", "path_to_scenario",
                 "budget", "initial_controller", "job_name", "result_directory", "parallel"
     """
-    config = load_configuration_from_file(args["config_file_name"])
-    apply_configuration(args, config)
+    configuration.load_from_file(args["config_file_name"])
+    configuration.load_from_arguments(args)
+    configuration.apply()
     logging.info(args["job_name"])
     localsearch.utilities.create_directory()
     # Run local search
@@ -180,22 +181,6 @@ def execute_localsearch(args):
 
 def parse_arguments():
     """This method parses the arguments to this script"""
-
-    def create_subparser_evaluate():
-        parser_evaluate = subparsers.add_parser('evaluate',
-                                                help='evaluate previously generated control software')
-        parser_evaluate.add_argument('-a', '--architecture', dest="architecture", default="FSM", required=True,
-                                     help="The type of controller used (FSM or BT). "
-                                          "(REQUIRED)")
-        parser_evaluate.add_argument('-cf', '--controller_file', dest="controller_file", default="/dev/null",
-                                     required=True, help="The file that contains the controllers to be evaluated. "
-                                                         "One controller per line. (REQUIRED)")
-        parser_evaluate.add_argument('-s', '--scenario_file', dest="scenario_file", default=SCENARIO_DEFAULT,
-                                     required=True, help="The scenario file for the improvement. "
-                                     "(REQUIRED)")
-        parser_evaluate.add_argument('-c', '--config', dest="config_file", required=True,
-                                     help="The configuration file for the local search algorithm. "
-                                     " (REQUIRED)")
 
     def create_subparser_local():
         """
@@ -260,7 +245,6 @@ def parse_arguments():
     create_subparser_local()
     create_subparser_submit()
     create_subparser_run()
-    create_subparser_evaluate()
     input_args = parser.parse_args()
     if input_args.execution_subcommand == "local":
         run_local(input_args.experiment_file)
