@@ -117,6 +117,7 @@ def submit_localsearch(args):
                 "budget", "initial_controller", "job_name", "result_directory", "parallel"
     """
     # TODO: Make the following blob a little bit more customizable
+    # TODO: Also don't write it to a real file, or at least clean the file up after execution
     submit_cmd = """#!/bin/bash
 #$ -N {job_name}
 #$ -l long
@@ -125,28 +126,27 @@ def submit_localsearch(args):
 #      e     Mail is sent at the end of the job.
 #      a     Mail is sent when the job is aborted or rescheduled.
 #      s     Mail is sent when the job is suspended.
-#$ -M jonas.kuckling@ulb.ac.be
 #$ -cwd
 
 USERNAME=`whoami`
-TMPDIR=/tmp/$USERNAME/LocalSearch_results_{job_name}
-JOBDIR=/home/$USERNAME/AutoMoDe-LocalSearch
-SOURCEDIR=$JOBDIR/src
-RESULTDIR=$JOBDIR/result
+TMPDIR=/tmp/${{USERNAME}}/LocalSearch_results_{job_name}
+JOBDIR=/home/${{USERNAME}}/AutoMoDe-LocalSearch
+SOURCEDIR=${{JOBDIR}}/src
+RESULTDIR=${{JOBDIR}}/result
 
-mkdir -p $TMPDIR
-source $JOBDIR/venv/bin/activate &> $TMPDIR/output_{job_name}.txt
-cd $SOURCEDIR
-export PYTHONPATH=$PYTHONPATH:/home/jkuckling/AutoMoDe-LocalSearch/src/
+mkdir -p ${{TMPDIR}}
+source ${{JOBDIR}}/venv/bin/activate &> $TMPDIR/output_{job_name}.txt
+cd ${{SOURCEDIR}}
+export PYTHONPATH=${{PYTHONPATH}}:/home/jkuckling/AutoMoDe-LocalSearch/src/
 
-python3 automode_localsearch.py run -c {} -a {} -s {} -b {} -i {} -j {job_name} -r {} &>> $TMPDIR/output_{job_name}.txt
+python3 automode_localsearch.py run -c {} -a {} -s {} -b {} -i {} -j {job_name} -r ${{TMPDIR}} &>> ${{TMPDIR}}/output_{job_name}.txt
 
 RET=$?
-mv $TMPDIR/* $RESULTDIR
-cd $JOBDIR
-rmdir -p $TMPDIR &> /dev/null
+mv ${{TMPDIR}}/* ${{RESULTDIR}}
+cd ${{JOBDIR}}
+rmdir -p ${{TMPDIR}} &> /dev/null
 """.format(args["config_file_name"], args["architecture"], args["path_to_scenario"], args["budget"],
-           args["initial_controller"], args["result_directory"], job_name=args["job_name"])
+           args["initial_controller"], job_name=args["job_name"])
     with open("submit_localsearch_{}.sh".format(args["job_name"]), "w") as submit_file:
         submit_file.write(submit_cmd)
     args = ["qsub", "submit_localsearch_{}.sh".format(args["job_name"])]
