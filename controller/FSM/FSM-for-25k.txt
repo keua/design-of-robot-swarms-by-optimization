@@ -1,0 +1,10 @@
+FAILURE! The failure occured in folder for-25k-irace-03
+FAILURE! The failure occured in folder for-25k-irace-01
+FAILURE! The failure occured in folder for-25k-irace-09
+FAILURE! The failure occured in folder for-25k-irace-04
+FAILURE! The failure occured in folder for-25k-irace-10
+FAILURE! The failure occured in folder for-25k-irace-08
+FAILURE! The failure occured in folder for-25k-irace-06
+FAILURE! The failure occured in folder for-25k-irace-02
+FAILURE! The failure occured in folder for-25k-irace-05
+FAILURE! The failure occured in folder for-25k-irace-07
