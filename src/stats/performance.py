@@ -1,6 +1,13 @@
 import os
 
 
+best_score = 0
+
+
+def reset():
+    global best_score
+    best_score = 0
+
 def prepare_score_files():
     if not os.path.isdir("scores"):
         os.mkdir("scores")
@@ -17,3 +24,8 @@ def save_results(best_controller, perturbed_controller):
                                               len(perturbed_controller.perturb_history) - 1].__name__))
     with open("scores/scores.csv", "a") as file:
         file.write("{}; {} \n".format(best_controller.scores, perturbed_controller.scores))
+
+
+def set_final_score(score);
+    global _best_score
+    best_score = score
