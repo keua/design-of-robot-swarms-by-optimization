@@ -1,129 +1,88 @@
+library(ggplot2)
+
 source(file="/home/jkuckling/AutoMoDe-LocalSearch/analysis/scripts/utilities.R")
 
-display_comparison <- function() {
-  
-  load_data <- function(architecture, scenario, method) {
-    folder_name <- paste(architecture, scenario, method, sep="_")
-    data <- load_data_score_file(folder_name)
-    return(data)
+load_data <- function(architecture, scenario, method) {
+  folder_name <- paste(architecture, scenario, method, sep="_")
+  data <- load_data_score_file(folder_name)
+  data <- data[c("Simulation", "Pseudo.Reality")]
+  return(data)
+}
+
+load_irace <- function(scenario) {
+  load_irace_bt <- function() {
+    bt_df <- load_data("BT", scenario, "irace")
+    return(bt_df)
   }
-  
-  load_minimal <- function(scenario) {
-    load_minimal_bt <- function() {
-      best <- load_data("BT", scenario, "minimal")
-      return(best)
-    }
-    load_minimal_fsm <- function() {
-      best <- load_data("FSM", scenario, "minimal")
-      return(best)
-    }
-    # bt_results <- load_minimal_bt()
-    fsm_results <- load_minimal_fsm()
-    results_df <- data.frame(fsm_results)
-    # results_df <- data.frame(bt_results, fsm_results)
-    # results_df <- setNames(results_df, c("Minimal BT", "Minimal FSM"))
-    return(results_df)
+  load_irace_fsm <- function() {
+    fsm_df <- load_data("FSM", scenario, "irace")
+    return(fsm_df)
   }
-  
-  load_irace_localsearch <- function(scenario) {
-    load_improving_bt <- function() {
-      best <- get_best_values("BT", scenario, "irace")
-      return(best)
-    }
-    load_improving_fsm <- function() {
-      best <- load_data("FSM", scenario, "irace")
-      return(best)
-    }
-    # bt_results <- load_improving_bt()
-    fsm_results <- load_improving_fsm()
-    results_df <- data.frame(fsm_results)
-    # results_df <- data.frame(bt_results, fsm_results)
-    # results_df <- setNames(results_df, c("Irace+LS BT", "Irace+LS FSM"))
-    return(results_df)
+
+  bt_results <- load_irace_bt()
+  fsm_results <- load_irace_fsm()
+  results_df <- data.frame(bt_results, fsm_results)
+  results_df <- setNames(results_df, c("Irace BT", "Irace FSM"))
+  return(results_df)
+}
+
+load_evostick <- function(scenario) {
+  load_irace_fsm <- function() {
+
   }
-  
-  load_random <- function(scenario) {
-    load_random_bt <- function() {
-      best <- get_best_values("BT", scenario, "random")
-      return(best)
-    }
-    load_random_fsm <- function() {
-      best <- load_data("FSM", scenario, "random")
-      return(best)
-    }
-    # bt_results <- load_random_bt()
-    fsm_results <- load_random_fsm()
-    results_df <- data.frame(fsm_results)
-    # results_df <- data.frame(bt_results, fsm_results)
-    # results_df <- setNames(results_df, c("Random BT", "Random FSM"))
-    return(results_df)
+  exp_folder <- paste("evostick", scenario, "50k", sep="-")
+  file <- paste(RESULT_FOLDER, "evostick_runs", exp_folder, "scores.txt", sep="/")
+  print(file)
+  results_df = read.csv(file, header = FALSE)
+  results_df <- setNames(results_df, c("Evostick"))
+  return(results_df)
+}
+
+load_genetic_programming <- function(scenario) {
+  folder <- paste(RESULT_FOLDER, "genetic_programming", scenario, sep="/")
+  file = paste(folder, "gp100p50g_scores.txt", sep="/")
+  print(file)
+  results_df = read.csv(file, header = FALSE)
+  results_df <- setNames(results_df, c("GP BT"))
+  return(results_df)
+}
+
+load_localsearch <- function(scenario, method) {
+  load_localsearch_bt <- function() {
+    bt_df <- load_data("BT", scenario, method)
+    return(bt_df)
   }
-  
-  load_irace <- function(scenario) {
-    load_irace_bt <- function() {
-      exp_folder <- paste("BT", scenario, "50k", sep="-")
-      file <- paste(RESULT_FOLDER, "irace_runs", exp_folder, "scores.txt", sep="/")
-      print(file)
-      dat = read.csv(file, header = FALSE)
-      return(dat)
-    }
-    load_irace_fsm <- function() {
-      exp_folder <- paste("FSM", scenario, "50k", sep="-")
-      file <- paste(RESULT_FOLDER, "irace_runs", exp_folder, "scores.txt", sep="/")
-      print(file)
-      dat = read.csv(file, header = FALSE)
-      return(dat)
-    }
-    bt_results <- load_irace_bt()
-    fsm_results <- load_irace_fsm()
-    results_df <- data.frame(bt_results, fsm_results)
-    results_df <- setNames(results_df, c("Irace BT", "Irace FSM"))
-    return(results_df)
+  load_localsearch_fsm <- function() {
+    fsm_df <- load_data("FSM", scenario, method)
+    return(fsm_df)
   }
-  
-  load_evostick <- function(scenario) {
-    load_irace_fsm <- function() {
-      
-    }
-    exp_folder <- paste("evostick", scenario, "50k", sep="-")
-    file <- paste(RESULT_FOLDER, "evostick_runs", exp_folder, "scores.txt", sep="/")
-    print(file)
-    results_df = read.csv(file, header = FALSE)
-    results_df <- setNames(results_df, c("Evostick"))
-    return(results_df)
-  }
-  
-  load_genetic_programming <- function(scenario) {
-    folder <- paste(RESULT_FOLDER, "genetic_programming", scenario, sep="/")
-    file = paste(folder, "gp100p50g_scores.txt", sep="/")
-    print(file)
-    results_df = read.csv(file, header = FALSE)
-    results_df <- setNames(results_df, c("GP BT"))
-    return(results_df)
-  }
-  
-  
-  load_all_results <- function(scenario) {
-    minimal_df <- load_minimal(scenario)
-    random_df <- load_random(scenario)
-    improving <- load_irace_localsearch(scenario)
-    irace <- load_irace(scenario)
-    evostick <- load_evostick(scenario)
-    gp <- load_genetic_programming(scenario)
-    all_df <- data.frame(minimal_df, random_df, improving, irace, evostick, gp)
-    return(all_df)
-  }
-  
-  display_comparison_agg <- function() {
-    all_df <- load_all_results("agg")
-    boxplot(all_df, main="Aggregation", ylab="Score", xlab="Controller")
-  }
-  
-  display_comparison_for <- function() {
-    all_df <- load_all_results("for")
-    boxplot(all_df, main="Foraging", ylab="Score", xlab="Controller")
-  }
-  
-  # display_comparison_agg()
-  display_comparison_for()
+
+  bt_results <- load_localsearch_bt()
+  fsm_results <- load_localsearch_fsm()
+  results_df <- data.frame(bt_results, fsm_results)
+  # results_df <- setNames(results_df, c("Random BT", "Random FSM"))
+  return(results_df)
+}
+
+
+load_all_results <- function(scenario) {
+  minimal_df <- load_localsearch(scenario, "minimal")
+  random_df <- load_localsearch(scenario, "random")
+  improve_df <- load_localsearch(scenario, "improve")
+  irace <- load_irace(scenario)
+  print(irace)
+  # evostick <- load_evostick(scenario)
+  # gp <- load_genetic_programming(scenario)
+  all_df <- data.frame(minimal_df, random_df, improve_df, irace)#, evostick, gp)
+  return(all_df)
+}
+
+compare_scenario <- function(title, scenario) {
+  all_df <- load_all_results(scenario)
+  boxplot(all_df, main=title, ylab="Score", xlab="Method")
+}
+
+compare_all <- function() {
+  compare_scenario("Foraging 250sec", "for")
+  # also compare agg, AAC, SCA
 }

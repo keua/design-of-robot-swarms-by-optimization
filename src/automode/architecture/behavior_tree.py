@@ -254,8 +254,6 @@ class RestrictedBehaviorTree(AbstractBehaviorTree):
     @staticmethod
     def parse_from_commandline_args(cmd_args):
 
-        # TODO: Adjust for new BT structure
-
         def parse_top_level_node():
             to_parse.pop(0)  # --nroot
             top_level_type = int(to_parse.pop(0))  # 3
