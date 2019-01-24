@@ -1,0 +1,13 @@
+{
+    "BT_agg_minimal": {
+        "repetitions": 1,
+        "config": "./config/config50k.ini",
+        "scenario": "/home/masterulb/masterthesis/localsearch/scenarios/vanilla/aggregation_bt.argos",
+        "architecture": "BT",
+        "budget": 50,
+        "initial_controller": "minimal",
+        "result_directory": "/home/masterulb/masterthesis/localsearch/result/",
+        "parallel": 2,
+        "sls_algorithm": "sa"
+    }
+}
