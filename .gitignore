@@ -20,6 +20,7 @@ AutoMoDe_LocalSearch.e*
 AutoMoDe_LocalSearch.o*
 
 # Ignore the __pycache__ folders
+__pycache__/
 src/automode/__pycache__/*
 src/automode/controller/__pycache__/*
 src/automode/modules/__pycache__/*
