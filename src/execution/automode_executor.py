@@ -3,6 +3,7 @@ import logging
 from mpi4py.futures import MPIPoolExecutor
 import execution
 import random
+import multiprocessing as mp
 
 
 class AutoMoDeExecutor:
@@ -45,29 +46,31 @@ class AutoMoDeExecutor:
         """
 
         def sequential_execution():
+            cmd = controller.convert_to_commandline_args()
             for s in evaluate_seeds:
-                self.execute_controller(controller, s)
+                seed, score = self.execute_controller(controller, cmd, s)
+                controller.evaluated_instances[seed] = score
 
         def parallel_execution():
-            # execute the parallel_automode.R script
-            pass
             # TODO: Fix this to not use so much memory or run for ever
-            with MPIPoolExecutor(max_workers=5) as executor:
-                for s in evaluate_seeds:
-                    future = executor.submit(self.execute_controller, controller, s)
-                    future.add_done_callback(parallel_execution_done)
-
-        def parallel_execution_done(future):
-            if future.exception() is not None:
-                raise future.exception()
-            seed, score = future.result()
-            controller.evaluated_instances[seed] = score
-
+            results = []
+            cmd = controller.convert_to_commandline_args()
+            pool = mp.Pool(processes=5)
+            for s in evaluate_seeds:
+                results.append(pool.apply_async(
+                    self.execute_controller,
+                    (controller, cmd, s, )))
+            pool.close()
+            pool.join()
+            for r in results:
+                seed, score = r.get()
+                controller.evaluated_instances[seed] = score
         scores = []
         # prepare the set of seeds that need to be evaluated
         evaluate_seeds = []
         for seed in self.seeds:
-            if (seed not in controller.evaluated_instances) or reevaluate_seeds:
+            if (seed not in controller.evaluated_instances) \
+            or reevaluate_seeds:
                 evaluate_seeds.append(seed)
         # evaluate the controller on the set of seeds
         if execution.mpi_enabled:
@@ -80,7 +83,7 @@ class AutoMoDeExecutor:
         controller.scores = scores
         return controller.scores
 
-    def execute_controller(self, controller, seed):
+    def execute_controller(self, controller, cmd, seed):
         """
         Executes the supplied controller on the supplied seed.
         :param controller: The controller to be executed
@@ -90,11 +93,13 @@ class AutoMoDeExecutor:
         # print("Evaluating BT " + str(self.id) + " on seed " + str(seed))
         logging.debug("Evaluating controller " + " on seed " + str(seed))
         # prepare the command line
-        args = [self.path_to_AutoMoDe_executable, "-n", "-c", self.scenario_file, "--seed", str(seed)]
-        args.extend(controller.convert_to_commandline_args())
+        args = [self.path_to_AutoMoDe_executable, "-n",
+                "-c", self.scenario_file, "--seed", str(seed)]
+        args.extend(cmd)
         logging.debug(args)
         # Run and capture output
-        p = subprocess.Popen(args, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        p = subprocess.Popen(args, stderr=subprocess.PIPE,
+                             stdout=subprocess.PIPE)
         (stdout, stderr) = p.communicate()
         # Analyse result
         output = stdout.decode('utf-8')
@@ -108,7 +113,5 @@ class AutoMoDeExecutor:
             logging.error("Stderr: " + stderr.decode('utf-8'))
             logging.error("Stdout: " + stdout.decode('utf-8'))
             raise
-        controller.evaluated_instances[seed] = score
-        logging.debug("Controller {} on seed {} returned score: {}".format(
-            "", seed, controller.evaluated_instances[seed]))
+        logging.debug(f"Controller on seed {seed} returned score: {score}")
         return seed, score
