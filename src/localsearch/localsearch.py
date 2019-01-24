@@ -47,7 +47,7 @@ def iterative_improvement(initial_controller):
             # Evaluate criterion
             criterion = \
                 acceptance(best_controller.scores, perturbed_controller.scores)
-            # save the scores to file and update contrllers
+            # save the scores to file and update controllers
             best_controller.agg_score = (criterion.type, criterion.best_outcome)
             perturbed_controller.agg_score = (criterion.type, criterion.perturb_outcome)
             file.write(
