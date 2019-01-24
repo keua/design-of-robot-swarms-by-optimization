@@ -14,7 +14,7 @@ def mean(best_cntrl_scores, perturb_cntrl_scores):
     perturb_out = stats.mean(perturb_cntrl_scores)
     best_out = stats.mean(best_cntrl_scores)
     # < for max
-    return Criterion('Mean', best_out, perturb_out, best_out < perturb_out)
+    return Criterion('Mean', best_out, perturb_out, best_out <= perturb_out)
 
 
 def median(best_cntrl_scores, perturb_cntrl_scores):
@@ -23,7 +23,7 @@ def median(best_cntrl_scores, perturb_cntrl_scores):
     perturb_out = stats.median(perturb_cntrl_scores)
     best_out = stats.median(best_cntrl_scores)
     # < for max
-    return Criterion('Median', best_out, perturb_out, best_out < perturb_out)
+    return Criterion('Median', best_out, perturb_out, best_out <= perturb_out)
 
 
 def mode(best_cntrl_scores, perturb_cntrl_scores):
@@ -32,7 +32,7 @@ def mode(best_cntrl_scores, perturb_cntrl_scores):
     perturb_out = stats.mode(perturb_cntrl_scores)
     best_out = stats.mode(best_cntrl_scores)
     # < for max
-    return Criterion('Mode', best_out, perturb_out, best_out < perturb_out)
+    return Criterion('Mode', best_out, perturb_out, best_out <= perturb_out)
 
 
 def sumc(best_cntrl_scores, perturb_cntrl_scores):
@@ -41,7 +41,7 @@ def sumc(best_cntrl_scores, perturb_cntrl_scores):
     perturb_out = sum(perturb_cntrl_scores)
     best_out = sum(best_cntrl_scores)
     # < for max
-    return Criterion('Sum', best_out, perturb_out, best_out < perturb_out)
+    return Criterion('Sum', best_out, perturb_out, best_out <= perturb_out)
 
 
 def maxc(best_cntrl_scores, perturb_cntrl_scores):
@@ -50,7 +50,7 @@ def maxc(best_cntrl_scores, perturb_cntrl_scores):
     perturb_out = sum(perturb_cntrl_scores)
     best_out = sum(best_cntrl_scores)
     # < for max
-    return Criterion('Max', best_out, perturb_out, best_out < perturb_out)
+    return Criterion('Max', best_out, perturb_out, best_out <= perturb_out)
 
 
 def minc(best_cntrl_scores, perturb_cntrl_scores):
@@ -59,7 +59,7 @@ def minc(best_cntrl_scores, perturb_cntrl_scores):
     perturb_out = min(perturb_cntrl_scores)
     best_out = min(best_cntrl_scores)
     # < for max
-    return Criterion('Min', best_out, perturb_out, best_out < perturb_out)
+    return Criterion('Min', best_out, perturb_out, best_out <= perturb_out)
 
 
 def tstudent_test(best_cntrl_scores, perturb_cntrl_scores, confidence=0.05):
@@ -71,7 +71,7 @@ def tstudent_test(best_cntrl_scores, perturb_cntrl_scores, confidence=0.05):
     # < for max
     return Criterion(
         'TStudent', best_out, perturb_out,
-        best_out < perturb_out and p < confidence
+        best_out <= perturb_out and p < confidence
     )
 
 
@@ -84,7 +84,7 @@ def wilcoxon_test(best_cntrl_scores, perturb_cntrl_scores, confidence=0.05):
     # < for max
     return Criterion(
         'Wilcoxon', best_out, perturb_out,
-        best_out < perturb_out and p < confidence
+        best_out <= perturb_out and p < confidence
     )
 
 
