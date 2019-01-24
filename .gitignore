@@ -29,9 +29,5 @@ src/automode/modules/__pycache__/*
 analysis/*
 !analysis/scripts/*
 
-# visual studio code 
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
+# Visual studio code 
+.vscode/
