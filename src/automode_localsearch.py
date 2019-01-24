@@ -12,6 +12,7 @@ from configuration import BUDGET_DEFAULT, SCENARIO_DEFAULT, RESULT_DEFAULT, JOB_
     load_configuration_from_file, apply_configuration
 from localsearch import iterative_improvement
 import localsearch.utilities
+from localsearch import SimulatedAnnealing as SA
 
 
 def load_experiment_file(experiment_file):
@@ -63,7 +64,8 @@ def run_local(experiment_file):
     experiment_setup = load_experiment_file(experiment_file)
     for setup_key in experiment_setup:  # Execute each experiment
         setup = experiment_setup[setup_key]
-        for i in range(0, setup["repetitions"]):  # Execute the repetitions of an experiment
+        # Execute the repetitions of an experiment
+        for i in range(0, setup["repetitions"]):
             # retrieve important information
             experiment = {
                 "config_file_name": setup["config"],
@@ -71,12 +73,17 @@ def run_local(experiment_file):
                 "path_to_scenario": setup["scenario"],
                 "budget": setup["budget"],
                 "initial_controller": setup["initial_controller"],
-                "job_name": "{}_{}".format(setup_key, i),  # create correct jobname
+                # create correct jobname
+                "job_name": "{}_{}".format(setup_key, i),
                 "result_directory": setup["result_directory"],
                 "parallel": setup["parallel"],
+                "sls_algorithm": setup["sls_algorithm"]
             }
-            # execute localsearch
-            execute_localsearch(experiment)
+            if experiment['sls_algorithm'] == "sa":
+                execute_simulated_annealing(experiment)
+            elif experiment['sls_algorithm'] == "ii":
+                # execute localsearch
+                execute_localsearch(experiment)
 
 
 def submit():
@@ -107,6 +114,30 @@ def execute_localsearch(args):
     localsearch.utilities.return_to_src_directory()
 
 
+def execute_simulated_annealing(args):
+    """
+    """
+    config = load_configuration_from_file(args["config_file_name"])
+    apply_configuration(args, config)
+    localsearch.utilities.create_directory()
+    # Run local search
+    initial_controller = localsearch.utilities.get_initial_controller()
+    ii_controller = iterative_improvement(initial_controller)
+    logging.warning(f'Improved controller score {ii_controller.agg_score}')
+    # Run Simulated Annealing
+    #initial_controller = localsearch.utilities.get_initial_controller()
+    # initial_controller.draw("initial")
+    sa = SA(random_seed=9846, candidate=ii_controller, cooling_rate=0.5)
+    new_controller = sa.perform_local_search()
+    logging.warning(f'Best controller score {new_controller.agg_score}')
+    new_controller.draw("final")
+    new_controller = new_controller.convert_to_commandline_args()
+    logging.warning(new_controller)
+    with open("best_controller_sa.txt", mode="w") as file:
+        file.write(" ".join(new_controller))
+    localsearch.utilities.return_to_src_directory()
+
+
 def parse_arguments():
     """This method parses the arguments to this script"""
 
@@ -115,7 +146,8 @@ def parse_arguments():
         Sets up the parser for the subcommand local.
         This subcommand will execute a whole experiment on the local machine.
         """
-        parser_local = subparsers.add_parser('local', help='run an experiment locally')
+        parser_local = subparsers.add_parser(
+            'local', help='run an experiment locally')
         group = parser_local.add_mutually_exclusive_group(required=True)
         group.add_argument("-e", dest="experiment_file",
                            help="(relative) path to the experiment file")
@@ -137,7 +169,8 @@ def parse_arguments():
         Sets up the parser for the subcommand run.
         This subcommand will execute a single local search.
         """
-        parser_run = subparsers.add_parser('run', help='run a single execution of the local search')
+        parser_run = subparsers.add_parser(
+            'run', help='run a single execution of the local search')
         # Required arguments
         parser_run.add_argument('-c', '--config', dest="config_file", required=True,
                                 help="The configuration file for the local search algorithm. "
@@ -169,7 +202,8 @@ def parse_arguments():
                                 "If this is not set, then the localsearch will be executed completely sequential.")
 
     parser = argparse.ArgumentParser()
-    subparsers = parser.add_subparsers(title="execution", dest="execution_subcommand")
+    subparsers = parser.add_subparsers(
+        title="execution", dest="execution_subcommand")
     create_subparser_local()
     create_subparser_submit()
     create_subparser_run()

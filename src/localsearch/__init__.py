@@ -1,1 +1,2 @@
 from localsearch.localsearch import iterative_improvement
+from localsearch.SimulatedAnnealing import SimulatedAnnealing
