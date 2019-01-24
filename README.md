@@ -54,4 +54,6 @@ The important top-level implementations (also are refactored heavily at the mome
 
 It would be good to have a flexible acceptance criterion. It would be good to to create a file "acceptance.py" (or "acceptance_criterion.py") in the localsearch folder. In that file you should provide different criteria (for example mean comparison, median comparison, or a statistical test).
 
+Implement a Simulated Annealing algorithm
+
 
