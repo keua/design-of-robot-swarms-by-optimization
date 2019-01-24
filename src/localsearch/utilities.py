@@ -6,6 +6,7 @@ import execution
 from automode.controller import FSM, BT
 
 
+SCORES_DIR = "scores/"
 result_directory = "default/"
 job_name = "LocalSearch"
 config_file_name = "config.ini"
