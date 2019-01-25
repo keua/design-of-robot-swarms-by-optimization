@@ -26,6 +26,6 @@ def save_results(best_controller, perturbed_controller):
         file.write("{}; {} \n".format(best_controller.scores, perturbed_controller.scores))
 
 
-def set_final_score(score);
+def set_final_score(score):
     global _best_score
     best_score = score
