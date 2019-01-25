@@ -18,6 +18,26 @@ copy_results_together <- function(list_of_names, list_of_scores) {
   return(tmp_df)
 }
 
+split_dataframe <- function(df) {
+  n = length(df[[1]])
+  architecture = character(n)
+  method = character(n)
+  source = character(n)
+  score = numeric(n)
+  for (i in 1:n) {
+    #print(df[[1]][i])
+    #print(df[[2]][i])
+    tmp_str = strsplit(as.character(df[[1]][i]), ".", fixed=TRUE)
+    architecture[i] = tmp_str[[1]][1]
+    method[i] = tmp_str[[1]][2]
+    print(class(tmp_str[[1]][3]))
+    source[i] = tmp_str[[1]][3]
+    score[i] = df[[2]][i]
+  }
+  df <- data.frame(architecture, method, source, score)
+  return(df)
+}
+
 
 load_data <- function(architecture, scenario, method) {
   folder_name <- paste(architecture, scenario, method, sep="_")
@@ -27,14 +47,11 @@ load_data <- function(architecture, scenario, method) {
 }
 
 load_evostick <- function(scenario) {
-  load_irace_fsm <- function() {
-
-  }
-  exp_folder <- paste("evostick", scenario, "50k", sep="-")
-  file <- paste(RESULT_FOLDER, "evostick_runs", exp_folder, "scores.txt", sep="/")
-  print(file)
-  results_df = read.csv(file, header = FALSE)
-  results_df <- setNames(results_df, c("Evostick"))
+  nn_results <- load_data("NN", scenario, "evostick")
+  nn_id = paste("NN", "evostick", sep=".")
+  results_df <- copy_results_together(
+    c(paste(nn_id, "simulation", sep="."), paste(nn_id, "pseudoreality", sep=".")),
+      list(nn_results[[1]], nn_results[[2]]))
   return(results_df)
 }
 
@@ -96,16 +113,17 @@ load_all_results <- function(scenario) {
   random_df <- load_localsearch(scenario, "random")
   improve_df <- load_localsearch(scenario, "improve")
   irace_df <- load_irace(scenario)
-  # evostick <- load_evostick(scenario)
+  evostick_df <- load_evostick(scenario)
   # gp <- load_genetic_programming(scenario)
   #print(minimal_df)
-  print(random_df)
+  #print(random_df)
   #print(improve_df)
   #print(irace_df)
-  methods <- unlist(list(minimal_df[[1]], random_df[[1]], improve_df[[1]], irace_df[[1]]))
-  scores <-  unlist(list(minimal_df[[2]], random_df[[2]], improve_df[[2]], irace_df[[2]]))
+  methods <- unlist(list(minimal_df[[1]], random_df[[1]], improve_df[[1]], irace_df[[1]], evostick_df[[1]]))
+  scores <-  unlist(list(minimal_df[[2]], random_df[[2]], improve_df[[2]], irace_df[[2]], evostick_df[[2]]))
   all_df = copy_results_together(methods, scores)
-  print(all_df)
+  all_df <- split_dataframe(all_df)
+  #print(all_df)
   return(all_df)
 }
 
@@ -115,9 +133,15 @@ compare_scenario <- function(title, scenario) {
 }
 
 plot_scenario <- function(title, results) {
-  p <- ggplot(results, aes(method, score)) +
-       geom_boxplot() +
-       ggtitle(title) + xlab("") + ylab("Score")
+  #preprocess results and make factors
+  #results$architecture <- factor(results$architecture, levels = results$architecture)
+  #results$method <- factor(results$method, levels = results$method)
+  #results$source <- factor(results$source, levels = results$source)
+  p <- ggplot(results, aes(architecture, score, notch=TRUE)) +
+       geom_boxplot(aes(fill=source)) +
+       ggtitle(title) + xlab("") + ylab("Score") +
+       theme_grey() +
+       facet_grid(. ~ method)
 
   plot(p)
   # boxplot(results, main=title, ylab="Score", xlab="Method")
@@ -125,5 +149,7 @@ plot_scenario <- function(title, results) {
 
 compare_all <- function() {
   compare_scenario("Foraging 250sec", "for")
-  # also compare agg, AAC, SCA
+  compare_scenario("Aggregation 250sec", "agg")
+  compare_scenario("AAC 60sec", "AAC")
+  compare_scenario("SCA 60sec", "SCA")
 }
