@@ -25,12 +25,9 @@ split_dataframe <- function(df) {
   source = character(n)
   score = numeric(n)
   for (i in 1:n) {
-    #print(df[[1]][i])
-    #print(df[[2]][i])
     tmp_str = strsplit(as.character(df[[1]][i]), ".", fixed=TRUE)
     architecture[i] = tmp_str[[1]][1]
     method[i] = tmp_str[[1]][2]
-    print(class(tmp_str[[1]][3]))
     source[i] = tmp_str[[1]][3]
     score[i] = df[[2]][i]
   }
@@ -108,41 +105,42 @@ load_irace <- function(scenario) {
   return(results_df)
 }
 
-load_all_results <- function(scenario) {
+load_localsearch_results <- function(scenario) {
   minimal_df <- load_localsearch(scenario, "minimal")
   random_df <- load_localsearch(scenario, "random")
   improve_df <- load_localsearch(scenario, "improve")
   irace_df <- load_irace(scenario)
-  evostick_df <- load_evostick(scenario)
-  # gp <- load_genetic_programming(scenario)
   #print(minimal_df)
   #print(random_df)
   #print(improve_df)
   #print(irace_df)
-  methods <- unlist(list(minimal_df[[1]], random_df[[1]], improve_df[[1]], irace_df[[1]], evostick_df[[1]]))
-  scores <-  unlist(list(minimal_df[[2]], random_df[[2]], improve_df[[2]], irace_df[[2]], evostick_df[[2]]))
-  all_df = copy_results_together(methods, scores)
+  methods_ls <- unlist(list(minimal_df[[1]], random_df[[1]], improve_df[[1]], irace_df[[1]]))
+  scores_ls <-  unlist(list(minimal_df[[2]], random_df[[2]], improve_df[[2]], irace_df[[2]]))
+  all_df = copy_results_together(methods_ls, scores_ls)
   all_df <- split_dataframe(all_df)
   #print(all_df)
   return(all_df)
 }
 
 compare_scenario <- function(title, scenario) {
-  all_results <- load_all_results(scenario)
-  plot_scenario(title, all_results)
+  ls_results <- load_localsearch_results(scenario)
+  evostick_df = load_evostick(scenario)
+  evostick_df <- split_dataframe(evostick_df)
+  # gp_df <- load_genetic_programming(scenario)
+  plot_scenario(title, ls_results, evostick_df, evostick_df)  # TODO: Change second evostick_df to gp_df
 }
 
-plot_scenario <- function(title, results) {
-  #preprocess results and make factors
-  #results$architecture <- factor(results$architecture, levels = results$architecture)
-  #results$method <- factor(results$method, levels = results$method)
-  #results$source <- factor(results$source, levels = results$source)
-  p <- ggplot(results, aes(architecture, score, notch=TRUE)) +
-       geom_boxplot(aes(fill=source)) +
-       ggtitle(title) + xlab("") + ylab("Score") +
+plot_scenario <- function(title, results_ls, results_evo, results_gp) {
+  # Setting up the plot
+  p <- ggplot()
+  # plotting localsearch
+  p <- p + geom_boxplot(data=results_ls, aes(architecture, score, fill=source))
+  # plotting evostick
+  p <- p + geom_boxplot(data=results_evo, aes(architecture, score, fill=source))
+  # setting up general information
+  p <- p + ggtitle(title) + xlab("") + ylab("Score") +
        theme_grey() +
-       facet_grid(. ~ method)
-
+       facet_grid(. ~ method, scales = "free", space = "free")  # group by method, only include relevant architectures (scales=free) and make everything the same width (space=free)
   plot(p)
   # boxplot(results, main=title, ylab="Score", xlab="Method")
 }
