@@ -13,6 +13,7 @@ from configuration import BUDGET_DEFAULT, SCENARIO_DEFAULT, RESULT_DEFAULT, JOB_
 from localsearch import iterative_improvement
 import localsearch.utilities
 from localsearch import SimulatedAnnealing as SA
+from localsearch import IterativeImprovement as II
 
 
 def load_experiment_file(experiment_file):
@@ -77,13 +78,16 @@ def run_local(experiment_file):
                 "job_name": "{}_{}".format(setup_key, i),
                 "result_directory": setup["result_directory"],
                 "parallel": setup["parallel"],
-                "sls_algorithm": setup["sls_algorithm"]
+                "sls": setup["sls"]
             }
-            if experiment['sls_algorithm'] == "sa":
+            if "SimulatedAnnealing" in experiment["sls"]:
                 execute_simulated_annealing(experiment)
-            elif experiment['sls_algorithm'] == "ii":
+            elif "IterativeImprovement" in experiment["sls"]:
                 # execute localsearch
-                execute_localsearch(experiment)
+                #execute_localsearch(experiment)
+                execute_iterative_improvement(experiment)
+            logging.warning(f"======== Repetition {i} finished ========")
+        logging.warning(f"======== Experiment {setup_key} finished ========")
 
 
 def submit():
@@ -120,20 +124,29 @@ def execute_simulated_annealing(args):
     config = load_configuration_from_file(args["config_file_name"])
     apply_configuration(args, config)
     localsearch.utilities.create_directory()
-    # Run local search
-    initial_controller = localsearch.utilities.get_initial_controller()
-    ii_controller = iterative_improvement(initial_controller)
-    logging.warning(f'Improved controller score {ii_controller.agg_score}')
-    # Run Simulated Annealing
-    #initial_controller = localsearch.utilities.get_initial_controller()
-    # initial_controller.draw("initial")
-    sa = SA(random_seed=9846, candidate=ii_controller, cooling_rate=0.5)
-    new_controller = sa.perform_local_search()
+    sa = SA.from_json(args["sls"]['SimulatedAnnealing'])
+    new_controller = sa.local_search()
     logging.warning(f'Best controller score {new_controller.agg_score}')
     new_controller.draw("final")
     new_controller = new_controller.convert_to_commandline_args()
-    logging.warning(new_controller)
+    logging.debug(new_controller)
     with open("best_controller_sa.txt", mode="w") as file:
+        file.write(" ".join(new_controller))
+    localsearch.utilities.return_to_src_directory()
+
+def execute_iterative_improvement(args):
+    """
+    """
+    config = load_configuration_from_file(args["config_file_name"])
+    apply_configuration(args, config)
+    localsearch.utilities.create_directory()
+    ii = II.from_json(args["sls"]['IterativeImprovement'])
+    new_controller = ii.local_search()
+    logging.warning(f'Best controller score {new_controller.agg_score}')
+    new_controller.draw("final")
+    new_controller = new_controller.convert_to_commandline_args()
+    logging.debug(new_controller)
+    with open("best_controller_ii.txt", mode="w") as file:
         file.write(" ".join(new_controller))
     localsearch.utilities.return_to_src_directory()
 
