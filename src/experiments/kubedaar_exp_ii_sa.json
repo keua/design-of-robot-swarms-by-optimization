@@ -1,0 +1,58 @@
+{
+    "FSM_agg_minimal_ii_sa": {
+        "repetitions": 1,
+        "config": "./config/config50k.ini",
+        "scenario": "/home/masterulb/masterthesis/localsearch/scenarios/vanilla/aggregation.argos",
+        "architecture": "FSM",
+        "result_directory": "/home/masterulb/masterthesis/localsearch/result/",
+        "parallel": 8,
+        "budget": 50,
+        "initial_controller": "minimal",
+        "sls": {
+            "SimulatedAnnealing": {
+                "budget": 500,
+                "candidate": {
+                    "IterativeImprovement": {
+                        "budget": 50,
+                        "initial_controller": "minimal",
+                        "acceptance_criterion": "mean"
+                    }
+                },
+                "temperature": 125.0,
+                "final_temperature": 0.00001,
+                "cooling_rate": 0.5,
+                "iterations_per_temperature": 1,
+                "acceptance_criterion": "mean",
+                "random_seed": 8963
+            }
+        }
+    },
+    "BT_agg_minimal_ii_sa": {
+        "repetitions": 1,
+        "config": "./config/config50k.ini",
+        "scenario": "/home/masterulb/masterthesis/localsearch/scenarios/vanilla/aggregation_bt.argos",
+        "architecture": "BT",
+        "result_directory": "/home/masterulb/masterthesis/localsearch/result/",
+        "parallel": 8,
+        "budget": 50,
+        "initial_controller": "minimal",
+        "sls": {
+            "SimulatedAnnealing": {
+                "budget": 500,
+                "candidate": {
+                    "IterativeImprovement": {
+                        "budget": 50,
+                        "initial_controller": "minimal",
+                        "acceptance_criterion": "mean"
+                    }
+                },
+                "temperature": 125.0,
+                "final_temperature": 0.00001,
+                "cooling_rate": 0.5,
+                "iterations_per_temperature": 1,
+                "acceptance_criterion": "mean",
+                "random_seed": 8963
+            }
+        }
+    }
+}
