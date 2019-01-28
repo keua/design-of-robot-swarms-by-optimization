@@ -9,21 +9,42 @@ import stats
 import settings
 
 
+class ExecutorFactory:
+    """
+    A factory class to get the correct executor to submit the controllers to.
+    """
+
+    @staticmethod
+    def get_executor():
+        """
+        Returns an instance of the executor that should be used.
+        :return:
+        """
+        return SequentialExecutor()  # TODO: Find the right executor here
+
+
 class AutoMoDeExecutor:
     """
-    Abstract executor class that defines many useful methods.
-    Override to implement the details on how the evaluation is distributed.
+    Abstract class for "executors".
+    When created it sets up everything necessary for execution.
+    Subclass and implement this class to define the way in which the execution is distributed.
     """
 
     __metaclass__ = ABCMeta
 
-    def __init__(self, path_to_AutoMoDe_executable="/path/to/AutoMoDe/",
-                 scenario_file="/path/to/scenario"):
-        self.path_to_AutoMoDe_executable = path_to_AutoMoDe_executable
-        self.scenario_file = scenario_file
+    def __init__(self):
+        if settings.architecture == "BT":
+            self.path_to_AutoMoDe_executable = settings.BT_path_to_AutoMoDe
+        elif settings.architecture == "FSM":
+            self.path_to_AutoMoDe_executable = settings.FSM_path_to_AutoMoDe
+        else:
+            logging.warning("Unknown architecture {}".format(settings.architecture))
+            self.path_to_AutoMoDe_executable = "/path/to/AutoMoDe"
+        self.scenario_file = settings.path_to_scenario
 
         self.seed_window_size = settings.seed_window_size
         self.seed_window_move = settings.seed_window_movement
+        self.seeds = []
         self.create_seeds()
 
     def create_seeds(self):

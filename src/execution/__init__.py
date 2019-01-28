@@ -1,21 +1,12 @@
-from execution.automode_executor import SequentialExecutor
+"""
+This module provides the following functionality
+- execution.ExecutorFactory: a factory class that can be used to obtain an executor object
+- execution.AutoMoDeExecutor: the abstract class that provides the execution logic
 
-# TODO: Maybe hide this? At least make it read only
-mpi_enabled = False
-parallel = 0
+How to use the executor?
+import execution.ExecutorFactory
+executor = execution.ExecutorFactory.get_executor()
+scores = executor.evaluate_controller(controller)
+"""
 
-_executor = None
-
-
-def setup(path_to_AutoMoDe, scenario_file):
-    global _executor
-    if parallel == 0:  # no parallelization
-        _executor = SequentialExecutor(path_to_AutoMoDe, scenario_file)
-
-
-def evaluate_controller(controller):
-    return _executor.evaluate_controller(controller)
-
-
-def advance_seeds():
-    _executor.advance_seeds()
+from execution.automode_executor import ExecutorFactory

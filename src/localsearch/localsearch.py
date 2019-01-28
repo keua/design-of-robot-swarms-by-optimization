@@ -18,6 +18,7 @@ def iterative_improvement(initial_controller):
     :param initial_controller: The controller that is used to first improve from
     :return: The best controller after the iterative improvement
     """
+    executor = execution.ExecutorFactory.get_executor()
     max_improvements = math.floor(
         budget/(settings.seed_window_size + settings.seed_window_movement))
     logging.info("number of iterations: {}".format(max_improvements))
@@ -26,12 +27,13 @@ def iterative_improvement(initial_controller):
     stats.time.start_run()
     logging.info("Started at {}".format(stats.time.start_time))
     stats.performance.prepare_score_files()
-    best_controller.evaluate()
+    print(settings.architecture)
+    best_controller.evaluate(executor)
     logging.debug("Initial best scores {}".format(best_controller.scores))
     for i in range(0, max_improvements):
         logging.debug("Iteration {}".format(i))
         # move the window
-        execution.advance_seeds()
+        executor.advance_seeds()
         # create a perturbed controller
         perturbed_controller = copy.deepcopy(best_controller)
         # it is necessary to remove all evaluations from here
@@ -39,8 +41,8 @@ def iterative_improvement(initial_controller):
         perturbed_controller.id = i
         perturbed_controller.perturb()
         # evaluate both FSMs on the seed_window
-        best_controller.evaluate()
-        perturbed_controller.evaluate()
+        best_controller.evaluate(executor)
+        perturbed_controller.evaluate(executor)
         # Evaluate criterion
         criterion = acceptance(best_controller.scores, perturbed_controller.scores)
         # save the scores to file and update controllers

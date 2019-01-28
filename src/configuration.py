@@ -164,17 +164,8 @@ def set_execution_parameters():
     """
     Sets the configuration parameters in the execution module
     """
-    #if settings.parallel > 1:
-    #    execution.mpi_enabled = True
-    #    execution.parallel = parallel
-    #else:
-    execution.mpi_enabled = False
+    pass
 
-    if settings.architecture == "BT":
-        path_to_AutoMoDe_executable = settings.BT_path_to_AutoMoDe
-    else:
-        path_to_AutoMoDe_executable = settings.FSM_path_to_AutoMoDe
-    execution.setup(path_to_AutoMoDe_executable, settings.path_to_scenario)
 
 
 def set_localsearch_parameters():
@@ -198,5 +189,5 @@ def apply():
     logging.getLogger().setLevel(level)
     # TODO: Instead of setting here, let them look up
     set_controller_parameters()
-    set_execution_parameters()
+    # set_execution_parameters()
     set_localsearch_parameters()

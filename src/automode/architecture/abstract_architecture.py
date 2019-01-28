@@ -6,8 +6,6 @@ from abc import ABCMeta, abstractmethod
 import random
 import logging
 
-import execution
-
 
 class ArchitectureABC:
     """
@@ -84,7 +82,7 @@ class AutoMoDeArchitectureABC(ArchitectureABC):
     def convert_to_commandline_args(self):
         pass
 
-    def evaluate(self):
+    def evaluate(self, executor):
         """Run this controller in Argos and receive a score to compute the efficiency of the controller"""
-        self.scores = execution.evaluate_controller(self)
+        self.scores = executor.evaluate_controller(self)
         return self.scores
