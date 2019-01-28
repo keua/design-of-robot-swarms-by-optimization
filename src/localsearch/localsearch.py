@@ -24,7 +24,6 @@ def iterative_improvement(initial_controller):
     stats.time.start_run()
     logging.info("Started at {}".format(stats.time.start_time))
     stats.performance.prepare_score_files()
-    print(settings.architecture)
     best_controller.evaluate(executor)
     logging.debug("Initial best scores {}".format(best_controller.scores))
     for i in range(0, max_improvements):

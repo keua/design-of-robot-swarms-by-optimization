@@ -20,7 +20,7 @@ class ExecutorFactory:
         Returns an instance of the executor that should be used.
         :return:
         """
-        return SequentialExecutor()  # TODO: Find the right executor here
+        return MultiProcessingExecutor()  # TODO: Find the right executor here
 
 
 class AutoMoDeExecutor:
@@ -95,10 +95,10 @@ class AutoMoDeExecutor:
         :return: a list of scores, achieved on the instances
         """
 
-    def execute_controller(self, controller, seed):
+    def execute_controller(self, controller_args, seed):
         """
         Executes the supplied controller on the supplied seed.
-        :param controller: The controller to be executed
+        :param controller_args: The controller to be executed, already in command line format
         :param seed: The seed with which the controller is executed
         :return: The score of controller with the given seed (which is also saved in the controller)
         """
@@ -106,7 +106,7 @@ class AutoMoDeExecutor:
         logging.debug("Evaluating controller on seed {}".format(seed))
         # prepare the command line
         args = [self.path_to_AutoMoDe_executable, "-n", "-c", self.scenario_file, "--seed", str(seed)]
-        args.extend(controller.convert_to_commandline_args())
+        args.extend(controller_args)
         logging.debug(args)
         # Run and capture output
         stats.time.start_simulation()
@@ -136,11 +136,61 @@ class SequentialExecutor(AutoMoDeExecutor):
 
     def _evaluate(self, controller, seeds):
         # evaluate the controller on the set of seeds
+        controller_args = controller.convert_to_commandline_args()
         for seed in seeds:
-            _, score = self.execute_controller(controller, seed)
+            _, score = self.execute_controller(controller_args, seed)
             controller.evaluated_instances[seed] = score
         # return the score
         scores = []
         for seed in self.seeds:
             scores.append(controller.evaluated_instances[seed])
+        return scores
+
+
+class MultiProcessingExecutor(AutoMoDeExecutor):
+    """
+    An implementation of the abstract class AutoMoDeExecutor that runs all instances using the multiprocessing module
+    """
+
+    def _evaluate(self, controller, seeds):
+        import multiprocessing
+        results = []
+        cmd = controller.convert_to_commandline_args()
+        pool = multiprocessing.Pool(processes=settings.parallel)
+        for s in seeds:
+            results.append(pool.apply_async(
+                self.execute_controller,
+                (cmd, s,)))
+        pool.close()
+        pool.join()
+        scores = []
+        for r in results:
+            seed, score = r.get()
+            controller.evaluated_instances[seed] = score
+            scores.append(score)
+        return scores
+
+
+class MPIExecutor(AutoMoDeExecutor):
+    """
+    An implementation of the abstract class AutoMoDeExecutor that runs all instances using the mpi4py package
+    """
+
+    def _evaluate(self, controller, seeds):
+        import mpi4py.futures
+        results = []
+        cmd = controller.convert_to_commandline_args()
+        pool = mpi4py.futures.MPIPoolExecutor(max_workers=settings.parallel)
+        for s in seeds:
+            results.append(pool.submit(
+                self.execute_controller,
+                (cmd, s,)))
+        pool.shutdown(wait=True)
+        scores = []
+        for future in results:
+            if future.exception() is not None:
+                raise future.exception()
+            seed, score = future.result()
+            controller.evaluated_instances[seed] = score
+            scores.append(score)
         return scores

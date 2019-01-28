@@ -61,3 +61,6 @@ BT_max_actions = 0
 
 snapshot_frequency = 0
 log_level = ""
+
+# TODO: Setting and parallelization technique
+parallel = 1
