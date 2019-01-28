@@ -7,6 +7,7 @@ How to use the executor?
 import execution.ExecutorFactory
 executor = execution.ExecutorFactory.get_executor()
 scores = executor.evaluate_controller(controller)
+executor.advance_seeds()
 """
 
 from execution.automode_executor import ExecutorFactory

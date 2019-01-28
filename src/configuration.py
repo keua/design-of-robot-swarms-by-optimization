@@ -11,7 +11,7 @@ import logging
 
 from automode.architecture import FSM
 from automode.architecture import BT
-import execution
+
 import localsearch.utilities
 import settings
 
@@ -167,7 +167,6 @@ def set_execution_parameters():
     pass
 
 
-
 def set_localsearch_parameters():
     """
     Sets the configuration parameters in the localsearch module
@@ -176,8 +175,6 @@ def set_localsearch_parameters():
     localsearch.utilities.job_name = settings.job_name
     localsearch.utilities.result_directory = settings.result_directory
     localsearch.utilities.config_file_name = settings.config_file_name
-    localsearch.localsearch.budget = settings.budget
-    localsearch.localsearch.snapshot_frequency = settings.snapshot_frequency
 
 
 def apply():
