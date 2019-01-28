@@ -47,8 +47,8 @@ def sumc(best_cntrl_scores, perturb_cntrl_scores):
 def maxc(best_cntrl_scores, perturb_cntrl_scores):
     """
     """
-    perturb_out = sum(perturb_cntrl_scores)
-    best_out = sum(best_cntrl_scores)
+    perturb_out = max(perturb_cntrl_scores)
+    best_out = max(best_cntrl_scores)
     # < for max
     return Criterion('Max', best_out, perturb_out, best_out <= perturb_out)
 
