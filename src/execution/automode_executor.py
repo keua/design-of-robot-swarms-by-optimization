@@ -75,15 +75,25 @@ class AutoMoDeExecutor:
                 evaluate_seeds.append(seed)
         return evaluate_seeds
 
-    @abstractmethod
     def evaluate_controller(self, controller, reevaluate_seeds=False):
         """
         Evaluate this controller on the current seed set
         :param controller: the controller to be evaluated
         :param reevaluate_seeds:
-        :return:
+        :return: the list of scores
         """
-        pass
+        evaluate_seeds = self.prepare_seeds(controller, reevaluate_seeds)
+        return self._evaluate(controller, evaluate_seeds)
+
+    @abstractmethod
+    def _evaluate(self, controller, seeds):
+        """
+        Evaluate a controller on the supplied set of seeds.
+        Override this to implement how exactly it is handled.
+        :param controller: The controller that should be evaluated
+        :param seeds: The set of seeds that need to be evaluated
+        :return: a list of scores, achieved on the instances
+        """
 
     def execute_controller(self, controller, seed):
         """
@@ -124,10 +134,9 @@ class SequentialExecutor(AutoMoDeExecutor):
     An implementation of the abstract class AutoMoDeExecutor that runs all instances sequentially
     """
 
-    def evaluate_controller(self, controller, reevaluate_seeds=False):
-        evaluate_seeds = self.prepare_seeds(controller, reevaluate_seeds)
+    def _evaluate(self, controller, seeds):
         # evaluate the controller on the set of seeds
-        for seed in evaluate_seeds:
+        for seed in seeds:
             _, score = self.execute_controller(controller, seed)
             controller.evaluated_instances[seed] = score
         # return the score
