@@ -57,3 +57,11 @@ def get_initial_controller():
                 controller = file.readline()
         controller = controller.split(" ")
         return get_controller_class()().parse_from_commandline_args(controller)
+
+def get_class( kls ):
+    parts = kls.split('.')
+    module = ".".join(parts[:-1])
+    m = __import__( module )
+    for comp in parts[1:]:
+        m = getattr(m, comp)
+    return m
