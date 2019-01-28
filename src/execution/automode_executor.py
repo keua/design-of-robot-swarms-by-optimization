@@ -55,7 +55,7 @@ class AutoMoDeExecutor:
             # TODO: Fix this to not use so much memory or run for ever
             results = []
             cmd = controller.convert_to_commandline_args()
-            pool = mp.Pool(processes=5)
+            pool = mp.Pool(processes=execution.parallel)
             for s in evaluate_seeds:
                 results.append(pool.apply_async(
                     self.execute_controller,
