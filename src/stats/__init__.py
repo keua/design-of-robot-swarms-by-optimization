@@ -26,7 +26,7 @@ def save():
                  "simulation time": str(stats.time.simulation_time),
                  }
     performance_dict = {
-        "final_performace": str(stats.performace.best_score)
+        "final_performace": str(stats.performance.best_score)
     }
     stats_dict = {"time": time_dict, "performance": performance_dict}
     with open("stats.json", "w") as file:

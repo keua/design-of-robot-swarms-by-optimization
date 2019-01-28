@@ -8,6 +8,7 @@ def reset():
     global best_score
     best_score = 0
 
+
 def prepare_score_files():
     if not os.path.isdir("scores"):
         os.mkdir("scores")
@@ -27,5 +28,5 @@ def save_results(best_controller, perturbed_controller):
 
 
 def set_final_score(score):
-    global _best_score
+    global best_score
     best_score = score
