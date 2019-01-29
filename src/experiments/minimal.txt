@@ -4,7 +4,7 @@
     "BT_for_minimal": {
         "repetitions": 10,
         "config": "./config/config50k.ini",
-        "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/scenarios/vanilla/for250sec/foraging_bt.argos",
+        "scenario": "/home/jkuckling/AutoMoDe-missions/vanilla/for250sec/foraging_bt.argos",
         "architecture": "BT",
         "budget": 50000,
         "initial_controller": "minimal",
@@ -14,7 +14,7 @@
     "FSM_for_minimal": {
         "repetitions": 10,
         "config": "./config/config50k.ini",
-        "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/scenarios/vanilla/for250sec/foraging.argos",
+        "scenario": "/home/jkuckling/AutoMoDe-missions/vanilla/for250sec/foraging.argos",
         "architecture": "FSM",
         "budget": 50000,
         "initial_controller": "minimal",
@@ -24,7 +24,7 @@
     "BT_agg_minimal": {
         "repetitions": 10,
         "config": "./config/config50k.ini",
-        "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/scenarios/vanilla/agg250sec/aggregation_bt.argos",
+        "scenario": "/home/jkuckling/AutoMoDe-missions/vanilla/agg250sec/aggregation_bt.argos",
         "architecture": "BT",
         "budget": 50000,
         "initial_controller": "minimal",
@@ -34,7 +34,7 @@
     "FSM_agg_minimal": {
         "repetitions": 10,
         "config": "./config/config50k.ini",
-        "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/scenarios/vanilla/agg250sec/aggregation.argos",
+        "scenario": "/home/jkuckling/AutoMoDe-missions/vanilla/agg250sec/aggregation.argos",
         "architecture": "FSM",
         "budget": 50000,
         "initial_controller": "minimal",
@@ -44,7 +44,7 @@
     "BT_AAC_minimal": {
         "repetitions": 10,
         "config": "./config/config50k.ini",
-        "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/scenarios/chocolate/AAC/aac_bt.argos",
+        "scenario": "/home/jkuckling/AutoMoDe-missions/chocolate/AAC120sec/aac_bt.argos",
         "architecture": "BT",
         "budget": 50000,
         "initial_controller": "minimal",
@@ -54,7 +54,7 @@
     "FSM_AAC_minimal": {
         "repetitions": 10,
         "config": "./config/config50k.ini",
-        "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/scenarios/chocolate/AAC/aac_fsm.argos",
+        "scenario": "/home/jkuckling/AutoMoDe-missions/chocolate/AAC120sec/aac_fsm.argos",
         "architecture": "FSM",
         "budget": 50000,
         "initial_controller": "minimal",
@@ -64,7 +64,7 @@
     "BT_SCA_minimal": {
         "repetitions": 10,
         "config": "./config/config50k.ini",
-        "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/scenarios/chocolate/SCA/sca_bt.argos",
+        "scenario": "/home/jkuckling/AutoMoDe-missions/chocolate/SCA120sec/sca_bt.argos",
         "architecture": "BT",
         "budget": 50000,
         "initial_controller": "minimal",
@@ -74,7 +74,7 @@
     "FSM_SCA_minimal": {
         "repetitions": 10,
         "config": "./config/config50k.ini",
-        "scenario": "/home/jkuckling/AutoMoDe-LocalSearch/scenarios/chocolate/SCA/sca_fsm.argos",
+        "scenario": "/home/jkuckling/AutoMoDe-missions/chocolate/SCA120sec/sca_fsm.argos",
         "architecture": "FSM",
         "budget": 50000,
         "initial_controller": "minimal",
