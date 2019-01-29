@@ -77,13 +77,20 @@ class AutoMoDeExecutor:
 
     def evaluate_controller(self, controller, reevaluate_seeds=False):
         """
-        Evaluate this controller on the current seed set
+        Evaluate this controller on the current seed set.
+        This function will return the set of scores, but will also already have set everything on the controller.
+        That means specifically that you don't need set the controller.scores with whatever this method returns.
         :param controller: the controller to be evaluated
         :param reevaluate_seeds:
-        :return: the list of scores
+        :return: the list of scores,
         """
         evaluate_seeds = self.prepare_seeds(controller, reevaluate_seeds)
-        return self._evaluate(controller, evaluate_seeds)
+        self._evaluate(controller, evaluate_seeds)  # returns the evaluated scores, but we don't care
+        scores = []
+        for seed in self.seeds:
+            scores.append(controller.evaluated_instances[seed])
+        controller.scores = scores
+        return None
 
     @abstractmethod
     def _evaluate(self, controller, seeds):
@@ -137,13 +144,11 @@ class SequentialExecutor(AutoMoDeExecutor):
     def _evaluate(self, controller, seeds):
         # evaluate the controller on the set of seeds
         controller_args = controller.convert_to_commandline_args()
+        scores = []
         for seed in seeds:
             _, score = self.execute_controller(controller_args, seed)
             controller.evaluated_instances[seed] = score
-        # return the score
-        scores = []
-        for seed in self.seeds:
-            scores.append(controller.evaluated_instances[seed])
+            scores.append(score)
         return scores
 
 

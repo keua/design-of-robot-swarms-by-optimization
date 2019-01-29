@@ -24,7 +24,7 @@ def iterative_improvement(initial_controller):
     stats.time.start_run()
     logging.info("Started at {}".format(stats.time.start_time))
     stats.performance.prepare_score_files()
-    best_controller.evaluate(executor)
+    executor.evaluate_controller(best_controller)
     logging.debug("Initial best scores {}".format(best_controller.scores))
     for i in range(0, max_improvements):
         logging.debug("Iteration {}".format(i))
@@ -37,8 +37,8 @@ def iterative_improvement(initial_controller):
         perturbed_controller.id = i
         perturbed_controller.perturb()
         # evaluate both FSMs on the seed_window
-        best_controller.evaluate(executor)
-        perturbed_controller.evaluate(executor)
+        executor.evaluate_controller(best_controller)
+        executor.evaluate_controller(perturbed_controller)
         # Evaluate criterion
         criterion = acceptance(best_controller.scores, perturbed_controller.scores)
         # save the scores to file and update controllers

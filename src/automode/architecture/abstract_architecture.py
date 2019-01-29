@@ -62,7 +62,7 @@ class AutoMoDeArchitectureABC(ArchitectureABC):
     """
 
     def __init__(self, minimal=False):
-        self.scores = []  # this will be a list of tuples (seed, score)
+        self.scores = []  # this will be a list scores
         self.agg_score = ("type", float("inf"))  # the aggregated score with respect to the fitness function, useful for short debugging
         # parameters used to keep track of the local search
         self.perturb_history = []  # a list of all applied operators -> TODO: transform this into a list of strings
@@ -81,8 +81,3 @@ class AutoMoDeArchitectureABC(ArchitectureABC):
     @abstractmethod
     def convert_to_commandline_args(self):
         pass
-
-    def evaluate(self, executor):
-        """Run this controller in Argos and receive a score to compute the efficiency of the controller"""
-        self.scores = executor.evaluate_controller(self)
-        return self.scores
