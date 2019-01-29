@@ -42,16 +42,15 @@ def evaluate_all_controllers(controller_file, automode, scenario, architecture="
         controller_config_constant = "--fsm-config"
     else:
         print("Unknown architecture {}".format(architecture))
-    with open(controller_file) as file:
-        controllers = file.readlines()
-        for controller in controllers:
-            controller = controller.strip()
-            # print(controller)
-            scores = evaluate_controller(automode, scenario, controller_config_constant, controller)
-            # TODO: Use scores
-            print(statistics.mean(scores))
-            if output_file:
-                with open(output_file, "a") as output:
+    if output_file:
+        with open(output_file, "w") as output:
+            with open(controller_file) as file:
+                controllers = file.readlines()
+                for controller in controllers:
+                    controller = controller.strip()
+                    # print(controller)
+                    scores = evaluate_controller(automode, scenario, controller_config_constant, controller)
+                    # print(statistics.mean(scores))
                     output.write(str(statistics.mean(scores)) + "\n")
 
 
