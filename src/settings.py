@@ -33,6 +33,9 @@ LOG_LEVEL_DEFAULT = "NOTHING"
 
 JOB_NAME_DEFAULT = ""
 
+PARALLEL_DEFAULT = -1
+PARALLELIZATION_DEFAULT = "NoParallelization"
+
 
 architecture = ""
 job_name = ""
@@ -62,5 +65,5 @@ BT_max_actions = 0
 snapshot_frequency = 0
 log_level = ""
 
-# TODO: Setting and parallelization technique
+parallelization = "sequential"  # can be sequential, multiprocessing or MPI at the moment
 parallel = 1

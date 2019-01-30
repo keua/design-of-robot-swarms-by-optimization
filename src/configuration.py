@@ -47,6 +47,9 @@ def default_configuration():
     # Values of the logging section of the configuration file
     settings.snapshot_frequency = settings.SNAPSHOT_FREQUENCY_DEFAULT
     settings.log_level = settings.LOG_LEVEL_DEFAULT
+    # Values for parallelization
+    settings.parallel = settings.PARALLEL_DEFAULT
+    settings.parallelization = settings.PARALLELIZATION_DEFAULT
 
 
 def load_from_file(config_file_name):
@@ -83,11 +86,16 @@ def load_from_file(config_file_name):
         settings.BT_path_to_AutoMoDe = config_parser["BT"]["path_to_AutoMoDe"]
         settings.BT_max_actions = int(config_parser["BT"]["max_actions"])
 
+    def load_parallel_configuration():
+        settings.parallel = int(config_parser["Parallel"]["parallel"])
+        settings.parallelization = config_parser["Parallel"]["parallelization"]
+
     config_parser = configparser.ConfigParser()
     config_parser.read(config_file_name)
     load_default_values()
     load_run_configuration()
     load_controller_configuration()
+    load_parallel_configuration()
     # parse logging configuration
     settings.snapshot_frequency = int(config_parser["Logging"]["snapshot_frequency"])
     settings.log_level = config_parser["Logging"]["log_level"]

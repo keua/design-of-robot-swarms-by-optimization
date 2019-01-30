@@ -3,8 +3,6 @@ import logging
 import random
 from abc import ABCMeta, abstractmethod
 
-# from mpi4py.futures import MPIPoolExecutor
-
 import stats
 import settings
 
@@ -20,7 +18,13 @@ class ExecutorFactory:
         Returns an instance of the executor that should be used.
         :return:
         """
-        return MultiProcessingExecutor()  # TODO: Find the right executor here
+        if settings.parallelization == "sequential":
+            return SequentialExecutor()
+        if settings.parallelization == "multiprocessing":
+            return MultiProcessingExecutor()
+        if settings.parallelization == "MPI":
+            return MPIExecutor()
+        return None
 
 
 class AutoMoDeExecutor:

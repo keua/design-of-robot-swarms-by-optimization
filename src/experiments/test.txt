@@ -15,7 +15,7 @@
     "FSM_agg_minimal": {
         "repetitions": 1,
         "config": "./config/config_short.ini",
-        "scenario": "/home/jkuckling/AutoMoDe-missions/vanilla/agg250sec/aggregation.argos",
+        "scenario": "/home/jkuckling/AutoMoDe-missions/vanilla/agg250sec/aggregation_fsm.argos",
         "architecture": "FSM",
         "budget": 50,
         "initial_controller": "minimal",
