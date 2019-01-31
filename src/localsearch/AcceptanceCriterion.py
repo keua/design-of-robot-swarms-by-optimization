@@ -1,7 +1,5 @@
 from abc import ABCMeta, abstractmethod
-import statistics as stats
 import scipy.stats as scistats
-import collections as coll
 import numpy as np
 
 
@@ -23,66 +21,68 @@ class AcceptanceCriterion(object):
     def mean(self):
         """
         """
-        self.current_outcome = stats.mean(self.current_scores)
-        self.new_outcome = stats.mean(self.new_scores)
+        self.current_outcome = np.mean(self.current_scores)
+        self.new_outcome = np.mean(self.new_scores)
         self.name = self.mean.__name__
         return self.current_outcome <= self.new_outcome
 
     def median(self):
         """
         """
-        self.new_outcome = stats.median(self.new_scores)
-        self.current_outcome = stats.median(self.current_scores)
+        self.new_outcome = np.median(self.new_scores)
+        self.current_outcome = np.median(self.current_scores)
         self.name = self.median.__name__
         return self.current_outcome <= self.new_outcome
 
     def mode(self):
         """
         """
-        self.new_outcome = stats.mode(self.new_scores)
-        self.current_outcome = stats.mode(self.current_scores)
+        current_outcomes, _ = scistats.mode(self.current_scores)
+        new_outcomes, _ = scistats.mode(self.new_scores)
+        self.current_outcome = current_outcomes[0]
+        self.new_outcome = new_outcomes[0]
         self.name = self.mode.__name__
         return self.current_outcome <= self.new_outcome
 
-    def sumc(self):
+    def sum(self):
         """
         """
-        self.new_outcome = sum(self.new_scores)
-        self.current_outcome = sum(self.current_scores)
-        self.name = self.sumc.__name__
+        self.new_outcome = np.sum(self.new_scores)
+        self.current_outcome = np.sum(self.current_scores)
+        self.name = self.sum.__name__
         return self.current_outcome <= self.new_outcome
 
-    def maxc(self):
+    def max(self):
         """
         """
-        self.new_outcome = max(self.new_scores)
-        self.current_outcome = max(self.current_scores)
-        self.name = self.maxc.__name__
-        self.current_outcome <= self.new_outcome
-
-    def minc(self):
-        """
-        """
-        self.new_outcome = min(self.new_scores)
-        self.current_outcome = min(self.current_scores)
-        self.name = self.minc.__name__
+        self.new_outcome = np.max(self.new_scores)
+        self.current_outcome = np.max(self.current_scores)
+        self.name = self.max.__name__
         return self.current_outcome <= self.new_outcome
 
-    def tstudent_test(self, confidence=0.05):
+    def min(self):
+        """
+        """
+        self.new_outcome = np.min(self.new_scores)
+        self.current_outcome = np.min(self.current_scores)
+        self.name = self.min.__name__
+        return self.current_outcome <= self.new_outcome
+
+    def t_student_test(self, confidence=0.05):
         """
         """
         _, p = scistats.ttest_ind(self.current_scores, self.new_scores)
-        self.new_outcome = stats.mean(self.new_scores)
-        self.current_outcome = stats.mean(self.current_scores)
-        self.name = f'{self.tstudent_test.__name__}_{str(confidence)}'
+        self.new_outcome = np.mean(self.new_scores)
+        self.current_outcome = np.mean(self.current_scores)
+        self.name = f'{self.t_student_test.__name__}_{str(confidence)}'
         return self.current_outcome <= self.new_outcome and p < confidence
 
     def wilcoxon_test(self, confidence=0.05):
         """
         """
         _, p = scistats.wilcoxon(self.current_scores, self.new_scores)
-        self.new_outcome = stats.mean(self.new_scores)
-        self.current_outcome = stats.mean(self.current_scores)
+        self.new_outcome = np.mean(self.new_scores)
+        self.current_outcome = np.mean(self.current_scores)
         self.name = f'{self.wilcoxon_test.__name__}_{str(confidence)}'
         return self.current_outcome <= self.new_outcome and p < confidence
 
@@ -94,7 +94,7 @@ class AcceptanceCriterion(object):
         self.name = f'{self.metropolis_condition.__name__}_{self.accept.__name__}'
         return accept or random_gen.random() < np.exp((delta / t))
 
-    def update(self, current_scores, new_scores):
+    def set_scores(self, current_scores, new_scores):
         """
         """
         self.current_scores = current_scores
