@@ -84,7 +84,6 @@ class SimulatedAnnealing(object):
         self.budget = budget
         self._establish_termination_criterion(termination_criterion)
 
-
     @classmethod
     def from_json(cls, data):
         """
@@ -118,7 +117,7 @@ class SimulatedAnnealing(object):
             not self.tc.count == 0 and self.candidate.evaluate()
             perturbed.evaluate()
             # Evaluating metropolis condition
-            self.acceptance.update(self.candidate.scores, perturbed.scores)
+            self.acceptance.set_scores(self.candidate.scores, perturbed.scores)
             mc_accept = self.mc(current_temperature, self.random_gen)
             self._log_scores(perturbed, out)
             # If metropolis condition met select the new controller
@@ -162,8 +161,6 @@ class SimulatedAnnealing(object):
     def _log_scores(self, perturbed, file):
         """
         """
-        log.warning(f'Exploring controller {self.acceptance.new_outcome}' +
-                    f', Old controller {self.acceptance.current_outcome}')
         log.debug(f'Candidate: {self.candidate.scores},' +
                   f'Perturbed: {perturbed.scores}')
         file.write(
@@ -182,7 +179,9 @@ class SimulatedAnnealing(object):
     def _evaluate_incumbent(self):
         """
         """
-        self.acceptance.update(self.incumbent.scores, self.candidate.scores)
+        log.warning(f'Exploring controller {self.acceptance.new_outcome}' +
+                    f', Old controller {self.acceptance.current_outcome}')
+        self.acceptance.set_scores(self.incumbent.scores, self.candidate.scores)
         if self.acceptance.accept():
             self.candidate.draw(str(self.tc.count))
             self.incumbent = copy.deepcopy(self.candidate)
@@ -210,8 +209,8 @@ class SimulatedAnnealing(object):
         if termination_criterion is None:
             if self.budget is not None:
                 self.tc = ITC.from_budget(self.budget,
-                                        self.exe.seed_window_size,
-                                        self.exe.seed_window_move)
+                                          self.exe.seed_window_size,
+                                          self.exe.seed_window_move)
             else:
                 self.tc = DTC(self.temperature, self.final_temperature, 1.0)
         else:

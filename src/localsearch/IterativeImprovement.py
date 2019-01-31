@@ -3,7 +3,6 @@ import os
 import copy
 import logging as log
 import execution
-import math
 
 import localsearch.utilities as ls_utl
 from . import acceptance_criteria as ac
@@ -72,7 +71,7 @@ class IterativeImprovement(object):
                 self.best.evaluate()
                 perturbed.evaluate()
                 # Evaluate criterion
-                self.acceptance.update(self.best.scores, perturbed.scores)
+                self.acceptance.set_scores(self.best.scores, perturbed.scores)
                 c_accept = self.acceptance.accept()
                 # save the scores to file and update controllers
                 self._log_scores(perturbed, file)
