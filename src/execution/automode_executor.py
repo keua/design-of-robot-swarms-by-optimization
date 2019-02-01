@@ -193,7 +193,7 @@ class MPIExecutor(AutoMoDeExecutor):
         for s in seeds:
             results.append(pool.submit(
                 self.execute_controller,
-                (cmd, s,)))
+                *(cmd, s)))
         pool.shutdown(wait=True)
         scores = []
         for future in results:
