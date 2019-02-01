@@ -86,8 +86,8 @@ def run_local(experiment_file):
                 # execute localsearch
                 #execute_localsearch(experiment)
                 execute_iterative_improvement(experiment)
-            logging.warning(f"======== Repetition {i} finished ========")
-        logging.warning(f"======== Experiment {setup_key} finished ========")
+            logging.warning("======== Repetition %d finished ========" % i)
+        logging.warning("======== Experiment %s finished ========" % setup_key)
 
 
 def submit():
@@ -126,7 +126,7 @@ def execute_simulated_annealing(args):
     localsearch.utilities.create_directory()
     sa = SA.from_json(args["sls"]['SimulatedAnnealing'])
     new_controller = sa.local_search()
-    logging.warning(f'Best controller score {new_controller.agg_score}')
+    logging.warning('Best controller score {}'.format(new_controller.agg_score))
     new_controller.draw("final")
     new_controller = new_controller.convert_to_commandline_args()
     logging.debug(new_controller)
@@ -142,7 +142,7 @@ def execute_iterative_improvement(args):
     localsearch.utilities.create_directory()
     ii = II.from_json(args["sls"]['IterativeImprovement'])
     new_controller = ii.local_search()
-    logging.warning(f'Best controller score {new_controller.agg_score}')
+    logging.warning('Best controller score {}'.format(new_controller.agg_score))
     new_controller.draw("final")
     new_controller = new_controller.convert_to_commandline_args()
     logging.debug(new_controller)
