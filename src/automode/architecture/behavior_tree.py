@@ -1,4 +1,4 @@
-from automode.controller.AutoMoDeControllerABC import AutoMoDeControllerABC
+from automode.architecture.abstract_architecture import AutoMoDeArchitectureABC
 from abc import ABCMeta, abstractmethod
 from enum import Enum
 import graphviz as gv
@@ -57,7 +57,6 @@ class ABCNode:
         """
         self.children.remove(child_node)
         self.set_id(self.id)
-        pass
 
     @property
     @abstractmethod
@@ -152,7 +151,11 @@ class ConditionNode(ABCNode):
         return caption
 
 
-class BT(AutoMoDeControllerABC):
+class AbstractBehaviorTree(AutoMoDeArchitectureABC):
+
+    """This class is used as a base class for behavior trees. It should implemenet feature for both the restricted
+    (Maple) version and a less restricted version.
+    """
 
     parameters = {"max_actions": 4,
                   "minimal_condition": "Fail",
@@ -162,6 +165,81 @@ class BT(AutoMoDeControllerABC):
         self.root = RootNode()
         super().__init__(minimal=minimal)
 
+    def draw(self, graph_name):
+        graph = gv.Digraph(format='svg')
+        self.root.draw(graph)
+        filename = graph.render(filename='img/graph_' + graph_name, view=False)
+
+
+class UnrestrictedBehaviorTree(AbstractBehaviorTree):
+    """
+    This is the implementation for an unrestricted BT (there are still restrictions on the number of levels and the
+    number of childs, but everything else can be chosen freely)
+    """
+
+    def __init__(self, minimal=False):
+        super().__init__(minimal)
+
+    def create_minimal_controller(self):
+        """
+        Sets up a minimal controller. That is a BT with a single action
+        """
+        self.root.children.append((ActionNode(AbstractBehaviorTree.parameters["minimal_behavior"])))
+
+    @staticmethod
+    def parse_from_commandline_args(cmd_args):
+        """
+        Parses a unrestricted behavior tree from cmd args
+        :param cmd_args:
+        :return:
+        """
+        raise NotImplementedError
+
+    def convert_to_commandline_args(self):
+        """Converts this BT to a format that is readable by the AutoMoDe command line"""
+        raise NotImplementedError
+
+    # ******************************************************************************************************************
+    # perturbation operators
+    # ******************************************************************************************************************
+
+    def perturb_reorder_subtrees(self):
+        """
+        :return:
+        """
+        raise NotImplementedError
+        # TODO: select CFN with at least two children
+        # TODO: select two random children
+        # TODO: swap their positions
+
+    def perturb_change_control_flow_node(self):
+        """
+
+        :return:
+        """
+        # TODO: select CFN
+        # TODO: change type of CFN
+        raise NotImplementedError
+
+    def perturb_change_leaf_node(self):
+        """
+
+        :return:
+        """
+        # TODO: select leaf
+        # TODO: check if it can be transformed in an action or condition
+        # TODO: if both types possible, then choose one type
+        # TODO: if type is chosen (or only one possible), then select random instance of that type
+
+
+class RestrictedBehaviorTree(AbstractBehaviorTree):
+    """
+    This is the implementation of a restricted BT (just like in Maple)
+    """
+
+    def __init__(self, minimal=False):
+        super().__init__(minimal)
+
     def create_minimal_controller(self):
         """
         Sets up a minimal controller. That is a BT with a single action and a single condition.
@@ -169,46 +247,29 @@ class BT(AutoMoDeControllerABC):
         sequence = SequenceStarNode()
         self.root.set_child(sequence)
         sel1 = SelectorNode()
-        sel1.set_child(ConditionNode(BT.parameters["minimal_condition"]))
-        sel1.set_child(ActionNode(BT.parameters["minimal_behavior"]))
+        sel1.set_child(ConditionNode(AbstractBehaviorTree.parameters["minimal_condition"]))
+        sel1.set_child(ActionNode(AbstractBehaviorTree.parameters["minimal_behavior"]))
         sequence.set_child(sel1)
-
-    def draw(self, graph_name):
-        graph = gv.Digraph(format='svg')
-        self.root.draw(graph)
-        filename = graph.render(filename='img/graph_' + graph_name, view=False)
 
     @staticmethod
     def parse_from_commandline_args(cmd_args):
 
-        # TODO: Adjust for new BT structure
-
         def parse_top_level_node():
-            to_parse.pop(0)  # --rootnode
-            top_level_type = int(to_parse.pop(0))  # 0
+            to_parse.pop(0)  # --nroot
+            top_level_type = int(to_parse.pop(0))  # 3
             behavior_tree.root.set_child(SequenceStarNode())
-            to_parse.pop(0)  # --nchildsroot
+            to_parse.pop(0)  # --nchildroot
             top_level_children_count = int(to_parse.pop(0))  # not really needed, iterating over subtrees should work fine
 
-        def parse_selector_subtree():
-            """
-                The parsing of the parameters in this function is a very dirty fix.
-                Once back from holidays, try and find a better way to handle it.
-                At  the moment it just iterates over the length of the parameters and 
-                reads one parameter from the parse_list.
-            """
-            # parse selector node
-            selector_id_string = to_parse.pop(0)  # --n[]
-            selector_type = int(to_parse.pop(0))  # 0
-            num_conditions_string = to_parse.pop(0)  # --nc[]
-            num_conditions = int(to_parse.pop(0))  # 1
-            selector = SelectorNode()
-            condition_label = to_parse.pop(0)  # --c[]x[]
+        def parse_condition_node():
+            node_id_string = to_parse.pop(0)  # --n[]
+            node_type = int(to_parse.pop(0))  # 6
+            condition_label = to_parse.pop(0)  # --c[]
             condition_type = int(to_parse.pop(0))
             condition_node = ConditionNode("FixedProbability")
             condition_node.condition = Condition.get_by_id(condition_type)
-            # TODO: FIX: parse condition parameters
-            for condition_param in condition_node.condition.params:
+            # Parse parameters until the next node is found
+            while not to_parse[0].startswith("--n"):
                 param_string = to_parse.pop(0)  # param identifier
                 param_name = regex_no_number.match(param_string.split("--")[1]).group()
                 if isinstance(condition_node.condition.params[param_name], int):
@@ -216,19 +277,44 @@ class BT(AutoMoDeControllerABC):
                 else:
                     param_val = float(to_parse.pop(0))
                 condition_node.condition.params[param_name] = param_val
+            return condition_node
+
+        def parse_action_node():
+            node_id_string = to_parse.pop(0)  # --n[]
+            node_type = int(to_parse.pop(0))  # 5
             action_label = to_parse.pop(0)  # --a[]
             action_type = int(to_parse.pop(0))
             action_node = ActionNode("Stop")
             action_node.action = Behavior.get_by_id(action_type)
-            # TODO: FIX: parse action parameters
-            for action_param in action_node.action.params:
+            # Parse parameters until the next node is found, or the list is empty
+            while to_parse and not to_parse[0].startswith("--n"):
                 param_string = to_parse.pop(0)  # param identifier
                 param_name = regex_no_number.match(param_string.split("--")[1]).group()
-                if param_name == "rwm":
-                    param_val = int(to_parse.pop(0))
+                if param_name == "p":  # Ignore any p here
+                    success_probability = to_parse.pop(0)  # 0
                 else:
-                    param_val = float(to_parse.pop(0))
-                action_node.action.params[param_name] = param_val
+                    if param_name == "rwm":
+                        param_val = int(to_parse.pop(0))
+                    else:
+                        param_val = float(to_parse.pop(0))
+                    action_node.action.params[param_name] = param_val
+            return action_node
+
+        def parse_selector_subtree():
+            """
+            The parsing of the parameters in this function is a very dirty fix.
+            Once back from holidays, try and find a better way to handle it.
+            At  the moment it just iterates over the length of the parameters and
+            reads one parameter from the parse_list.
+            """
+            # parse selector node
+            selector_id_string = to_parse.pop(0)  # --n[]
+            selector_type = int(to_parse.pop(0))  # 0
+            num_children_string = to_parse.pop(0)  # --nchild[]
+            num_children = int(to_parse.pop(0))  # 2
+            selector = SelectorNode()
+            condition_node = parse_condition_node()
+            action_node = parse_action_node()
             selector.set_child(condition_node)
             selector.set_child(action_node)
             behavior_tree.root.children[0].set_child(selector)
@@ -237,7 +323,7 @@ class BT(AutoMoDeControllerABC):
         regex_action_node = re.compile("--a[0-9]")
         regex_no_number = re.compile("[^0-9]+")
         # create an emtpy BT
-        behavior_tree = BT()
+        behavior_tree = RestrictedBehaviorTree()
         behavior_tree.root.children.clear()  # could also clear the root node, but the root node is invariant
         # prepare the arguments
         to_parse = list(cmd_args)

@@ -3,7 +3,7 @@ import random
 import graphviz as gv
 import logging
 import re
-from automode.controller.AutoMoDeControllerABC import AutoMoDeControllerABC
+from automode.architecture.abstract_architecture import AutoMoDeArchitectureABC
 
 # TODO: Write documentation for methods and classes
 
@@ -88,7 +88,8 @@ class Transition:
         caption += self.condition.get_parameter_for_caption()
         return caption
 
-class FSM(AutoMoDeControllerABC):
+
+class FSM(AutoMoDeArchitectureABC):
     """A finite state machine"""
 
     # FSM implementation

@@ -1,83 +1,83 @@
 # Experiment file for all experiments (aggregation, foraging) and all control architectures (BT, FSM) starting from
-# a minimal controller
+# a random controller
 {
-    "BT_for_minimal": {
+    "BT_for_random": {
         "repetitions": 10,
         "config": "./config/config50k.ini",
         "scenario": "/home/jkuckling/AutoMoDe-missions/vanilla/for250sec/foraging_bt.argos",
         "architecture": "BT",
         "budget": 50000,
-        "initial_controller": "minimal",
+        "initial_controller": "/home/jkuckling/AutoMoDe-LocalSearch/controller/BT/BT-random.txt",
         "result_directory": "/home/jkuckling/AutoMoDe-LocalSearch/result/",
         "parallel": 0
     },
-    "FSM_for_minimal": {
+    "FSM_for_random": {
         "repetitions": 10,
         "config": "./config/config50k.ini",
         "scenario": "/home/jkuckling/AutoMoDe-missions/vanilla/for250sec/foraging.argos",
         "architecture": "FSM",
         "budget": 50000,
-        "initial_controller": "minimal",
+        "initial_controller": "/home/jkuckling/AutoMoDe-LocalSearch/controller/FSM/FSM-random.txt",
         "result_directory": "/home/jkuckling/AutoMoDe-LocalSearch/result/",
         "parallel": 0
     },
-    "BT_agg_minimal": {
+    "BT_agg_random": {
         "repetitions": 10,
         "config": "./config/config50k.ini",
         "scenario": "/home/jkuckling/AutoMoDe-missions/vanilla/agg250sec/aggregation_bt.argos",
         "architecture": "BT",
         "budget": 50000,
-        "initial_controller": "minimal",
+        "initial_controller": "/home/jkuckling/AutoMoDe-LocalSearch/controller/BT/BT-random.txt",
         "result_directory": "/home/jkuckling/AutoMoDe-LocalSearch/result/",
         "parallel": 0
     },
-    "FSM_agg_minimal": {
+    "FSM_agg_random": {
         "repetitions": 10,
         "config": "./config/config50k.ini",
         "scenario": "/home/jkuckling/AutoMoDe-missions/vanilla/agg250sec/aggregation.argos",
         "architecture": "FSM",
         "budget": 50000,
-        "initial_controller": "minimal",
+        "initial_controller": "/home/jkuckling/AutoMoDe-LocalSearch/controller/FSM/FSM-random.txt",
         "result_directory": "/home/jkuckling/AutoMoDe-LocalSearch/result/",
         "parallel": 0
     },
-    "BT_AAC_minimal": {
+    "BT_AAC_random": {
         "repetitions": 10,
         "config": "./config/config50k.ini",
         "scenario": "/home/jkuckling/AutoMoDe-missions/chocolate/AAC120sec/aac_bt.argos",
         "architecture": "BT",
         "budget": 50000,
-        "initial_controller": "minimal",
+        "initial_controller": "/home/jkuckling/AutoMoDe-LocalSearch/controller/BT/BT-random.txt",
         "result_directory": "/home/jkuckling/AutoMoDe-LocalSearch/result/",
         "parallel": 0
     },
-    "FSM_AAC_minimal": {
+    "FSM_AAC_random": {
         "repetitions": 10,
         "config": "./config/config50k.ini",
         "scenario": "/home/jkuckling/AutoMoDe-missions/chocolate/AAC120sec/aac_fsm.argos",
         "architecture": "FSM",
         "budget": 50000,
-        "initial_controller": "minimal",
+        "initial_controller": "/home/jkuckling/AutoMoDe-LocalSearch/controller/FSM/FSM-random.txt",
         "result_directory": "/home/jkuckling/AutoMoDe-LocalSearch/result/",
         "parallel": 0
     },
-    "BT_SCA_minimal": {
+    "BT_SCA_random": {
         "repetitions": 10,
         "config": "./config/config50k.ini",
         "scenario": "/home/jkuckling/AutoMoDe-missions/chocolate/SCA120sec/sca_bt.argos",
         "architecture": "BT",
         "budget": 50000,
-        "initial_controller": "minimal",
+        "initial_controller": "/home/jkuckling/AutoMoDe-LocalSearch/controller/BT/BT-random.txt",
         "result_directory": "/home/jkuckling/AutoMoDe-LocalSearch/result/",
         "parallel": 0
     },
-    "FSM_SCA_minimal": {
+    "FSM_SCA_random": {
         "repetitions": 10,
         "config": "./config/config50k.ini",
         "scenario": "/home/jkuckling/AutoMoDe-missions/chocolate/SCA120sec/sca_fsm.argos",
         "architecture": "FSM",
         "budget": 50000,
-        "initial_controller": "minimal",
+        "initial_controller": "/home/jkuckling/AutoMoDe-LocalSearch/controller/FSM/FSM-random.txt",
         "result_directory": "/home/jkuckling/AutoMoDe-LocalSearch/result/",
         "parallel": 0
     }
