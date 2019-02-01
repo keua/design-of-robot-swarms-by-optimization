@@ -70,7 +70,7 @@ class AutoMoDeExecutor:
         evaluate_seeds = []
         for seed in self.seeds:
             if (seed not in controller.evaluated_instances) \
-            or reevaluate_seeds:
+                    or reevaluate_seeds:
                 evaluate_seeds.append(seed)
         # evaluate the controller on the set of seeds
         if execution.mpi_enabled:
@@ -113,5 +113,6 @@ class AutoMoDeExecutor:
             logging.error("Stderr: " + stderr.decode('utf-8'))
             logging.error("Stdout: " + stdout.decode('utf-8'))
             raise
-        logging.debug(f"Controller on seed {seed} returned score: {score}")
+        logging.debug("Controller on seed {} returned score: {}".
+                      format(seed, score))
         return seed, score
