@@ -15,14 +15,14 @@
                     "IterativeImprovement": {
                         "budget": 50,
                         "initial_controller": "minimal",
-                        "acceptance_criterion": "mean"
+                        "acceptance_criterion": "max"
                     }
                 },
                 "temperature": 125.0,
                 "final_temperature": 0.00001,
-                "cooling_rate": 0.5,
-                "iterations_per_temperature": 1,
-                "acceptance_criterion": "mean",
+                "cooling_rate": 0.85,
+                "iterations_per_temperature": 2,
+                "acceptance_criterion": "max",
                 "random_seed": 8963
             }
         }
@@ -43,14 +43,14 @@
                     "IterativeImprovement": {
                         "budget": 50,
                         "initial_controller": "minimal",
-                        "acceptance_criterion": "mean"
+                        "acceptance_criterion": "max"
                     }
                 },
                 "temperature": 125.0,
                 "final_temperature": 0.00001,
-                "cooling_rate": 0.5,
-                "iterations_per_temperature": 1,
-                "acceptance_criterion": "mean",
+                "cooling_rate": 0.85,
+                "iterations_per_temperature": 2,
+                "acceptance_criterion": "max",
                 "random_seed": 8963
             }
         }
