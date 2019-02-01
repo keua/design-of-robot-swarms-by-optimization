@@ -96,6 +96,6 @@ def metropolis_condition(best_cntrl_scores, perturb_cntrl_scores, t, random_gen,
     delta = c.perturb_outcome - c.best_outcome
     # While ∆ ≥ 0 or Random (0, 1) < e^(∆/t), do ω ← ω';
     return Criterion(
-        f'Metropolis_{c.type}', c.best_outcome, c.perturb_outcome,
+        'Metropolis_{}'.format(c.type), c.best_outcome, c.perturb_outcome,
         delta >= 0 or random_gen.random() < np.exp((delta / t))
     )
