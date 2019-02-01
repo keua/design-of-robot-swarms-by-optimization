@@ -136,7 +136,8 @@ class AutoMoDeExecutor:
             logging.error("stderr: {}".format(stderr.decode('utf-8')))
             logging.error("stdout: {}".format(stdout.decode('utf-8')))
             raise
-        logging.debug("Controller {} on seed {} returned score: {}".format("", seed, score))
+        logging.debug("Controller on seed {} returned score: {}".
+                      format(seed, score))
         return seed, score
 
 
