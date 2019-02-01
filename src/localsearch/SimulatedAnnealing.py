@@ -68,7 +68,7 @@ class SimulatedAnnealing(object):
         """
         """
         np.random.seed(random_seed)
-        self.OUT_NAME = ls_utl.SCORES_DIR + f'SA_{random_seed}_best_score.csv'
+        self.OUT_NAME = ls_utl.SCORES_DIR + 'SA_%d_best_score.csv' % random_seed
         not os.path.isdir(ls_utl.SCORES_DIR) and os.mkdir(ls_utl.SCORES_DIR)
         self.candidate = candidate
         self.incumbent = None
@@ -99,7 +99,7 @@ class SimulatedAnnealing(object):
         # isinstance(self.candidate, str) and
         self._get_candidate()
         start_time = datetime.now()
-        log.warning(f'SA Started at {str(start_time)}')
+        log.warning('SA Started at {}'.format(start_time))
         out = open(self.OUT_NAME, "w")
         # If already evaluated do nothing else evaluate
         self.candidate.scores == float("inf") and self.candidate.evaluate()
@@ -108,7 +108,7 @@ class SimulatedAnnealing(object):
         current_temperature = self.temperature
         self.exe.create_seeds()  # To avoid bias in certain seeds
         while True:  # do
-            log.debug(f'Current temperature {current_temperature}')
+            log.debug('Current temperature {}'.format(current_temperature))
             # create a perturbed controller
             perturbed = self._perform_perturbation()
             # move the window
@@ -141,8 +141,8 @@ class SimulatedAnnealing(object):
                 break
 
         end_time = datetime.now()
-        log.warning(f'Finished at {str(end_time)}')
-        log.warning(f'Took {str(end_time - start_time)}')
+        log.warning('Finished at {}'.format(end_time))
+        log.warning('Took {}'.format(end_time - start_time))
         out.close()
 
         return self.incumbent
@@ -161,15 +161,15 @@ class SimulatedAnnealing(object):
     def _log_scores(self, perturbed, file):
         """
         """
-        log.debug(f'Candidate: {self.candidate.scores},' +
-                  f'Perturbed: {perturbed.scores}')
-        file.write(
-            f'  {str(self.candidate.scores)}' +
-            f', {self.acceptance.name}={str(self.acceptance.current_outcome)}' +
-            f', {str(perturbed.scores)}' +
-            f', {self.acceptance.name}={str(self.acceptance.new_outcome)}' +
-            f', {perturbed.perturb_history[-1].__name__}' +
-            f'\n')
+        log.debug('Candidate: {}, Perturbed: {}'.format(
+                  self.candidate.scores, perturbed.scores))
+        file.write('{}, {}={}, {}, {}={}, {} \n'.format(
+            self.candidate.scores,
+            self.acceptance.name, self.acceptance.current_outcome,
+            perturbed.scores,
+            self.acceptance.name, self.acceptance.new_outcome,
+            perturbed.perturb_history[-1].__name__)
+        )
         # Updating controllers
         self.candidate.agg_score = \
             (self.acceptance.name, self.acceptance.current_outcome)
@@ -179,14 +179,15 @@ class SimulatedAnnealing(object):
     def _evaluate_incumbent(self):
         """
         """
-        log.warning(f'Exploring controller {self.acceptance.new_outcome}' +
-                    f', Old controller {self.acceptance.current_outcome}')
-        self.acceptance.set_scores(self.incumbent.scores, self.candidate.scores)
+        log.warning('Exploring controller {}, Old controller {}'.format(
+            self.acceptance.new_outcome, self.acceptance.current_outcome))
+        self.acceptance.set_scores(
+            self.incumbent.scores, self.candidate.scores)
         if self.acceptance.accept():
             self.candidate.draw(str(self.tc.count))
             self.incumbent = copy.deepcopy(self.candidate)
-            log.warning(f'New incumbent {self.acceptance.new_outcome}' +
-                        f', Old controller {self.acceptance.current_outcome}')
+            log.warning('New incumbent {}, Old controller {}'.format(
+                self.acceptance.new_outcome, self.acceptance.current_outcome))
 
     def _get_candidate(self):
         """
@@ -197,11 +198,12 @@ class SimulatedAnnealing(object):
             self.candidate = initial_controller
         else:
             for key in self.candidate:
-                algorithm = ls_utl.get_class(f"localsearch.{key}")
+                algorithm = ls_utl.get_class("localsearch.%s" % key)
                 new = algorithm.from_json(self.candidate[key]).local_search()
                 self.candidate = new
 
-        log.warning(f'Initial candidate score {self.candidate.agg_score}')
+        log.warning('Initial candidate score {}'.
+                    format(self.candidate.agg_score))
 
     def _establish_termination_criterion(self, termination_criterion):
         """

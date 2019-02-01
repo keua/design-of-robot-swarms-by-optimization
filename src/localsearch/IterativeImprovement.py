@@ -18,7 +18,7 @@ class IterativeImprovement(object):
         """
 
         def __init__(self, data):
-            """ 
+            """
             """
             self.initial_controller = None
             self.random_seed = None
@@ -31,12 +31,12 @@ class IterativeImprovement(object):
         """
         The iterative improvement method, that improves upon the
         candidate controller.
-        :param 
+        :param
             candidate: The controller that is used to first improve from
         :return
             The best controller after the iterative improvement
         """
-        self.OUT_NAME = ls_utl.SCORES_DIR + f'II_{budget}_best_score.csv'
+        self.OUT_NAME = ls_utl.SCORES_DIR + 'II_%d_best_score.csv' % budget
         not os.path.isdir(ls_utl.SCORES_DIR) and os.mkdir(ls_utl.SCORES_DIR)
         self.best = candidate
         self.exe = execution.get_executor()
@@ -57,11 +57,11 @@ class IterativeImprovement(object):
         """
         isinstance(self.best, str) and self._get_best()
         start_time = datetime.now()
-        log.warning(f"Started at {str(start_time)}")
+        log.warning("Started at {}".format(start_time))
         with open(self.OUT_NAME, "w") as file:
             self.exe.create_seeds()
             self.best.evaluate()
-            log.debug(f"Initial best scores {str(self.best.scores)}")
+            log.debug("Initial best scores {}".format(self.best.scores))
             while True:
                 # move the window
                 self.exe.advance_seeds()
@@ -79,8 +79,8 @@ class IterativeImprovement(object):
                 if c_accept:
                     log.debug(perturbed.perturb_history[-1].__name__)
                     perturbed.draw(str(self.tc.count))
-                    log.warning(f'New best {perturbed.agg_score}' +
-                                f', Old best {self.best.agg_score}')
+                    log.warning('New best {}, Old best {}'.format(
+                        perturbed.agg_score, self.best.agg_score))
                     self.best = perturbed
 
                 if self.tc.count % snap_freq == 0:
@@ -91,9 +91,9 @@ class IterativeImprovement(object):
 
             end_time = datetime.now()
 
-        log.warning(f"Finished at {str(end_time)}")
+        log.warning("Finished at {}".format(end_time))
         time_diff = end_time - start_time
-        log.warning(f"Took {str(time_diff)}")
+        log.warning("Took {}".format(time_diff))
 
         return self.best
 
@@ -111,22 +111,19 @@ class IterativeImprovement(object):
     def _log_scores(self, perturbed, file):
         """
         """
-        self.best.agg_score = \
-            (self.acceptance.name, self.acceptance.current_outcome)
-        perturbed.agg_score = \
-            (self.acceptance.name, self.acceptance.new_outcome)
-        file.write(
-            f"{str(self.best.scores)}" +
-            f', {self.acceptance.name}={str(self.acceptance.current_outcome)}' +
-            f", {str(perturbed.scores)}" +
-            f', {self.acceptance.name}={str(self.acceptance.new_outcome)}' +
-            f", {perturbed.perturb_history[-1].__name__}" +
-            f"\n"
+        self.best.agg_score = (self.acceptance.name,
+                               self.acceptance.current_outcome)
+        perturbed.agg_score = (self.acceptance.name,
+                               self.acceptance.new_outcome)
+        file.write("{}, {}={}, {}, {}={}, {}, \n".format(
+            self.best.scores,
+            self.acceptance.name, self.acceptance.current_outcome,
+            perturbed.scores,
+            self.acceptance.name, self.acceptance.new_outcome,
+            perturbed.perturb_history[-1].__name__)
         )
-        log.debug(
-            f"Best score {str(self.best.scores)}" +
-            f" and new score {str(perturbed.scores)}"
-        )
+        log.debug("Best score {} and new score {}".
+                  format(self.best.scores, perturbed.scores))
 
     def _get_best(self):
         """
@@ -137,7 +134,7 @@ class IterativeImprovement(object):
             self.best = initial_controller
         else:
             self.best = initial_controller
-        log.warning(f'Initial candidate score {self.best.agg_score}')
+        log.warning('Initial candidate score {}'.format(self.best.agg_score))
 
     def _establish_termination_criterion(self, termination_criterion):
         """
@@ -145,8 +142,8 @@ class IterativeImprovement(object):
         if termination_criterion is None:
             if self.budget is not None:
                 self.tc = ITC.from_budget(self.budget,
-                                        self.exe.seed_window_size,
-                                        self.exe.seed_window_move)
+                                          self.exe.seed_window_size,
+                                          self.exe.seed_window_move)
             else:
                 self.tc = ITC(0, 50)
         else:
