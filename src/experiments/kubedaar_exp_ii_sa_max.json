@@ -1,44 +1,56 @@
 {
-    "FSM_agg_minimal_sa": {
+    "FSM_agg_minimal_ii_sa": {
         "repetitions": 1,
         "config": "./config/config50k.ini",
         "scenario": "/home/kubedaar/masterthesis/localsearch/scenarios/vanilla/aggregation.argos",
         "architecture": "FSM",
         "result_directory": "/home/kubedaar/masterthesis/localsearch/result/",
         "parallel": 5,
-        "budget": 500,
+        "budget": 50,
         "initial_controller": "minimal",
         "sls": {
             "SimulatedAnnealing": {
                 "budget": 500,
-                "candidate": "minimal",
+                "candidate": {
+                    "IterativeImprovement": {
+                        "budget": 50,
+                        "initial_controller": "minimal",
+                        "acceptance_criterion": "max"
+                    }
+                },
                 "temperature": 125.0,
                 "final_temperature": 0.00001,
-                "cooling_rate": 0.5,
+                "cooling_rate": 0.85,
                 "iterations_per_temperature": 2,
-                "acceptance_criterion": "mean",
+                "acceptance_criterion": "max",
                 "random_seed": 8963
             }
         }
     },
-    "BT_agg_minimal_sa": {
+    "BT_agg_minimal_ii_sa": {
         "repetitions": 1,
         "config": "./config/config50k.ini",
         "scenario": "/home/kubedaar/masterthesis/localsearch/scenarios/vanilla/aggregation_bt.argos",
         "architecture": "BT",
         "result_directory": "/home/kubedaar/masterthesis/localsearch/result/",
         "parallel": 5,
-        "budget": 500,
+        "budget": 50,
         "initial_controller": "minimal",
         "sls": {
             "SimulatedAnnealing": {
                 "budget": 500,
-                "candidate": "minimal",
+                "candidate": {
+                    "IterativeImprovement": {
+                        "budget": 50,
+                        "initial_controller": "minimal",
+                        "acceptance_criterion": "max"
+                    }
+                },
                 "temperature": 125.0,
                 "final_temperature": 0.00001,
-                "cooling_rate": 0.5,
+                "cooling_rate": 0.85,
                 "iterations_per_temperature": 2,
-                "acceptance_criterion": "mean",
+                "acceptance_criterion": "max",
                 "random_seed": 8963
             }
         }

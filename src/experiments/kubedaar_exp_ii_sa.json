@@ -2,10 +2,10 @@
     "FSM_agg_minimal_ii_sa": {
         "repetitions": 1,
         "config": "./config/config50k.ini",
-        "scenario": "/home/masterulb/masterthesis/localsearch/scenarios/vanilla/aggregation.argos",
+        "scenario": "/home/kubedaar/masterthesis/localsearch/scenarios/vanilla/aggregation.argos",
         "architecture": "FSM",
-        "result_directory": "/home/masterulb/masterthesis/localsearch/result/",
-        "parallel": 8,
+        "result_directory": "/home/kubedaar/masterthesis/localsearch/result/",
+        "parallel": 5,
         "budget": 50,
         "initial_controller": "minimal",
         "sls": {
@@ -30,10 +30,10 @@
     "BT_agg_minimal_ii_sa": {
         "repetitions": 1,
         "config": "./config/config50k.ini",
-        "scenario": "/home/masterulb/masterthesis/localsearch/scenarios/vanilla/aggregation_bt.argos",
+        "scenario": "/home/kubedaar/masterthesis/localsearch/scenarios/vanilla/aggregation_bt.argos",
         "architecture": "BT",
-        "result_directory": "/home/masterulb/masterthesis/localsearch/result/",
-        "parallel": 8,
+        "result_directory": "/home/kubedaar/masterthesis/localsearch/result/",
+        "parallel": 5,
         "budget": 50,
         "initial_controller": "minimal",
         "sls": {

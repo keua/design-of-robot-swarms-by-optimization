@@ -11,7 +11,7 @@
   <!-- ****************** -->
   <!-- * Loop functions * -->
   <!-- ****************** -->
-  <loop_functions library="/opt/experiments-loop-functions-simulation/build/loop-functions/vanilla/libforaging_loopfunc.so"
+  <loop_functions library="/home/kubeddar/experiments-loop-functions/build/loop-functions/vanilla/libforaging_loopfunc.so"
    label="foraging_loop_functions">
     <params dist_radius="1.2" number_robots="20"/>
   </loop_functions>
@@ -22,7 +22,7 @@
   <controllers>
     <!-- TRANSMITTER -->
     <automode_controller_bt id="automode"
-                        library="/opt/AutoMoDe-BT/build/src/libautomode_bt.so">
+                        library="/home/kubeddar/AutoMoDe-BT/build/src/libautomode_bt.so">
       <actuators>
         <epuck_wheels implementation="default" noise_std_dev="0.05"/>
         <epuck_rgb_leds implementation="default" medium="leds"/>
