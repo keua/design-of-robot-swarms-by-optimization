@@ -69,8 +69,7 @@ class AutoMoDeExecutor:
         # prepare the set of seeds that need to be evaluated
         evaluate_seeds = []
         for seed in self.seeds:
-            if (seed not in controller.evaluated_instances) \
-                    or reevaluate_seeds:
+            if (seed not in controller.evaluated_instances) or reevaluate_seeds:
                 evaluate_seeds.append(seed)
         # evaluate the controller on the set of seeds
         if execution.mpi_enabled:
