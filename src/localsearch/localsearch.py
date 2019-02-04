@@ -15,6 +15,8 @@ def iterative_improvement(initial_controller):
     :param initial_controller: The controller that is used to first improve from
     :return: The best controller after the iterative improvement
     """
+    stats.profiling.start_profiling_memory()
+
     executor = execution.ExecutorFactory.get_executor()
     max_improvements = math.floor(
         settings.budget/(settings.seed_window_size + settings.seed_window_movement))
@@ -27,6 +29,8 @@ def iterative_improvement(initial_controller):
     executor.evaluate_controller(best_controller)
     logging.debug("Initial best scores {}".format(best_controller.scores))
     for i in range(0, max_improvements):
+        #stats.profiling.get_memory_diff()
+        stats.profiling.get_memory_snapshot()
         logging.debug("Iteration {}".format(i))
         # move the window
         executor.advance_seeds()

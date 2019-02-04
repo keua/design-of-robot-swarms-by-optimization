@@ -269,4 +269,7 @@ def parse_arguments():
 
 
 if __name__ == "__main__":
-    parse_arguments()
+    # parse_arguments()
+    import stats.profiling
+    stats.profiling.profile_runtime("parse_arguments()")
+

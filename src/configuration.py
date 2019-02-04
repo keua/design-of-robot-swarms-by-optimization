@@ -192,6 +192,7 @@ def apply():
     """
     level = logging.getLevelName(settings.log_level)
     logging.getLogger().setLevel(level)
+    logging.getLogger().setLevel(logging.ERROR)
     # TODO: Instead of setting here, let them look up
     set_controller_parameters()
     # set_execution_parameters()
