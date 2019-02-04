@@ -74,7 +74,7 @@ class AcceptanceCriterion(object):
         _, p = scistats.ttest_ind(self.current_scores, self.new_scores)
         self.new_outcome = np.mean(self.new_scores)
         self.current_outcome = np.mean(self.current_scores)
-        self.name = f'{self.t_student_test.__name__}_{str(confidence)}'
+        self.name = '{}_{}'.format(self.t_student_test.__name__, confidence)
         return self.current_outcome <= self.new_outcome and p < confidence
 
     def wilcoxon_test(self, confidence=0.05):
@@ -83,7 +83,7 @@ class AcceptanceCriterion(object):
         _, p = scistats.wilcoxon(self.current_scores, self.new_scores)
         self.new_outcome = np.mean(self.new_scores)
         self.current_outcome = np.mean(self.current_scores)
-        self.name = f'{self.wilcoxon_test.__name__}_{str(confidence)}'
+        self.name = '{}_{}'.format(self.wilcoxon_test.__name__, confidence)
         return self.current_outcome <= self.new_outcome and p < confidence
 
     def metropolis_condition(self, t, random_gen):
@@ -91,7 +91,8 @@ class AcceptanceCriterion(object):
         """
         accept = self.accept()
         delta = self.new_outcome - self.current_outcome
-        self.name = f'{self.metropolis_condition.__name__}_{self.accept.__name__}'
+        self.name = '{}_{}'.format(self.metropolis_condition.__name__,
+                                   self.accept.__name__)
         return accept or random_gen.random() < np.exp((delta / t))
 
     def set_scores(self, current_scores, new_scores):
