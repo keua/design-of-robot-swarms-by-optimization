@@ -127,6 +127,7 @@ def submit_localsearch(args):
 #      a     Mail is sent when the job is aborted or rescheduled.
 #      s     Mail is sent when the job is suspended.
 #$ -cwd
+#$ -pe mpi {parallel}
 
 USERNAME=`whoami`
 TMPDIR=/tmp/${{USERNAME}}/LocalSearch_results_{job_name}
@@ -146,7 +147,7 @@ mv ${{TMPDIR}}/* ${{RESULTDIR}}
 cd ${{JOBDIR}}
 rmdir -p ${{TMPDIR}} &> /dev/null
 """.format(args["config_file_name"], args["architecture"], args["path_to_scenario"], args["budget"],
-           args["initial_controller"], job_name=args["job_name"])
+           args["initial_controller"], job_name=args["job_name"],parallel=args["parallel"])
     with open("submit_localsearch_{}.sh".format(args["job_name"]), "w") as submit_file:
         submit_file.write(submit_cmd)
     args = ["qsub", "submit_localsearch_{}.sh".format(args["job_name"])]

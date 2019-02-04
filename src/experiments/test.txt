@@ -7,19 +7,19 @@
         "config": "./config/config_short.ini",
         "scenario": "/home/jkuckling/AutoMoDe-missions/vanilla/for250sec/foraging_bt.argos",
         "architecture": "BT",
-        "budget": 50,
+        "budget": 50000,
         "initial_controller": "minimal",
         "result_directory": "/home/jkuckling/AutoMoDe-LocalSearch/result/",
-        "parallel": 0
-    },
-    "FSM_agg_minimal": {
-        "repetitions": 1,
-        "config": "./config/config_short.ini",
-        "scenario": "/home/jkuckling/AutoMoDe-missions/vanilla/agg250sec/aggregation_fsm.argos",
-        "architecture": "FSM",
-        "budget": 50,
-        "initial_controller": "minimal",
-        "result_directory": "/home/jkuckling/AutoMoDe-LocalSearch/result/",
-        "parallel": 0
+        "parallel": 5
+    #},
+    #"FSM_agg_minimal": {
+    #    "repetitions": 1,
+    #    "config": "./config/config_short.ini",
+    #    "scenario": "/home/jkuckling/AutoMoDe-missions/vanilla/agg250sec/aggregation_fsm.argos",
+    #    "architecture": "FSM",
+    #    "budget": 50,
+    #    "initial_controller": "minimal",
+    #    "result_directory": "/home/jkuckling/AutoMoDe-LocalSearch/result/",
+    #    "parallel": 5
     }
 }
