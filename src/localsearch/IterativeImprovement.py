@@ -39,7 +39,7 @@ class IterativeImprovement(object):
         self.OUT_NAME = ls_utl.SCORES_DIR + 'II_%d_best_score.csv' % budget
         not os.path.isdir(ls_utl.SCORES_DIR) and os.mkdir(ls_utl.SCORES_DIR)
         self.best = candidate
-        self.exe = execution.get_executor()
+        self.exe = execution.ExecutorFactory.get_executor()
         self.acceptance = AC(accept=acceptance_criterion)
         self.budget = budget
         self._establish_termination_criterion(termination_criterion)
@@ -60,7 +60,7 @@ class IterativeImprovement(object):
         log.warning("Started at {}".format(start_time))
         with open(self.OUT_NAME, "w") as file:
             self.exe.create_seeds()
-            self.best.evaluate()
+            self.exe.evaluate_controller(self.best)
             log.debug("Initial best scores {}".format(self.best.scores))
             while True:
                 # move the window
@@ -68,8 +68,8 @@ class IterativeImprovement(object):
                 # create a perturbed controller
                 perturbed = self._perform_perturbation()
                 # evaluate both controllers on the seed_window
-                self.best.evaluate()
-                perturbed.evaluate()
+                self.exe.evaluate_controller(self.best)
+                self.exe.evaluate_controller(perturbed)
                 # Evaluate criterion
                 self.acceptance.set_scores(self.best.scores, perturbed.scores)
                 c_accept = self.acceptance.accept()
