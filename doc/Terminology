@@ -1,4 +1,4 @@
-SCENARIO    - the .argos file for the simulator
+SCENARIO    - the .argos file for the simulator (sometimes also called mission)
 EXPERIMENT  - a .txt file containing information on how to execute a set of localsearches that belong together
               (in json format), can describe multiple SETUPs
 SETUP       - the entirety of information needed to describe one execution of the localsearch

@@ -1,21 +1,13 @@
-from execution.factory import ExecutorFactory
+"""
+This module provides the following functionality
+- execution.ExecutorFactory: a factory class that can be used to obtain an executor object
+- execution.AutoMoDeExecutor: the abstract class that provides the execution logic
 
-# TODO: Maybe hide this? At least make it read only
-mpi_enabled = False
-parallel = 0
+How to use the executor?
+import execution.ExecutorFactory
+executor = execution.ExecutorFactory.get_executor()
+scores = executor.evaluate_controller(controller)
+executor.advance_seeds()
+"""
 
-
-def get_executor():
-    return ExecutorFactory.get_executor()
-
-
-def set_scenario(scenario_file):
-    ExecutorFactory.set_scenario(scenario_file)
-
-
-def set_seed_window(size, movement):
-    ExecutorFactory.set_seed_window(size, movement)
-
-
-def get_architecture():
-    return ExecutorFactory.get_executor().architecture
+from execution.automode_executor import ExecutorFactory
