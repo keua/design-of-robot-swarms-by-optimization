@@ -78,7 +78,7 @@ class SimulatedAnnealing(object):
         self.iterations_per_temperature = iterations_per_temperature
         self.random_seed = random_seed
         self.random_gen = np.random
-        self.exe = execution.get_executor()
+        self.exe = execution.ExecutorFactory.get_executor()
         self.acceptance = AC(accept=acceptance_criterion)
         self.mc = getattr(self.acceptance, "metropolis_condition")
         self.budget = budget
@@ -102,7 +102,7 @@ class SimulatedAnnealing(object):
         log.warning('SA Started at {}'.format(start_time))
         out = open(self.OUT_NAME, "w")
         # If already evaluated do nothing else evaluate
-        self.candidate.scores == float("inf") and self.candidate.evaluate()
+        self.candidate.scores == float("inf") and self.exe.evaluate_controller(self.candidate)
         self.incumbent = copy.deepcopy(self.candidate)
         temperature_constant = self.iterations_per_temperature
         current_temperature = self.temperature
@@ -114,8 +114,8 @@ class SimulatedAnnealing(object):
             # move the window
             self.exe.advance_seeds()
             # evaluate both controllers on the seed_window
-            not self.tc.count == 0 and self.candidate.evaluate()
-            perturbed.evaluate()
+            not self.tc.count == 0 and self.exe.evaluate_controller(self.candidate)
+            self.exe.evaluate_controller(perturbed)
             # Evaluating metropolis condition
             self.acceptance.set_scores(self.candidate.scores, perturbed.scores)
             mc_accept = self.mc(current_temperature, self.random_gen)
