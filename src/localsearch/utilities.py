@@ -2,9 +2,9 @@ import os
 import logging
 import shutil
 from datetime import datetime
-import execution
-from automode.controller import FSM, BT
 
+from automode.architecture import FSM, BT
+import settings
 
 SCORES_DIR = "scores/"
 result_directory = "default/"
@@ -36,14 +36,14 @@ def return_to_src_directory():
     """
     os.chdir(src_directory)
 
+
 def get_controller_class():
-    architecture = execution.get_architecture()
-    if architecture == "FSM":
+    if settings.architecture == "FSM":
         return FSM
-    elif architecture == "BT":
+    elif settings.architecture == "BT":
         return BT
     else:
-        logging.warning("WARNING: The specified type {} is not known.".format(architecture))
+        logging.warning("WARNING: The specified type {} is not known.".format(settings.architecture))
         return None
 
 

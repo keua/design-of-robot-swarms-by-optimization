@@ -1,9 +1,17 @@
+"""
+This module provides implementations for the modules of AutoMoDe Chocolate
+"""
+
 import random
-from automode.modules.modulesABC import ABCBehavior, ABCCondition
 import logging
 
+from automode.modules.abstract_modules import ABCBehavior, ABCCondition
 
-class Behavior (ABCBehavior):
+
+class Behavior(ABCBehavior):
+    """
+    This class represents the behaviors of AutoMoDe Chocolate
+    """
 
     def __init__(self, name):
         self.name = name
@@ -30,7 +38,7 @@ class Behavior (ABCBehavior):
         elif b_id == 5:
             b_name = "Repulsion"
         else:
-            logging.error("Unknown id " + str(b_id) + " for a behavior.")
+            logging.error("Unknown id {} for a behavior.".format(b_id))
         return Behavior(b_name)
 
     @staticmethod
@@ -48,7 +56,8 @@ class Behavior (ABCBehavior):
             return {}
         elif name == "Repulsion":
             return {"rep": Behavior.random_parameter("Repulsion.rep")}  # real value in [1,5]
-        return {}
+        else:
+            return {}
 
     @staticmethod
     def random_parameter(name):
@@ -56,15 +65,15 @@ class Behavior (ABCBehavior):
         To allow identification when different parameter spaces are used for the same parameter name it must be fully
         quantified (that is [behavior].[parameter])"""
         splits = name.split(".")
-        b = splits[0]
-        p = splits[1]
-        if p == "att":
+        # b_name = splits[0]
+        parameter_name = splits[1]
+        if parameter_name == "att":
             return random.uniform(1, 5)
-        if p == "rwm":
+        if parameter_name == "rwm":
             return random.randint(0, 100)
-        if p == "rep":
+        if parameter_name == "rep":
             return random.uniform(1, 5)
-        logging.error("Invalid combination of behavior and parameter " + name)
+        logging.error("Invalid combination of behavior and parameter {}".format(name))
         return 0
 
     @property
@@ -82,16 +91,22 @@ class Behavior (ABCBehavior):
             return 4
         elif self.name == "Repulsion":
             return 5
-        logging.error("Unknown name " + self.name + " for a behavior.")
-        return -1
+        else:
+            logging.error("Unknown name {} for a behavior.".format(self.name))
+            return -1
 
-    """This list contains all possible behaviors that exist in AutoMoDe Chocolate"""
+    # TODO: Describe this in the class
+    # This list contains all possible behaviors that exist in AutoMoDe Chocolate
     behavior_list = ["AntiPhototaxis", "Attraction", "Exploration", "Phototaxis", "Stop", "Repulsion"]
 
     def get_parameter_for_caption(self):
+        """
+        :return: a string representing the parameters and their values
+        """
         param_list = ""
         if self.params:
-            param_list = param_list + "("  # "\n(" TODO: This linebreak seems to break on the cluster. Add it again if the issue is resolved
+            param_list = param_list + "("
+            # "\n(" TODO: This linebreak seems to break on the cluster. Add it again if the issue is resolved
             first = True
             for key, value in self.params.items():
                 if not first:
@@ -102,7 +117,10 @@ class Behavior (ABCBehavior):
         return param_list
 
 
-class Condition (ABCCondition):
+class Condition(ABCCondition):
+    """
+    This class represents the conditions of AutoMoDe Chocolate
+    """
 
     def __init__(self, name):
         self.name = name
@@ -114,22 +132,22 @@ class Condition (ABCCondition):
         return Condition(name)
 
     @staticmethod
-    def get_by_id(t_id):
+    def get_by_id(c_id):
         t_name = "Failure"
-        if t_id == 0:
+        if c_id == 0:
             t_name = "BlackFloor"
-        elif t_id == 1:
+        elif c_id == 1:
             t_name = "GrayFloor"
-        elif t_id == 2:
+        elif c_id == 2:
             t_name = "WhiteFloor"
-        elif t_id == 3:
+        elif c_id == 3:
             t_name = "NeighborsCount"
-        elif t_id == 4:
+        elif c_id == 4:
             t_name = "InvertedNeighborsCount"
-        elif t_id == 5:
+        elif c_id == 5:
             t_name = "FixedProbability"
         else:
-            logging.error("Unknown id " + str(t_id) + " for a condition.")
+            logging.error("Unknown id {} for a condition.".format(c_id))
         return Condition(t_name)
 
     @staticmethod
@@ -157,19 +175,19 @@ class Condition (ABCCondition):
         To allow identification when different parameter spaces are used for the same parameter name it must be fully
         quantified (that is [condition].[parameter])"""
         splits = name.split(".")
-        c = splits[0]
-        p = splits[1]
-        if c == "BlackFloor" or c == "GrayFloor" or c == "WhiteFloor" or c == "FixedProbability":
-            if p == "p":
+        condition_name = splits[0]
+        parameter_name = splits[1]
+        if condition_name in ("BlackFloor", "GrayFloor", "WhiteFloor", "FixedProbability"):
+            if parameter_name == "p":
                 return random.uniform(0, 1)
-            logging.error("Invalid parameter " + p + " for condition " + c)
-        if c == "NeighborsCount" or c == "InvertedNeighborsCount":
-            if p == "w":
+            logging.error("Invalid parameter {} for condition {}".format(parameter_name, condition_name))
+        if condition_name in ("NeighborsCount", "InvertedNeighborsCount"):
+            if parameter_name == "w":
                 return random.uniform(0, 20)
-            if p == "p":
+            if parameter_name == "p":
                 return random.randint(1, 10)
-            logging.error("Invalid parameter " + p + " for condition " + c)
-        logging.error("Invalid combination of condition and parameter " + name)
+            logging.error("Invalid parameter {} for condition {}".format(parameter_name, condition_name))
+        logging.error("Invalid combination of condition and parameter {}".format(name))
         return 0
 
     @property
@@ -187,17 +205,22 @@ class Condition (ABCCondition):
             return 4
         elif self.name == "FixedProbability":
             return 5
-        logging.error("Unknown name " + self.name + " for a condition")
+        logging.error("Unknown name {} for a condition".format(self.name))
         return -1
 
-    """This list contains all possible conditions that exist in AutoMoDe Chocolate"""
+    # TODO: Document in class doc string
+    # This list contains all possible conditions that exist in AutoMoDe Chocolate
     condition_list = ["BlackFloor", "FixedProbability", "GrayFloor", "InvertedNeighborsCount", "NeighborsCount",
                       "WhiteFloor"]
 
     def get_parameter_for_caption(self):
+        """
+        :return: a string representing the parameters and their values
+        """
         param_list = ""
         if self.params:
-            param_list = param_list + "("  # + "\n(" TODO: This linebreak seems to break on the cluster. Add it again if the issue is resolved
+            param_list = param_list + "("
+            # + "\n(" TODO: This linebreak seems to break on the cluster. Add it again if the issue is resolved
             first = True
             for key, value in self.params.items():
                 if not first:
