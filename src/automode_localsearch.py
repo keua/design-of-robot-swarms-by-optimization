@@ -149,7 +149,7 @@ source ${{JOBDIR}}/venv/bin/activate &> $TMPDIR/output_{job_name}.txt
 cd ${{SOURCEDIR}}
 export PYTHONPATH=${{PYTHONPATH}}:/home/jkuckling/AutoMoDe-LocalSearch/src/
 
-python3 automode_localsearch.py run -c {} -a {} -s {} -b {} -i {} -j {job_name} -r ${{TMPDIR}} &>> ${{TMPDIR}}/output_{job_name}.txt
+mpiexec -n 1 python3 -m mpi4py /home/jkuckling/AutoMoDe-LocalSearch/src/automode_localsearch.py run -c {} -a {} -s {} -b {} -i {} -j {job_name} -r ${{TMPDIR}} &>> ${{TMPDIR}}/output_{job_name}.txt
 
 RET=$?
 mv ${{TMPDIR}}/* ${{RESULTDIR}}
