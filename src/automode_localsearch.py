@@ -192,8 +192,10 @@ def execute_localsearch(args):
 def execute_simulated_annealing(args):
     """
     """
-    config = load_configuration_from_file(args["config_file_name"])
-    apply_configuration(args, config)
+    configuration.load_from_file(args["config_file_name"])
+    configuration.load_from_arguments(args)
+    configuration.apply()
+    logging.info(args["job_name"])
     localsearch.utilities.create_directory()
     sa = SA.from_json(args["sls"]['SimulatedAnnealing'])
     new_controller = sa.local_search()
@@ -208,8 +210,10 @@ def execute_simulated_annealing(args):
 def execute_iterative_improvement(args):
     """
     """
-    config = load_configuration_from_file(args["config_file_name"])
-    apply_configuration(args, config)
+    configuration.load_from_file(args["config_file_name"])
+    configuration.load_from_arguments(args)
+    configuration.apply()
+    logging.info(args["job_name"])
     localsearch.utilities.create_directory()
     ii = II.from_json(args["sls"]['IterativeImprovement'])
     new_controller = ii.local_search()
