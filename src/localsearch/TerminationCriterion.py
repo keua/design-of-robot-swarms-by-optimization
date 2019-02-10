@@ -62,14 +62,3 @@ class IterationTermination(TerminationCriterion):
         self.status = self.start >= self.end
         return self.status
 
-class DualTermination(TerminationCriterion):
-    """
-    """
-    def __init__(self, primary, secondary):
-        self.primary = primary
-        self.secondary = secondary
-
-    def satisfied(self):
-        self.primary.status = self.primary.satisfied()
-        self.secondary.status = self.secondary.satisfied()
-        return self.primary.status or self.secondary.status
