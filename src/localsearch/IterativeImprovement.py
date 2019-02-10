@@ -1,13 +1,15 @@
-from datetime import datetime
-import os
 import copy
 import logging as log
-import execution
+import os
+from datetime import datetime
 
-import localsearch.utilities as ls_utl
+import execution
+import localsearch.utilities as lsutl
+import stats
+
 from . import acceptance_criteria as ac
-from .TerminationCriterion import IterationTermination as ITC
 from .AcceptanceCriterion import AcceptanceCriterion as AC
+from .TerminationCriterion import IterationTermination as ITC
 
 
 class IterativeImprovement(object):
@@ -36,12 +38,11 @@ class IterativeImprovement(object):
         :return
             The best controller after the iterative improvement
         """
-        self.OUT_NAME = ls_utl.SCORES_DIR + 'II_%d_best_score.csv' % budget
-        not os.path.isdir(ls_utl.SCORES_DIR) and os.mkdir(ls_utl.SCORES_DIR)
         self.best = candidate
         self.exe = execution.ExecutorFactory.get_executor()
         self.acceptance = AC(accept=acceptance_criterion)
         self.budget = budget
+        self._outname = 'II_%d' % budget
         self._establish_termination_criterion(termination_criterion)
 
     @classmethod
@@ -51,49 +52,50 @@ class IterativeImprovement(object):
         iim = cls._IterativeImprovementModel(data)
         return cls(iim.initial_controller, iim.acceptance_criterion, iim.budget)
 
-    def local_search(self, snap_freq=10):
+    def local_search(self, snap_freq=100):
         """
         :return: The best controller after the iterative improvement
         """
-        isinstance(self.best, str) and self._get_best()
-        start_time = datetime.now()
-        log.warning("Started at {}".format(start_time))
-        with open(self.OUT_NAME, "w") as file:
-            self.exe.create_seeds()
+        self.best = lsutl.get_initial_controller()
+        log.debug('Initial candidate score {}'.format(self.best.agg_score))
+        stats.time.start_run()
+        log.info("Started at {}".format(stats.time.start_time))
+        stats.performance.prepare_score_files(filename=self._outname)
+        self.exe.evaluate_controller(self.best)
+        log.debug("Initial best scores {}".format(self.best.scores))
+        while True:
+            # move the window
+            self.exe.advance_seeds()
+            # create a perturbed controller
+            perturbed = self._perform_perturbation()
+            # evaluate both controllers on the seed_window
             self.exe.evaluate_controller(self.best)
-            log.debug("Initial best scores {}".format(self.best.scores))
-            while True:
-                # move the window
-                self.exe.advance_seeds()
-                # create a perturbed controller
-                perturbed = self._perform_perturbation()
-                # evaluate both controllers on the seed_window
-                self.exe.evaluate_controller(self.best)
-                self.exe.evaluate_controller(perturbed)
-                # Evaluate criterion
-                self.acceptance.set_scores(self.best.scores, perturbed.scores)
-                c_accept = self.acceptance.accept()
-                # save the scores to file and update controllers
-                self._log_scores(perturbed, file)
+            self.exe.evaluate_controller(perturbed)
+            # Evaluate criterion
+            self.acceptance.set_scores(self.best.scores, perturbed.scores)
+            accept = self.acceptance.accept()
+            # save the scores to file and update controllers
+            self._update_agg_scores(perturbed)
+            stats.performance.save_results(self.best, perturbed, self._outname)
+            if accept:
+                log.debug(perturbed.perturb_history[-1].__name__)
+                perturbed.draw('{}'.format(self.tc.count))
+                log.info('New best {}, Old best {}'.format(
+                    perturbed.agg_score, self.best.agg_score))
+                self.best = perturbed
 
-                if c_accept:
-                    log.debug(perturbed.perturb_history[-1].__name__)
-                    perturbed.draw(str(self.tc.count))
-                    log.warning('New best {}, Old best {}'.format(
-                        perturbed.agg_score, self.best.agg_score))
-                    self.best = perturbed
+            if self.tc.count % snap_freq == 0:
+                self.best.draw('{}'.format(self.tc.count))
 
-                if self.tc.count % snap_freq == 0:
-                    self.best.draw(str(self.tc.count))
+            if self.tc.satisfied():  # While
+                break
 
-                if self.tc.satisfied():  # While
-                    break
-
-            end_time = datetime.now()
-
-        log.warning("Finished at {}".format(end_time))
-        time_diff = end_time - start_time
-        log.warning("Took {}".format(time_diff))
+        stats.time.end_run()
+        log.info("Finished at {}".format(stats.time.end_time))
+        log.info("Total time: {}".format(stats.time.elapsed_time()))
+        log.info("Time in simulation: {}".format(stats.time.simulation_time))
+        stats.save()
+        stats.reset()
 
         return self.best
 
@@ -108,33 +110,15 @@ class IterativeImprovement(object):
 
         return perturbed
 
-    def _log_scores(self, perturbed, file):
+    def _update_agg_scores(self, perturbed):
         """
         """
-        self.best.agg_score = (self.acceptance.name,
-                               self.acceptance.current_outcome)
-        perturbed.agg_score = (self.acceptance.name,
-                               self.acceptance.new_outcome)
-        file.write("{}, {}={}, {}, {}={}, {}, \n".format(
-            self.best.scores,
-            self.acceptance.name, self.acceptance.current_outcome,
-            perturbed.scores,
-            self.acceptance.name, self.acceptance.new_outcome,
-            perturbed.perturb_history[-1].__name__)
-        )
-        log.debug("Best score {} and new score {}".
+        log.debug("Best scores {} and perturbed scores {}".
                   format(self.best.scores, perturbed.scores))
-
-    def _get_best(self):
-        """
-        """
-        initial_controller = ls_utl.get_initial_controller()
-
-        if "" == self.best or "minimal" == self.best:
-            self.best = initial_controller
-        else:
-            self.best = initial_controller
-        log.warning('Initial candidate score {}'.format(self.best.agg_score))
+        self.best.agg_score = (
+            self.acceptance.name, self.acceptance.current_outcome)
+        perturbed.agg_score = (
+            self.acceptance.name, self.acceptance.new_outcome)
 
     def _establish_termination_criterion(self, termination_criterion):
         """
