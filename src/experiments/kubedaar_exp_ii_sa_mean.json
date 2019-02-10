@@ -6,22 +6,22 @@
         "architecture": "FSM",
         "result_directory": "/home/masterulb/masterthesis/localsearch/result/",
         "parallel": 8,
-        "budget": 50,
+        "budget": 500,
         "initial_controller": "minimal",
         "sls": {
             "SimulatedAnnealing": {
-                "budget": 500,
+                "budget": 1000,
                 "candidate": {
                     "IterativeImprovement": {
-                        "budget": 50,
+                        "budget": 100,
                         "initial_controller": "minimal",
                         "acceptance_criterion": "mean"
                     }
                 },
                 "temperature": 125.0,
                 "final_temperature": 0.00001,
-                "cooling_rate": 0.85,
-                "iterations_per_temperature": 2,
+                "cooling_rate": 0.70,
+                "temperature_length": 3,
                 "acceptance_criterion": "mean",
                 "random_seed": 8963
             }
@@ -34,22 +34,22 @@
         "architecture": "BT",
         "result_directory": "/home/masterulb/masterthesis/localsearch/result/",
         "parallel": 8,
-        "budget": 50,
+        "budget": 100,
         "initial_controller": "minimal",
         "sls": {
             "SimulatedAnnealing": {
-                "budget": 500,
+                "budget": 1000,
                 "candidate": {
                     "IterativeImprovement": {
-                        "budget": 50,
+                        "budget": 500,
                         "initial_controller": "minimal",
                         "acceptance_criterion": "mean"
                     }
                 },
                 "temperature": 125.0,
                 "final_temperature": 0.00001,
-                "cooling_rate": 0.85,
-                "iterations_per_temperature": 2,
+                "cooling_rate": 0.6,
+                "temperature_length": 3,
                 "acceptance_criterion": "mean",
                 "random_seed": 8963
             }

@@ -21,7 +21,7 @@
                 "temperature": 125.0,
                 "final_temperature": 0.00001,
                 "cooling_rate": 0.65,
-                "iterations_per_temperature": 2,
+                "temperature_length": 2,
                 "acceptance_criterion": "t_student_test",
                 "random_seed": 8963
             }
@@ -49,7 +49,7 @@
                 "temperature": 125.0,
                 "final_temperature": 0.00001,
                 "cooling_rate": 0.65,
-                "iterations_per_temperature": 2,
+                "temperature_length": 2,
                 "acceptance_criterion": "t_student_test",
                 "random_seed": 8963
             }
