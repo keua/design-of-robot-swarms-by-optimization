@@ -1,15 +1,18 @@
-import numpy as np
 import copy
-import os
 import json
-import execution
 import logging as log
-import localsearch.utilities as ls_utl
+import os
+from datetime import datetime
+
+import numpy as np
+
+import execution
+import localsearch.utilities as lsutl
+import stats
+
+from .AcceptanceCriterion import AcceptanceCriterion as AC
 from .TerminationCriterion import DiscountTermination as DTC
 from .TerminationCriterion import IterationTermination as ITC
-from .AcceptanceCriterion import AcceptanceCriterion as AC
-from datetime import datetime
-from localsearch import iterative_improvement as ii
 
 
 class SimulatedAnnealing(object):
@@ -37,7 +40,7 @@ class SimulatedAnnealing(object):
         in time.
         final_temperature: float value indicating the end of the annealing 
         process.
-        iterations_per_temperature: integer value indicating the number of 
+        temperature_length: integer value indicating the number of 
         iterations during the cooling process in which the same temperature
         will be used.
         random_seed: integer value to initialize the random generator.
@@ -55,33 +58,32 @@ class SimulatedAnnealing(object):
             self.temperature = None
             self.cooling_rate = None
             self.final_temperature = None
-            self.iterations_per_temperature = None
+            self.temperature_length = None
             self.random_seed = None
             self.acceptance_criterion = None
             self.budget = None
             self.__dict__ = data
 
     def __init__(self, candidate, temperature=125.00, cooling_rate=0.5,
-                 final_temperature=0.0001, iterations_per_temperature=2,
+                 final_temperature=0.0001, temperature_length=2,
                  acceptance_criterion="mean", random_seed=None, budget=5000,
                  termination_criterion=None):
         """
         """
         np.random.seed(random_seed)
-        self.OUT_NAME = ls_utl.SCORES_DIR + 'SA_%d_best_score.csv' % random_seed
-        not os.path.isdir(ls_utl.SCORES_DIR) and os.mkdir(ls_utl.SCORES_DIR)
         self.candidate = candidate
-        self.incumbent = None
+        self.best = candidate
         self.temperature = temperature
         self.cooling_rate = cooling_rate
         self.final_temperature = final_temperature
-        self.iterations_per_temperature = iterations_per_temperature
+        self.temperature_length = temperature_length
         self.random_seed = random_seed
         self.random_gen = np.random
         self.exe = execution.ExecutorFactory.get_executor()
         self.acceptance = AC(accept=acceptance_criterion)
         self.mc = getattr(self.acceptance, "metropolis_condition")
         self.budget = budget
+        self._outname = 'SA_%d' % random_seed
         self._establish_termination_criterion(termination_criterion)
 
     @classmethod
@@ -90,23 +92,19 @@ class SimulatedAnnealing(object):
         """
         sam = cls._SimulatedAnnealingModel(data)
         return cls(sam.candidate, sam.temperature, sam.cooling_rate,
-                   sam.final_temperature, sam.iterations_per_temperature,
+                   sam.final_temperature, sam.temperature_length,
                    sam.acceptance_criterion, sam.random_seed, sam.budget)
 
-    def local_search(self, snap_freq=10):
+    def local_search(self, snap_freq=100):
         """
         """
-        # isinstance(self.candidate, str) and
         self._get_candidate()
-        start_time = datetime.now()
-        log.warning('SA Started at {}'.format(start_time))
-        out = open(self.OUT_NAME, "w")
-        # If already evaluated do nothing else evaluate
-        self.candidate.scores == float("inf") and self.exe.evaluate_controller(self.candidate)
-        self.incumbent = copy.deepcopy(self.candidate)
-        temperature_constant = self.iterations_per_temperature
+        stats.time.start_run()
+        log.info('SA Started at {}'.format(stats.time.start_time))
+        stats.performance.prepare_score_files(filename=self._outname)
+        self.best = copy.deepcopy(self.candidate)
+        temperature_length = self.temperature_length
         current_temperature = self.temperature
-        self.exe.create_seeds()  # To avoid bias in certain seeds
         while True:  # do
             log.debug('Current temperature {}'.format(current_temperature))
             # create a perturbed controller
@@ -114,38 +112,42 @@ class SimulatedAnnealing(object):
             # move the window
             self.exe.advance_seeds()
             # evaluate both controllers on the seed_window
-            not self.tc.count == 0 and self.exe.evaluate_controller(self.candidate)
+            self.exe.evaluate_controller(self.candidate)
             self.exe.evaluate_controller(perturbed)
             # Evaluating metropolis condition
             self.acceptance.set_scores(self.candidate.scores, perturbed.scores)
             mc_accept = self.mc(current_temperature, self.random_gen)
-            self._log_scores(perturbed, out)
+            self._update_agg_scores(perturbed)
+            stats.performance.save_results(
+                self.candidate, perturbed, self._outname)
             # If metropolis condition met select the new controller
             if mc_accept:
                 self.candidate = perturbed
-                # Evaluating acceptance criterion for incumbent controller
-                self._evaluate_incumbent()
+                # Evaluating acceptance criterion for global best controller
+                self._evaluate_best()
             # Draw Best controller with certain frequency
             if self.tc.count % snap_freq == 0:
-                self.candidate.draw(str(self.tc.count))
+                self.candidate.draw('{}'.format(self.tc.count))
             # Constant temperature
-            temperature_constant -= 1
+            temperature_length -= 1
             self.tc.discount = 1.0
             # Applying cooling_rate
-            if temperature_constant == 0:
+            if temperature_length == 0:
                 current_temperature *= self.cooling_rate
                 self.tc.discount = self.cooling_rate
-                temperature_constant = self.iterations_per_temperature
+                temperature_length = self.temperature_length
 
             if self.tc.satisfied():  # While
                 break
 
-        end_time = datetime.now()
-        log.warning('Finished at {}'.format(end_time))
-        log.warning('Took {}'.format(end_time - start_time))
-        out.close()
+        stats.time.end_run()
+        log.info("Finished at {}".format(stats.time.end_time))
+        log.info("Total time: {}".format(stats.time.elapsed_time()))
+        log.info("Time in simulation: {}".format(stats.time.simulation_time))
+        stats.save()
+        stats.reset()
 
-        return self.incumbent
+        return self.best
 
     def _perform_perturbation(self):
         """
@@ -158,52 +160,42 @@ class SimulatedAnnealing(object):
 
         return perturbed
 
-    def _log_scores(self, perturbed, file):
+    def _update_agg_scores(self, perturbed):
         """
         """
         log.debug('Candidate: {}, Perturbed: {}'.format(
                   self.candidate.scores, perturbed.scores))
-        file.write('{}, {}={}, {}, {}={}, {} \n'.format(
-            self.candidate.scores,
-            self.acceptance.name, self.acceptance.current_outcome,
-            perturbed.scores,
-            self.acceptance.name, self.acceptance.new_outcome,
-            perturbed.perturb_history[-1].__name__)
-        )
         # Updating controllers
         self.candidate.agg_score = \
             (self.acceptance.name, self.acceptance.current_outcome)
         perturbed.agg_score = \
             (self.acceptance.name, self.acceptance.new_outcome)
 
-    def _evaluate_incumbent(self):
+    def _evaluate_best(self):
         """
         """
-        log.warning('Exploring controller {}, Old controller {}'.format(
+        log.debug('Exploring controller {}, Old controller {}'.format(
             self.acceptance.new_outcome, self.acceptance.current_outcome))
-        self.acceptance.set_scores(
-            self.incumbent.scores, self.candidate.scores)
+        self.acceptance.set_scores(self.best.scores, self.candidate.scores)
         if self.acceptance.accept():
-            self.candidate.draw(str(self.tc.count))
-            self.incumbent = copy.deepcopy(self.candidate)
-            log.warning('New incumbent {}, Old controller {}'.format(
+            self.candidate.draw('{}'.format(self.tc.count))
+            self.best = copy.deepcopy(self.candidate)
+            log.info('New Best controller {}, Old controller {}'.format(
                 self.acceptance.new_outcome, self.acceptance.current_outcome))
 
     def _get_candidate(self):
         """
         """
-        initial_controller = ls_utl.get_initial_controller()
-
-        if "" == self.candidate or "minimal" == self.candidate:
-            self.candidate = initial_controller
+        if "" == self.candidate or isinstance(self.candidate, str):
+            self.candidate = lsutl.get_initial_controller()
+            self.exe.evaluate_controller(self.candidate)
         else:
             for key in self.candidate:
-                algorithm = ls_utl.get_class("localsearch.%s" % key)
+                algorithm = lsutl.get_class("localsearch.%s" % key)
                 new = algorithm.from_json(self.candidate[key]).local_search()
                 self.candidate = new
 
-        log.warning('Initial candidate score {}'.
-                    format(self.candidate.agg_score))
+        log.debug('Initial candidate score %s' % str(self.candidate.agg_score))
 
     def _establish_termination_criterion(self, termination_criterion):
         """
