@@ -21,8 +21,7 @@ def prepare_score_files():
 def save_results(best_controller, perturbed_controller):
     with open("scores/history.csv", "a") as file:
         file.write("{}, {}, {} \n".format(best_controller.agg_score[1], perturbed_controller.agg_score[1],
-                                          perturbed_controller.perturb_history[
-                                              len(perturbed_controller.perturb_history) - 1].__name__))
+                                          perturbed_controller.perturb_history[-1]))
     with open("scores/scores.csv", "a") as file:
         file.write("{}; {} \n".format(best_controller.scores, perturbed_controller.scores))
 
