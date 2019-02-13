@@ -6,6 +6,7 @@ from automode.modules.chocolate import Behavior, Condition
 import random
 import logging
 import re
+import settings
 
 
 class ABCNode:
@@ -157,10 +158,6 @@ class AbstractBehaviorTree(AutoMoDeArchitectureABC):
     (Maple) version and a less restricted version.
     """
 
-    parameters = {"max_actions": 4,
-                  "minimal_condition": "Fail",
-                  "minimal_behavior": "Fail"}
-
     def __init__(self, minimal=False):
         self.root = RootNode()
         super().__init__(minimal=minimal)
@@ -184,7 +181,7 @@ class UnrestrictedBehaviorTree(AbstractBehaviorTree):
         """
         Sets up a minimal controller. That is a BT with a single action
         """
-        self.root.children.append((ActionNode(AbstractBehaviorTree.parameters["minimal_behavior"])))
+        self.root.children.append((ActionNode(settings.controller["minimal_behavior"])))
 
     @staticmethod
     def parse_from_commandline_args(cmd_args):
@@ -247,8 +244,8 @@ class RestrictedBehaviorTree(AbstractBehaviorTree):
         sequence = SequenceStarNode()
         self.root.set_child(sequence)
         sel1 = SelectorNode()
-        sel1.set_child(ConditionNode(AbstractBehaviorTree.parameters["minimal_condition"]))
-        sel1.set_child(ActionNode(AbstractBehaviorTree.parameters["minimal_behavior"]))
+        sel1.set_child(ConditionNode(settings.controller["minimal_condition"]))
+        sel1.set_child(ActionNode(settings.controller["minimal_behavior"]))
         sequence.set_child(sel1)
 
     @staticmethod
@@ -389,7 +386,7 @@ class RestrictedBehaviorTree(AbstractBehaviorTree):
         The new subtree will be added as a random child to the sequence* node.
         """
         # Check if maximum number of subtrees is not exceeded
-        if len(self.top_node.children) >= self.parameters["max_actions"]:
+        if len(self.top_node.children) >= settings.BT["max_actions"]:
             return False  # we exceeded the amount of allowed subtrees
         # Generate new subtree
         new_selector = SelectorNode()

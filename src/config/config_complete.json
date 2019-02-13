@@ -21,7 +21,7 @@
     "max_states": 4,
     "max_transitions": 1000,
     "max_transitions_per_state": 4,
-    "no_self_transition": true
+    "self_transition": false
   },
   "BT": {
     "path_to_AutoMoDe": "/home/jkuckling/AutoMoDe-BT/bin/automode_main_bt",
@@ -31,8 +31,8 @@
     "snapshot_frequency": 100,
     "log_level": "DEBUG"
   },
-  "parallel": {
+  "parallelization": {
     "parallel": 5,
-    "parallelization": "MPI"
+    "mode": "sequential"
   }
 }

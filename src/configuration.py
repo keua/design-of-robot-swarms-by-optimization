@@ -33,49 +33,6 @@ def load_from_file(file_name):
     return data
 
 
-def set_parameters_fsm():
-    """
-    Sets the configuration parameters of the FSM module
-    """
-    # parameters for the FSM
-    FSM.parameters["max_states"] = settings.FSM_max_states
-    FSM.parameters["max_transitions"] = settings.FSM_max_transitions
-    FSM.parameters["max_transitions_per_state"] = settings.FSM_max_transitions_per_state
-    FSM.parameters["no_self_transition"] = settings.FSM_no_self_transition
-    FSM.parameters["initial_state_behavior"] = settings.minimal_behavior
-    FSM.parameters["random_parameter_initialization"] = settings.random_parameter_initialization
-
-
-def set_parameters_bt():
-    """
-    Sets the configuration parameters of the BT module
-    """
-    # parameters for the BT
-    BT.parameters["max_actions"] = settings.BT_max_actions
-    BT.parameters["minimal_behavior"] = settings.minimal_behavior
-    BT.parameters["minimal_condition"] = settings.minimal_condition
-    BT.parameters["random_parameter_initialization"] = settings.random_parameter_initialization
-
-
-def set_controller_parameters():
-    """
-    Sets the configuration parameters for the FSM and BT module
-    """
-    # Initialize all controller types
-    set_parameters_fsm()
-    set_parameters_bt()
-
-
-def set_localsearch_parameters():
-    """
-    Sets the configuration parameters in the localsearch module
-    """
-    localsearch.utilities.initial_controller = settings.initial_controller
-    localsearch.utilities.job_name = settings.job_name
-    localsearch.utilities.result_directory = settings.result_directory
-    localsearch.utilities.config_file_name = settings.config_file_name
-
-
 def apply(configuration):
     """
     Applies the current settings. Unfortunately this is still necessary at the moment.
