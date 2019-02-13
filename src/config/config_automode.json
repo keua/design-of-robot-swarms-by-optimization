@@ -1,0 +1,18 @@
+{
+  "controller": {
+    "minimal_behavior": "Stop",
+    "minimal_condition": "FixedProbability",
+    "random_parameter_initialization": true
+  },
+  "FSM": {
+    "path_to_AutoMoDe": "/home/jkuckling/AutoMoDe-FSM/bin/automode_main",
+    "max_states": 4,
+    "max_transitions": 1000,
+    "max_transitions_per_state": 4,
+    "no_self_transition": true
+  },
+  "BT": {
+    "path_to_AutoMoDe": "/home/jkuckling/AutoMoDe-BT/bin/automode_main_bt",
+    "max_actions": 4
+  }
+}

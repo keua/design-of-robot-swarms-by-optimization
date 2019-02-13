@@ -47,11 +47,23 @@ The important top-level implementations (also are refactored heavily at the mome
 
 - **submit_localsearch.py**: Was supposed to replace the localsearch_*.sh, automode_localsearch,sh and submit_localsearch.sh files. I never finished this file and it will be replaced in my current refactoring process.
 
-- **localsearch_*.sh, automode_localsearch,sh and submit_localsearch.sh**: Scripts that I used to submit my jobs on the cluster. Not necessary for local testing
+- **localsearch_\*.sh, automode_localsearch,sh and submit_localsearch.sh**: Scripts that I used to submit my jobs on the cluster. Not necessary for local testing
+
+## Running a local search
 
 
-## TO-DO
 
-It would be good to have a flexible acceptance criterion. It would be good to to create a file "acceptance.py" (or "acceptance_criterion.py") in the localsearch folder. In that file you should provide different criteria (for example mean comparison, median comparison, or a statistical test).
+## Configuring the local search
 
+The local search can be configured using JSON files.
 
+When calling automode_localsearch.py with the "run" subcommand, an *experiment file* is expected.
+This experiment file should contain all necessary configuration that will be made available through the settings.py file.
+The configuration data should be structured as named dictionaries and each dictionary dict will be available as settings.dict
+
+When calling automode_localsearch.py with either the **local** or **submit** the syntax is supposed to be a little bit different.
+The main experiment file (supplied by -e) needs to contain a number of dictionaries describing the experiments.
+For each experiment, the key to this dictionary will be used as the job_name.
+The values of the experiment need to contain at least entry: **configuration** with the path to the config file.
+This config file will be loaded (including all of it's include_files).
+If all the experiments use the same config file, it can also be set at the top-level.
