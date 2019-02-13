@@ -7,7 +7,7 @@
         "config": "./config/config_short.ini",
         "scenario": "/home/jkuckling/AutoMoDe-missions/vanilla/for250sec/foraging_bt.argos",
         "architecture": "BT",
-        "budget": 50000,
+        "budget": 1000,
         "initial_controller": "minimal",
         "result_directory": "/home/jkuckling/AutoMoDe-LocalSearch/result/",
         "parallel": 5
