@@ -1,7 +1,7 @@
 # Experiment file for all experiments (aggregation, foraging) and all control architectures (BT, FSM) starting from
 # a minimal controller
 {
-    "configuration": "config/config_complete.json",
+    "configuration": "config/config_include.json",
     # BT
     "BT_for_minimal": {
         "repetitions": 1,

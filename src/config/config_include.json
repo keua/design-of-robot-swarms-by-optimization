@@ -12,8 +12,8 @@
     "log_level": "DEBUG"
   },
 
-  "parallel": {
+  "parallelization": {
     "parallel": 5,
-    "parallelization": "MPI"
+    "mode": "sequential"
   }
 }
