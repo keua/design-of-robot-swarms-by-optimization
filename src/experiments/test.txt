@@ -1,24 +1,22 @@
 # Experiment file for all experiments (aggregation, foraging) and all control architectures (BT, FSM) starting from
 # a minimal controller
 {
-    "include_files": ["config/config_short.json"],
+    "configuration": "config/config_complete.json",
     # BT
     "BT_for_minimal": {
         "repetitions": 1,
-        "config": "./config/config_short.json",
         "scenario": "/home/jkuckling/AutoMoDe-missions/vanilla/for250sec/foraging_bt.argos",
         "architecture": "BT",
         "initial_controller": "minimal",
         "result_directory": "/home/jkuckling/AutoMoDe-LocalSearch/result/",
         "parallel": 5
-    #},
-    #"FSM_agg_minimal": {
-    #    "repetitions": 1,
-    #    "config": "./config/config_short.ini",
-    #    "scenario": "/home/jkuckling/AutoMoDe-missions/vanilla/agg250sec/aggregation_fsm.argos",
-    #    "architecture": "FSM",
-    #    "initial_controller": "minimal",
-    #    "result_directory": "/home/jkuckling/AutoMoDe-LocalSearch/result/",
-    #    "parallel": 5
+    },
+    "FSM_agg_minimal": {
+        "repetitions": 1,
+        "scenario": "/home/jkuckling/AutoMoDe-missions/vanilla/agg250sec/aggregation_fsm.argos",
+        "architecture": "FSM",
+        "initial_controller": "minimal",
+        "result_directory": "/home/jkuckling/AutoMoDe-LocalSearch/result/",
+        "parallel": 5
     }
 }

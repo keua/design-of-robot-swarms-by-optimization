@@ -39,6 +39,7 @@ def load_experiment_file(experiment_file):
     # Handle required and optional parameters like when parsing from sys.argv
     for setup_key in data:
         experiment_setup = data[setup_key]
+        print(experiment_setup)
         if global_config_file:  # set the config file if there was a global definition
             experiment_setup["configuration"] = global_config_file
         if "repetitions" not in experiment_setup:  # default check for repetitions
@@ -75,24 +76,22 @@ def run_local(experiment_file):
     experiment_setup = load_experiment_file(experiment_file)
     for setup_key in experiment_setup:  # Execute each experiment
         setup = experiment_setup[setup_key]
-        for i in range(0, setup["repetitions"]):  # Execute the repetitions of an experiment
+        for i in range(int(setup["repetitions"])):  # Execute the repetitions of an experiment
             # retrieve important information
             initial_controller = setup["initial_controller"]
             if not initial_controller == "minimal":
                 initial_controller = "{}:{}".format(initial_controller,
                                                     i+1)  # add the current repetition if it is not minimal
-            experiment = {
-                "config_file_name": setup["config"],
+            # TODO: only assign those that are necessary
+            arguments = {
                 "architecture": setup["architecture"],
-                "path_to_scenario": setup["scenario"],
-                "budget": setup["budget"],
+                "scenario_file": setup["scenario"],
                 "initial_controller": initial_controller,
                 "job_name": "{}_{}".format(setup_key, i),  # create correct jobname
                 "result_directory": setup["result_directory"],
-                "parallel": setup["parallel"],
             }
             # execute local search
-            execute_localsearch(experiment)
+            execute_localsearch(setup["configuration"], arguments)
 
 
 def submit(experiment_file):
@@ -199,6 +198,8 @@ def execute_localsearch(configuration_file, experiment_arguments = {}):
 
     # apply the configuration
     configuration.apply(config_data)
+
+    print(settings.experiment)
 
     # create the run folder
     logging.info(config_data["experiment"]["job_name"])

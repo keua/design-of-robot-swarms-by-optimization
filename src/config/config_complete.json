@@ -1,7 +1,7 @@
 {
   "experiment": {
     "job_name": "example_job",
-    "scenario": "/home/jkuckling/AutoMoDe-missions/vanilla/for250sec/foraging_bt.argos",
+    "scenario_file": "/home/jkuckling/AutoMoDe-missions/vanilla/for250sec/foraging_bt.argos",
     "architecture": "BT",
     "initial_controller": "minimal",
     "result_directory": "/home/jkuckling/AutoMoDe-LocalSearch/result/"

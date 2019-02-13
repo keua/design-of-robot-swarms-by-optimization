@@ -44,7 +44,7 @@ class AutoMoDeExecutor:
         else:
             logging.warning("Unknown architecture {}".format(settings.experiment["architecture"]))
             self.path_to_AutoMoDe_executable = "/path/to/AutoMoDe"
-        self.scenario_file = settings.experiment["scenario"]
+        self.scenario_file = settings.experiment["scenario_file"]
 
         self.seed_window_size = settings.execution["seed_window_size"]
         self.seed_window_move = settings.execution["seed_window_movement"]
