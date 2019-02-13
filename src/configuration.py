@@ -25,10 +25,9 @@ def load_from_file(file_name):
     if "include_files" in data:
         for include_file_name in data["include_files"]:
             logging.debug("Including configuration file {}".format(include_file_name))
-            # TODO: This should rather be a recursive call to load_from_file and
-            #  also do a recursive merge of the dictionary
-            with open(include_file_name) as include_file:
-                included_data = json.load(include_file)
+            # TODO: maybe include checks against circular imports
+            included_data = load_from_file(include_file_name)
+            # TODO: maybe make this a recursive update
             data.update(included_data)
     return data
 
