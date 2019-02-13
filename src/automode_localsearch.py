@@ -107,17 +107,16 @@ def submit(experiment_file):
             if not initial_controller == "minimal":
                 initial_controller = "{}:{}".format(initial_controller,
                                                     i+1)  # add the current repetition if it is not minimal
-            experiment = {
-                "config_file_name": setup["config"],
+            # TODO: only assign those that are necessary
+            arguments = {
+                "configuration": setup["configuration"],
                 "architecture": setup["architecture"],
-                "path_to_scenario": setup["scenario"],
-                "budget": setup["budget"],
+                "scenario_file": setup["scenario"],
                 "initial_controller": initial_controller,
                 "job_name": "{}_{}".format(setup_key, i),  # create correct jobname
                 "result_directory": setup["result_directory"],
-                "parallel": setup["parallel"],
             }
-            submit_localsearch(experiment)
+            submit_localsearch(arguments)
 
 
 def submit_localsearch(args):
@@ -128,6 +127,10 @@ def submit_localsearch(args):
     """
     # TODO: Make the following blob a little bit more customizable
     # TODO: Also don't write it to a real file, or at least clean the file up after execution
+
+    config_data = configuration.load_from_file(args["configuration"])
+    execution_cmd = "python3" if not config_data["parallelization"]["mode"]=="MPI" else "mpiexec -n 1 python3 -m mpi4py"
+
     submit_cmd = """#!/bin/bash
 #$ -N {job_name}
 #$ -l long
@@ -137,7 +140,7 @@ def submit_localsearch(args):
 #      a     Mail is sent when the job is aborted or rescheduled.
 #      s     Mail is sent when the job is suspended.
 #$ -cwd
-#$ -pe mpi {parallel}
+{parallel}
 
 USERNAME=`whoami`
 TMPDIR=/tmp/${{USERNAME}}/LocalSearch_results_{job_name}
@@ -150,14 +153,16 @@ source ${{JOBDIR}}/venv/bin/activate &> $TMPDIR/output_{job_name}.txt
 cd ${{SOURCEDIR}}
 export PYTHONPATH=${{PYTHONPATH}}:/home/jkuckling/AutoMoDe-LocalSearch/src/
 
-mpiexec -n 1 python3 -m mpi4py /home/jkuckling/AutoMoDe-LocalSearch/src/automode_localsearch.py run -c {} -a {} -s {} -b {} -i {} -j {job_name} -r ${{TMPDIR}} &>> ${{TMPDIR}}/output_{job_name}.txt
+{} /home/jkuckling/AutoMoDe-LocalSearch/src/automode_localsearch.py run -c {} -a {} -s {} -i {} -j {job_name} -r ${{TMPDIR}} &>> ${{TMPDIR}}/output_{job_name}.txt
 
 RET=$?
 mv ${{TMPDIR}}/* ${{RESULTDIR}}
 cd ${{JOBDIR}}
 rmdir -p ${{TMPDIR}} &> /dev/null
-""".format(args["config_file_name"], args["architecture"], args["path_to_scenario"], args["budget"],
-           args["initial_controller"], job_name=args["job_name"],parallel=args["parallel"])
+""".format(execution_cmd, args["configuration"], args["architecture"], args["scenario_file"],
+           args["initial_controller"], job_name=args["job_name"],
+           parallel="#$ -pe mpi {}".format(config_data["parallelization"]["parallel"])
+           if config_data["parallelization"]["mode"] == "MPI" else "")
     with open("submit_localsearch_{}.sh".format(args["job_name"]), "w") as submit_file:
         submit_file.write(submit_cmd)
     args = ["qsub", "submit_localsearch_{}.sh".format(args["job_name"])]
@@ -198,8 +203,6 @@ def execute_localsearch(configuration_file, experiment_arguments = {}):
 
     # apply the configuration
     configuration.apply(config_data)
-
-    print(settings.experiment)
 
     # create the run folder
     logging.info(config_data["experiment"]["job_name"])
