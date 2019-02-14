@@ -112,8 +112,7 @@ class SimulatedAnnealing(object):
             # move the window
             self.exe.advance_seeds()
             # evaluate both controllers on the seed_window
-            self.exe.evaluate_controller(self.candidate)
-            self.exe.evaluate_controller(perturbed)
+            self.exe.evaluate_controller([self.candidate, perturbed])
             # Evaluating metropolis condition
             self.acceptance.set_scores(self.candidate.scores, perturbed.scores)
             mc_accept = self.mc(current_temperature, self.random_gen)
@@ -188,7 +187,7 @@ class SimulatedAnnealing(object):
         """
         if "" == self.candidate or isinstance(self.candidate, str):
             self.candidate = lsutl.get_initial_controller()
-            self.exe.evaluate_controller(self.candidate)
+            self.exe.evaluate_controller([self.candidate])
         else:
             for key in self.candidate:
                 algorithm = lsutl.get_class("localsearch.%s" % key)
