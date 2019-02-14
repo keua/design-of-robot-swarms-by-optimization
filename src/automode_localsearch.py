@@ -129,7 +129,7 @@ def submit_localsearch(args):
     # TODO: Also don't write it to a real file, or at least clean the file up after execution
 
     config_data = configuration.load_from_file(args["configuration"])
-    execution_cmd = "python3" if not config_data["parallelization"]["mode"]=="MPI" else "mpiexec -n 1 python3 -m mpi4py"
+    execution_cmd = "python3" if not config_data["parallelization"]["mode"]=="MPI" else "mpiexec -n 1 python3 -m mpi4py.futures"
 
     submit_cmd = """#!/bin/bash
 #$ -N {job_name}
@@ -161,7 +161,8 @@ cd ${{JOBDIR}}
 rmdir -p ${{TMPDIR}} &> /dev/null
 """.format(execution_cmd, args["configuration"], args["architecture"], args["scenario_file"],
            args["initial_controller"], job_name=args["job_name"],
-           parallel="#$ -pe mpi {}".format(config_data["parallelization"]["parallel"])
+           parallel="""#$ -pe mpi {}
+#$ -binding linear:256""".format(config_data["parallelization"]["parallel"])
            if config_data["parallelization"]["mode"] == "MPI" else "")
     with open("submit_localsearch_{}.sh".format(args["job_name"]), "w") as submit_file:
         submit_file.write(submit_cmd)

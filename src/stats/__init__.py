@@ -6,6 +6,7 @@ import json
 
 import stats.time
 import stats.performance
+import stats.profiling
 
 
 def reset():
