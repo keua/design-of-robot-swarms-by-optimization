@@ -8,6 +8,7 @@ import argparse
 import logging
 import json
 import subprocess
+import numpy as np
 
 from settings import BUDGET_DEFAULT, SCENARIO_DEFAULT, RESULT_DEFAULT, JOB_NAME_DEFAULT
 import configuration
@@ -79,7 +80,8 @@ def run_local(experiment_file):
                 "path_to_scenario": setup["scenario"],
                 "budget": setup["budget"],
                 "initial_controller": initial_controller,
-                "job_name": "{}_{}".format(setup_key, i),  # create correct jobname
+                # create correct jobname
+                "job_name": "{}_{}".format(setup_key, i),
                 "result_directory": setup["result_directory"],
                 "parallel": setup["parallel"],
                 "sls": setup["sls"]
@@ -88,7 +90,7 @@ def run_local(experiment_file):
                 execute_simulated_annealing(experiment)
             elif "IterativeImprovement" in experiment["sls"]:
                 # execute localsearch
-                #execute_localsearch(experiment)
+                # execute_localsearch(experiment)
                 execute_iterative_improvement(experiment)
             logging.warning("======== Repetition %d finished ========" % i)
         logging.warning("======== Experiment %s finished ========" % setup_key)
@@ -101,7 +103,8 @@ def submit(experiment_file):
     experiment_setup = load_experiment_file(experiment_file)
     for setup_key in experiment_setup:  # Execute each experiment
         setup = experiment_setup[setup_key]
-        for i in range(0, setup["repetitions"]):  # Execute the repetitions of an experiment
+        # Execute the repetitions of an experiment
+        for i in range(0, setup["repetitions"]):
             # retrieve important information
             initial_controller = setup["initial_controller"]
             if not initial_controller == "minimal":
@@ -113,9 +116,11 @@ def submit(experiment_file):
                 "path_to_scenario": setup["scenario"],
                 "budget": setup["budget"],
                 "initial_controller": initial_controller,
-                "job_name": "{}_{}".format(setup_key, i),  # create correct jobname
+                # create correct jobname
+                "job_name": "{}_{}".format(setup_key, i),
                 "result_directory": setup["result_directory"],
                 "parallel": setup["parallel"],
+                "file": experiment_file
             }
             submit_localsearch(experiment)
 
@@ -128,39 +133,45 @@ def submit_localsearch(args):
     """
     # TODO: Make the following blob a little bit more customizable
     # TODO: Also don't write it to a real file, or at least clean the file up after execution
-    submit_cmd = """#!/bin/bash
+    submit_cmd = """
+#!/bin/bash
 #$ -N {job_name}
-#$ -l long
+#$ -l short
 #$ -m ase
 #      b     Mail is sent at the beginning of the job.
 #      e     Mail is sent at the end of the job.
 #      a     Mail is sent when the job is aborted or rescheduled.
 #      s     Mail is sent when the job is suspended.
 #$ -cwd
+#$ -binding linear:256
+#$ -pe mpi {parallel}
 
 USERNAME=`whoami`
-TMPDIR=/tmp/${{USERNAME}}/LocalSearch_results_{job_name}
-JOBDIR=/home/${{USERNAME}}/AutoMoDe-LocalSearch
+TMPDIR=/tmp/${{USERNAME}}/localsearch_results_{job_name}
+JOBDIR=/home/${{USERNAME}}/masterthesis/localsearch
 SOURCEDIR=${{JOBDIR}}/src
 RESULTDIR=${{JOBDIR}}/result
 
 mkdir -p ${{TMPDIR}}
-source ${{JOBDIR}}/venv/bin/activate &> $TMPDIR/output_{job_name}.txt
+source /home/${{USERNAME}}/venv/bin/activate &> $TMPDIR/output_{job_name}.txt
 cd ${{SOURCEDIR}}
-export PYTHONPATH=${{PYTHONPATH}}:/home/jkuckling/AutoMoDe-LocalSearch/src/
+export PYTHONPATH=${{PYTHONPATH}}:/home/${{USERNAME}}/masterthesis/localsearch/src/
 
-mpiexec -n 1 python3 -m mpi4py /home/jkuckling/AutoMoDe-LocalSearch/src/automode_localsearch.py run -c {} -a {} -s {} -b {} -i {} -j {job_name} -r ${{TMPDIR}} &>> ${{TMPDIR}}/output_{job_name}.txt
+/opt/openmpi/bin/mpiexec -n 1 python3 -m mpi4py.futures automode_localsearch.py local -e {filename} &>> ${{TMPDIR}}/output_{job_name}.txt
+#python3 automode_localsearch.py local -e {filename} &>> ${{TMPDIR}}/output_{job_name}.txt
 
 RET=$?
 mv ${{TMPDIR}}/* ${{RESULTDIR}}
 cd ${{JOBDIR}}
 rmdir -p ${{TMPDIR}} &> /dev/null
-""".format(args["config_file_name"], args["architecture"], args["path_to_scenario"], args["budget"],
-           args["initial_controller"], job_name=args["job_name"])
+""".format(job_name=args["job_name"] + str(np.random.randint(1, 1000)),
+           parallel=args["parallel"] + 1,
+           filename=args["file"])
     with open("submit_localsearch_{}.sh".format(args["job_name"]), "w") as submit_file:
         submit_file.write(submit_cmd)
     args = ["qsub", "submit_localsearch_{}.sh".format(args["job_name"])]
-    qsub_process = subprocess.Popen(args, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+    qsub_process = subprocess.Popen(
+        args, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
     (stdout, stderr) = qsub_process.communicate()
     print(stdout.decode('utf-8'))
     print(stderr.decode('utf-8'))
@@ -199,13 +210,14 @@ def execute_simulated_annealing(args):
     localsearch.utilities.create_directory()
     sa = SA.from_json(args["sls"]['SimulatedAnnealing'])
     new_controller = sa.local_search()
-    logging.warning('Best controller score {}'.format(new_controller.agg_score))
+    logging.warning('Best controller score %s' % str(new_controller.agg_score))
     new_controller.draw("final")
     new_controller = new_controller.convert_to_commandline_args()
     logging.debug(new_controller)
     with open("best_controller_sa.txt", mode="w") as file:
         file.write(" ".join(new_controller))
     localsearch.utilities.return_to_src_directory()
+
 
 def execute_iterative_improvement(args):
     """
@@ -217,7 +229,7 @@ def execute_iterative_improvement(args):
     localsearch.utilities.create_directory()
     ii = II.from_json(args["sls"]['IterativeImprovement'])
     new_controller = ii.local_search()
-    logging.warning('Best controller score {}'.format(new_controller.agg_score))
+    logging.warning('Best controller score %s' % str(new_controller.agg_score))
     new_controller.draw("final")
     new_controller = new_controller.convert_to_commandline_args()
     logging.debug(new_controller)
