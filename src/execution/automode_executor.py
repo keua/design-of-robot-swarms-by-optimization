@@ -79,7 +79,7 @@ class AutoMoDeExecutor:
                 evaluate_seeds.append(seed)
         return evaluate_seeds
 
-    def evaluate_controller(self, controller, reevaluate_seeds=False):
+    def evaluate_controller(self, controllers, reevaluate_seeds=False):
         """
         Evaluate this controller on the current seed set.
         This function will return the set of scores, but will also already have set everything on the controller.
@@ -88,13 +88,16 @@ class AutoMoDeExecutor:
         :param reevaluate_seeds:
         :return: the list of scores,
         """
-        evaluate_seeds = self.prepare_seeds(controller, reevaluate_seeds)
-        self._evaluate(controller, evaluate_seeds)  # returns the evaluated scores, but we don't care
+        for controller in controllers:
+            evaluate_seeds = self.prepare_seeds(controller, reevaluate_seeds)
+        # returns the evaluated scores, but we don't care
+        self._evaluate(controllers, evaluate_seeds)
         scores = []
-        for seed in self.seeds:
-            scores.append(controller.evaluated_instances[seed])
-        controller.scores = scores
-        return None
+        for controller in controllers:
+            for seed in self.seeds:
+                scores.append(controller.evaluated_instances[seed])
+            controller.scores = scores
+            scores = []
 
     @abstractmethod
     def _evaluate(self, controller, seeds):
@@ -146,14 +149,17 @@ class SequentialExecutor(AutoMoDeExecutor):
     An implementation of the abstract class AutoMoDeExecutor that runs all instances sequentially
     """
 
-    def _evaluate(self, controller, seeds):
+    def _evaluate(self, controllers, seeds):
         # evaluate the controller on the set of seeds
-        controller_args = controller.convert_to_commandline_args()
         scores = []
-        for seed in seeds:
-            _, score = self.execute_controller(controller_args, seed)
-            controller.evaluated_instances[seed] = score
-            scores.append(score)
+        for controller in controllers:
+            tmp_scores = []
+            controller_args = controller.convert_to_commandline_args()
+            for seed in seeds:
+                _, score = self.execute_controller(controller_args, seed)
+                controller.evaluated_instances[seed] = score
+                tmp_scores.append(score)
+            scores.append(tmp_scores)
         return scores
 
 
@@ -162,22 +168,26 @@ class MultiProcessingExecutor(AutoMoDeExecutor):
     An implementation of the abstract class AutoMoDeExecutor that runs all instances using the multiprocessing module
     """
 
-    def _evaluate(self, controller, seeds):
+    def _evaluate(self, controllers, seeds):
         import multiprocessing
         results = []
-        cmd = controller.convert_to_commandline_args()
         pool = multiprocessing.Pool(processes=settings.parallel)
-        for s in seeds:
-            results.append(pool.apply_async(
-                self.execute_controller,
-                (cmd, s,)))
+        for controller in controllers:
+            cmd = controller.convert_to_commandline_args()
+            for s in seeds:
+                results.append(pool.apply_async(self.execute_controller, (cmd, s,)))
         pool.close()
         pool.join()
         scores = []
-        for r in results:
-            seed, score = r.get()
-            controller.evaluated_instances[seed] = score
-            scores.append(score)
+        i = 0
+        for controller in controllers:
+            tmp_scores = []
+            for s in seeds:
+                seed, score = results[i].get()
+                controller.evaluated_instances[seed] = score
+                tmp_scores.append(score)
+                i += 1
+            scores.append(tmp_scores)
         return scores
 
 
@@ -186,21 +196,25 @@ class MPIExecutor(AutoMoDeExecutor):
     An implementation of the abstract class AutoMoDeExecutor that runs all instances using the mpi4py package
     """
 
-    def _evaluate(self, controller, seeds):
+    def _evaluate(self, controllers, seeds):
         import mpi4py.futures
         results = []
-        cmd = controller.convert_to_commandline_args()
         pool = mpi4py.futures.MPIPoolExecutor(max_workers=settings.parallel)
-        for s in seeds:
-            results.append(pool.submit(
-                self.execute_controller,
-                *(cmd, s)))
+        for controller in controllers:
+            cmd = controller.convert_to_commandline_args()
+            for s in seeds:
+                results.append(pool.submit(self.execute_controller, *(cmd, s)))
         pool.shutdown(wait=True)
         scores = []
-        for future in results:
-            if future.exception() is not None:
-                raise future.exception()
-            seed, score = future.result()
-            controller.evaluated_instances[seed] = score
-            scores.append(score)
+        i = 0
+        for controller in controllers:
+            tmp_scores = []
+            for s in seeds:
+                if results[i].exception() is not None:
+                    raise results[i].exception()
+                seed, score = results[i].result()
+                controller.evaluated_instances[seed] = score
+                tmp_scores.append(score)
+                i += 1
+            scores.append(tmp_scores)
         return scores

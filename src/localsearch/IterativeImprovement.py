@@ -61,7 +61,7 @@ class IterativeImprovement(object):
         stats.time.start_run()
         log.info("Started at {}".format(stats.time.start_time))
         stats.performance.prepare_score_files(filename=self._outname)
-        self.exe.evaluate_controller(self.best)
+        self.exe.evaluate_controller([self.best])
         log.debug("Initial best scores {}".format(self.best.scores))
         while True:
             # move the window
@@ -69,8 +69,7 @@ class IterativeImprovement(object):
             # create a perturbed controller
             perturbed = self._perform_perturbation()
             # evaluate both controllers on the seed_window
-            self.exe.evaluate_controller(self.best)
-            self.exe.evaluate_controller(perturbed)
+            self.exe.evaluate_controller([self.best, perturbed])
             # Evaluate criterion
             self.acceptance.set_scores(self.best.scores, perturbed.scores)
             accept = self.acceptance.accept()
