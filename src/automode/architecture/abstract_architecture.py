@@ -47,7 +47,7 @@ class ArchitectureABC:
             # remove operator from list so it is not chosen again if it failed
             perturbation_operators.remove(perturbation_operator)
             if result:
-                self.perturb_history.append(perturbation_operator)
+                self.perturb_history.append(perturbation_operator.__name__)
                 return
         # We cannot apply any operator -> how can this even happen?
         logging.error("A critical error appeared. We cannot apply any perturbation at his point.")
