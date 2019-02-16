@@ -18,11 +18,11 @@ class ExecutorFactory:
         Returns an instance of the executor that should be used.
         :return:
         """
-        if settings.parallelization == "sequential":
+        if settings.parallelization["mode"] == "sequential":
             return SequentialExecutor()
-        if settings.parallelization == "multiprocessing":
+        if settings.parallelization["mode"] == "multiprocessing":
             return MultiProcessingExecutor()
-        if settings.parallelization == "MPI":
+        if settings.parallelization["mode"] == "MPI":
             return MPIExecutor()
         return None
 
@@ -37,17 +37,17 @@ class AutoMoDeExecutor:
     __metaclass__ = ABCMeta
 
     def __init__(self):
-        if settings.architecture == "BT":
-            self.path_to_AutoMoDe_executable = settings.BT_path_to_AutoMoDe
-        elif settings.architecture == "FSM":
-            self.path_to_AutoMoDe_executable = settings.FSM_path_to_AutoMoDe
+        if settings.experiment["architecture"] == "BT":
+            self.path_to_AutoMoDe_executable = settings.BT["path_to_AutoMoDe"]
+        elif settings.experiment["architecture"] == "FSM":
+            self.path_to_AutoMoDe_executable = settings.FSM["path_to_AutoMoDe"]
         else:
-            logging.warning("Unknown architecture {}".format(settings.architecture))
+            logging.warning("Unknown architecture {}".format(settings.experiment["architecture"]))
             self.path_to_AutoMoDe_executable = "/path/to/AutoMoDe"
-        self.scenario_file = settings.path_to_scenario
+        self.scenario_file = settings.experiment["scenario_file"]
 
-        self.seed_window_size = settings.seed_window_size
-        self.seed_window_move = settings.seed_window_movement
+        self.seed_window_size = settings.execution["seed_window_size"]
+        self.seed_window_move = settings.execution["seed_window_movement"]
         self.seeds = []
         self.create_seeds()
 
@@ -171,11 +171,26 @@ class MultiProcessingExecutor(AutoMoDeExecutor):
     def _evaluate(self, controllers, seeds):
         import multiprocessing
         results = []
+<<<<<<< HEAD
         pool = multiprocessing.Pool(processes=settings.parallel)
         for controller in controllers:
             cmd = controller.convert_to_commandline_args()
             for s in seeds:
                 results.append(pool.apply_async(self.execute_controller, (cmd, s,)))
+||||||| merged common ancestors
+        cmd = controller.convert_to_commandline_args()
+        pool = multiprocessing.Pool(processes=settings.parallel)
+        for s in seeds:
+            results.append(pool.apply_async(
+                self.execute_controller,
+                (cmd, s,)))
+=======
+        pool = multiprocessing.Pool(processes=settings.parallelization["parallel"])
+        for controller in controllers:
+            cmd = controller.convert_to_commandline_args()
+            for s in seeds:
+                results.append(pool.apply_async(self.execute_controller, (cmd, s,)))
+>>>>>>> msth-kubedaar
         pool.close()
         pool.join()
         scores = []
@@ -199,11 +214,26 @@ class MPIExecutor(AutoMoDeExecutor):
     def _evaluate(self, controllers, seeds):
         import mpi4py.futures
         results = []
+<<<<<<< HEAD
         pool = mpi4py.futures.MPIPoolExecutor(max_workers=settings.parallel)
         for controller in controllers:
             cmd = controller.convert_to_commandline_args()
             for s in seeds:
                 results.append(pool.submit(self.execute_controller, *(cmd, s)))
+||||||| merged common ancestors
+        cmd = controller.convert_to_commandline_args()
+        pool = mpi4py.futures.MPIPoolExecutor(max_workers=settings.parallel)
+        for s in seeds:
+            results.append(pool.submit(
+                self.execute_controller,
+                *(cmd, s)))
+=======
+        pool = mpi4py.futures.MPIPoolExecutor(max_workers=settings.parallelization["parallel"])
+        for controller in controllers:
+            cmd = controller.convert_to_commandline_args()
+            for s in seeds:
+                results.append(pool.submit(self.execute_controller, *(cmd, s)))
+>>>>>>> msth-kubedaar
         pool.shutdown(wait=True)
         scores = []
         i = 0

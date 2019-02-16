@@ -4,6 +4,7 @@ import graphviz as gv
 import logging
 import re
 from automode.architecture.abstract_architecture import AutoMoDeArchitectureABC
+import settings
 
 # TODO: Write documentation for methods and classes
 
@@ -94,15 +95,6 @@ class FSM(AutoMoDeArchitectureABC):
 
     # FSM implementation
 
-    # Static variables
-    # Parameters that can be used for tuning the behavior of the local search
-    parameters = {"max_states": 4,
-                  "max_transitions": float("inf"),
-                  "max_transitions_per_state": 4,
-                  "no_self_transition": True,
-                  "initial_state_behavior": "Fail",
-                  "random_parameter_initialization": True}
-
     def __init__(self, minimal=False):
         self.initial_state = None
         self.states = []
@@ -117,8 +109,8 @@ class FSM(AutoMoDeArchitectureABC):
         Sets up a minimal controller. That is a FSM with a single state and no transitions.
         """
         # The empty FSM
-        stop_behavior = Behavior.get_by_name(FSM.parameters["initial_state_behavior"])
-        self.initial_state = State(stop_behavior)
+        minimal_behavior = Behavior.get_by_name(settings.controller["minimal_behavior"])
+        self.initial_state = State(minimal_behavior)
         self.states = [self.initial_state]
         self.transitions = []
 
@@ -279,21 +271,20 @@ class FSM(AutoMoDeArchitectureABC):
         """Adds a new state to the FSM.
         It will not exceed the maximum number of states. In case that there is no space for a new state it will
         return False. Every added state will contain one ingoing and one outgoing edge."""
-        if len(self.states) >= self.parameters["max_states"]:
+        if len(self.states) >= settings.FSM["max_states"]:
             return False  # we exceeded the amount of allowed states
         # create a new state with a random behavior
         new_behavior = Behavior.get_by_name(random.choice(Behavior.behavior_list))
         s = State(new_behavior)
-        if self.parameters["no_self_transition"]:
-            possible_states = list(self.states)  # create a transition from an already existing state
-            s_in = random.choice(self.states)  # create a transition to an already existing state
-        else:
-            possible_states = list(self.states).append(s)
-            s_in = random.choice(list(self.states).append(s))
+        possible_states = list(self.states)  # create a transition from an already existing state
+        s_in = random.choice(self.states)  # create a transition to an already existing state
+        if settings.FSM["self_transition"]:
+            possible_states.append(s)  # possible_states is now every state
+            s_in = random.choice(list(self.states).append(s))  # draw again to determine from all possible_states now
         while possible_states:
             s_out = random.choice(possible_states)
             possible_states.remove(s_out)
-            if len([t for t in self.transitions if t.from_state == s_out]) < self.parameters["max_transitions_per_state"]:
+            if len([t for t in self.transitions if t.from_state == s_out]) < settings.FSM["max_transitions_per_state"]:
                 ingoing = Transition(s_out, s,
                                          Condition.get_by_name(random.choice(Condition.condition_list)))
                 outgoing = Transition(s, s_in,
@@ -381,7 +372,7 @@ class FSM(AutoMoDeArchitectureABC):
 
     def perturb_add_transition(self):
         """Adds a transition to the FSM"""
-        if len(self.transitions) >= self.parameters["max_transitions"]:
+        if len(self.transitions) >= settings.FSM["max_transitions"]:
             return False  # already all transitions used
         # choose a random state where the new transition should start
         possible_states = list(self.states)
@@ -389,7 +380,7 @@ class FSM(AutoMoDeArchitectureABC):
             start = random.choice(possible_states)
             possible_states.remove(start)
             # Check for this states that they don't exceed max transitions per state
-            if len([t for t in self.transitions if t.from_state == start]) < self.parameters["max_transitions_per_state"]:
+            if len([t for t in self.transitions if t.from_state == start]) < settings.FSM["max_transitions_per_state"]:
                 # the end state needs to be different from the starting state
                 other_states = [s for s in self.states if s != start]
                 # there must be at least another state
@@ -433,7 +424,7 @@ class FSM(AutoMoDeArchitectureABC):
             while possible_states:
                 new_start = random.choice(possible_states)
                 possible_states.remove(new_start)
-                if len([t for t in self.transitions if t.from_state==new_start]) < self.parameters["max_transitions_per_state"]:
+                if len([t for t in self.transitions if t.from_state==new_start]) < settings.FSM["max_transitions_per_state"]:
                     t.from_state = new_start
                     return True
         return False

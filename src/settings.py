@@ -10,7 +10,7 @@ ARCHITECTURE_DEFAULT = "undefined architecture"
 
 SCENARIO_DEFAULT = "/path/to/scenario/missing.argos"
 BUDGET_DEFAULT = -1
-RESULT_DEFAULT = "/path/to/results/"
+RESULT_DEFAULT = "/tmp/AutoMoDe-LocalSearch/results/"
 
 SEED_SIZE_DEFAULT = -1
 SEED_MOVE_DEFAULT = -1
@@ -35,35 +35,3 @@ JOB_NAME_DEFAULT = ""
 
 PARALLEL_DEFAULT = -1
 PARALLELIZATION_DEFAULT = "NoParallelization"
-
-
-architecture = ""
-job_name = ""
-initial_controller = ""
-config_file_name = ""
-
-path_to_scenario = ""
-budget = 1
-result_directory = ""
-
-seed_window_size = 0
-seed_window_movement = 0
-
-minimal_behavior = ""
-minimal_condition = ""
-random_parameter_initialization = False
-
-FSM_path_to_AutoMoDe = ""
-FSM_max_states = 0
-FSM_max_transitions = 0
-FSM_max_transitions_per_state = 0
-FSM_no_self_transition = True  # TODO: Refactor this setting to positive
-
-BT_path_to_AutoMoDe = ""
-BT_max_actions = 0
-
-snapshot_frequency = 0
-log_level = ""
-
-parallelization = "sequential"  # can be sequential, multiprocessing or MPI at the moment
-parallel = 1

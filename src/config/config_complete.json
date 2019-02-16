@@ -1,0 +1,38 @@
+{
+  "experiment": {
+    "job_name": "example_job",
+    "scenario_file": "/home/jkuckling/AutoMoDe-missions/vanilla/for250sec/foraging_bt.argos",
+    "architecture": "BT",
+    "initial_controller": "minimal",
+    "result_directory": "/home/jkuckling/AutoMoDe-LocalSearch/result/"
+  },
+  "execution": {
+    "seed_window_size": 10,
+    "seed_window_movement": 2,
+    "budget": 500
+  },
+  "controller": {
+    "minimal_behavior": "Stop",
+    "minimal_condition": "FixedProbability",
+    "random_parameter_initialization": true
+  },
+  "FSM": {
+    "path_to_AutoMoDe": "/home/jkuckling/AutoMoDe-FSM/bin/automode_main",
+    "max_states": 4,
+    "max_transitions": 1000,
+    "max_transitions_per_state": 4,
+    "self_transition": false
+  },
+  "BT": {
+    "path_to_AutoMoDe": "/home/jkuckling/AutoMoDe-BT/bin/automode_main_bt",
+    "max_actions": 4
+  },
+  "logging": {
+    "snapshot_frequency": 100,
+    "log_level": "DEBUG"
+  },
+  "parallelization": {
+    "parallel": 5,
+    "mode": "sequential"
+  }
+}
