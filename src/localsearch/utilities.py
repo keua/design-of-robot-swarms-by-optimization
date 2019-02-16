@@ -4,23 +4,7 @@ import logging
 from automode.architecture import FSM, BT
 import settings
 
-<<<<<<< HEAD
-SCORES_DIR = "scores/"
-result_directory = "default/"
-job_name = "LocalSearch"
-config_file_name = "config.ini"
-initial_controller = ""
-src_directory = "/home/kubedaar/masterthesis/localsearch/src/"  # TODO: Detect this?
-||||||| merged common ancestors
-SCORES_DIR = "scores/"
-result_directory = "default/"
-job_name = "LocalSearch"
-config_file_name = "config.ini"
-initial_controller = ""
 src_directory = "/home/masterulb/masterthesis/localsearch/src/"  # TODO: Detect this?
-=======
-src_directory = "/home/masterulb/masterthesis/localsearch/src/"  # TODO: Detect this?
->>>>>>> msth-kubedaar
 
 
 def return_to_src_directory():

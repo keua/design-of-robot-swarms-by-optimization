@@ -171,26 +171,11 @@ class MultiProcessingExecutor(AutoMoDeExecutor):
     def _evaluate(self, controllers, seeds):
         import multiprocessing
         results = []
-<<<<<<< HEAD
-        pool = multiprocessing.Pool(processes=settings.parallel)
-        for controller in controllers:
-            cmd = controller.convert_to_commandline_args()
-            for s in seeds:
-                results.append(pool.apply_async(self.execute_controller, (cmd, s,)))
-||||||| merged common ancestors
-        cmd = controller.convert_to_commandline_args()
-        pool = multiprocessing.Pool(processes=settings.parallel)
-        for s in seeds:
-            results.append(pool.apply_async(
-                self.execute_controller,
-                (cmd, s,)))
-=======
         pool = multiprocessing.Pool(processes=settings.parallelization["parallel"])
         for controller in controllers:
             cmd = controller.convert_to_commandline_args()
             for s in seeds:
                 results.append(pool.apply_async(self.execute_controller, (cmd, s,)))
->>>>>>> msth-kubedaar
         pool.close()
         pool.join()
         scores = []
@@ -214,26 +199,11 @@ class MPIExecutor(AutoMoDeExecutor):
     def _evaluate(self, controllers, seeds):
         import mpi4py.futures
         results = []
-<<<<<<< HEAD
-        pool = mpi4py.futures.MPIPoolExecutor(max_workers=settings.parallel)
-        for controller in controllers:
-            cmd = controller.convert_to_commandline_args()
-            for s in seeds:
-                results.append(pool.submit(self.execute_controller, *(cmd, s)))
-||||||| merged common ancestors
-        cmd = controller.convert_to_commandline_args()
-        pool = mpi4py.futures.MPIPoolExecutor(max_workers=settings.parallel)
-        for s in seeds:
-            results.append(pool.submit(
-                self.execute_controller,
-                *(cmd, s)))
-=======
         pool = mpi4py.futures.MPIPoolExecutor(max_workers=settings.parallelization["parallel"])
         for controller in controllers:
             cmd = controller.convert_to_commandline_args()
             for s in seeds:
                 results.append(pool.submit(self.execute_controller, *(cmd, s)))
->>>>>>> msth-kubedaar
         pool.shutdown(wait=True)
         scores = []
         i = 0
