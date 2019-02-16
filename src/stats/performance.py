@@ -22,7 +22,7 @@ def save_results(best_controller, perturbed_controller, filename=""):
     with open("scores/%s_history.csv" % filename, "a") as file:
         file.write("{}, {}, {} \n".format(
             best_controller.agg_score[1], perturbed_controller.agg_score[1],
-            perturbed_controller.perturb_history[-1].__name__))
+            perturbed_controller.perturb_history[-1]))
     with open("scores/%s_scores.csv" % filename, "a") as file:
         file.write("{}; {} \n".format(
             best_controller.scores, perturbed_controller.scores))
