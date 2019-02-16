@@ -1,0 +1,17 @@
+{
+    "configuration": "config/masterulb/sa_wilcoxon_50_mp.json",
+    "FOR_SA_MIN_WILCOXON_BT_50": {
+        "repetitions": 1,
+        "scenario": "/home/masterulb/masterthesis/localsearch/scenarios/vanilla/foraging_bt.argos",
+        "architecture": "BT",
+        "initial_controller": "minimal",
+        "result_directory": "/home/masterulb/masterthesis/localsearch/result/"
+    },
+    "FOR_SA_MIN_WILCOXON_FSM_50": {
+        "repetitions": 1,
+        "scenario": "/home/masterulb/masterthesis/localsearch/scenarios/vanilla/foraging.argos",
+        "architecture": "FSM",
+        "initial_controller": "minimal",
+        "result_directory": "/home/masterulb/masterthesis/localsearch/result/"
+    }
+}

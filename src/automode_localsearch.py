@@ -158,7 +158,7 @@ source /home/${{USERNAME}}/venv/bin/activate &> $TMPDIR/output_{job_name}.txt
 cd ${{SOURCEDIR}}
 export PYTHONPATH=${{PYTHONPATH}}:/home/${{USERNAME}}/masterthesis/localsearch/src/
 
-{} /home/jkuckling/AutoMoDe-LocalSearch/src/automode_localsearch.py run -c {} -a {} -s {} -i {} -j {job_name} -r ${{TMPDIR}} &>> ${{TMPDIR}}/output_{job_name}.txt
+{} /home/${{USERNAME}}/masterthesis/localsearch/src/automode_localsearch.py run -c {} -a {} -s {} -i {} -j {job_name} -r ${{TMPDIR}} &>> ${{TMPDIR}}/output_{job_name}.txt
 
 RET=$?
 mv ${{TMPDIR}}/* ${{RESULTDIR}}
@@ -215,10 +215,13 @@ def execute_localsearch(configuration_file, experiment_arguments = {}):
     logging.info(config_data["experiment"]["job_name"])
     create_run_directory()
 
-    # run local search
-    initial_controller = localsearch.utilities.get_initial_controller()
-    initial_controller.draw("initial")
-    result = iterative_improvement(initial_controller)
+    if "sls" in config_data:
+        result = execute_sls(config_data["sls"])
+    else:
+        # run local search
+        initial_controller = localsearch.utilities.get_initial_controller()
+        initial_controller.draw("initial")
+        result = iterative_improvement(initial_controller)
 
     # save the best controller
     result.draw("final")
@@ -229,42 +232,16 @@ def execute_localsearch(configuration_file, experiment_arguments = {}):
     localsearch.utilities.return_to_src_directory()
 
 
-def execute_simulated_annealing(args):
+def execute_sls(data):
     """
     """
-    configuration.load_from_file(args["config_file_name"])
-    configuration.load_from_arguments(args)
-    configuration.apply()
-    logging.info(args["job_name"])
-    localsearch.utilities.create_directory()
-    sa = SA.from_json(args["sls"]['SimulatedAnnealing'])
-    new_controller = sa.local_search()
-    logging.warning('Best controller score %s' % str(new_controller.agg_score))
-    new_controller.draw("final")
-    new_controller = new_controller.convert_to_commandline_args()
-    logging.debug(new_controller)
-    with open("best_controller_sa.txt", mode="w") as file:
-        file.write(" ".join(new_controller))
-    localsearch.utilities.return_to_src_directory()
-
-
-def execute_iterative_improvement(args):
-    """
-    """
-    configuration.load_from_file(args["config_file_name"])
-    configuration.load_from_arguments(args)
-    configuration.apply()
-    logging.info(args["job_name"])
-    localsearch.utilities.create_directory()
-    ii = II.from_json(args["sls"]['IterativeImprovement'])
-    new_controller = ii.local_search()
-    logging.warning('Best controller score %s' % str(new_controller.agg_score))
-    new_controller.draw("final")
-    new_controller = new_controller.convert_to_commandline_args()
-    logging.debug(new_controller)
-    with open("best_controller_ii.txt", mode="w") as file:
-        file.write(" ".join(new_controller))
-    localsearch.utilities.return_to_src_directory()
+    for key in data:
+        algorithm = localsearch.utilities.get_class("localsearch.%s" % key)
+        instance = algorithm.from_json(data[key])
+        logging.debug(instance.__dict__)
+        controller = instance.local_search()
+        logging.info('Best controller score %s' % str(controller.agg_score))
+    return controller
 
 
 def parse_arguments():

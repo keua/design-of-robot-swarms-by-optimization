@@ -1,0 +1,27 @@
+{
+  "include_files": [
+    "config/masterulb/automode.json"
+  ],
+  "execution": {
+    "seed_window_size": 10,
+    "seed_window_movement": 2,
+    "budget": 50
+  },
+  "logging": {
+    "snapshot_frequency": 100,
+    "log_level": "INFO"
+  },
+  "parallelization": {
+    "parallel": 5,
+    "mode": "multiprocessing"
+  },
+  "sls": {
+    "SimulatedAnnealing": {
+      "temperature": 125.0,
+      "cooling_rate": 0.5,
+      "temperature_length": 2,
+      "acceptance_criterion": "median",
+      "random_seed": 8463
+    }
+  }
+}

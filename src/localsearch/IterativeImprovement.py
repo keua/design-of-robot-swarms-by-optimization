@@ -5,6 +5,7 @@ from datetime import datetime
 
 import execution
 import localsearch.utilities as lsutl
+import settings
 import stats
 
 from . import acceptance_criteria as ac
@@ -22,11 +23,11 @@ class IterativeImprovement(object):
         def __init__(self, data):
             """
             """
-            self.initial_controller = None
+            self.initial_controller = ""
             self.random_seed = None
-            self.acceptance_criterion = None
-            self.budget = None
-            self.__dict__ = data
+            self.acceptance_criterion = "mean"
+            self.budget = settings.execution["budget"]
+            self.__dict__.update(data)
 
     def __init__(self, candidate, acceptance_criterion="mean", budget=5000,
                  termination_criterion=None):

@@ -8,6 +8,7 @@ import numpy as np
 
 import execution
 import localsearch.utilities as lsutl
+import settings
 import stats
 
 from .AcceptanceCriterion import AcceptanceCriterion as AC
@@ -54,15 +55,15 @@ class SimulatedAnnealing(object):
         def __init__(self, data):
             """ 
             """
-            self.candidate = None
-            self.temperature = None
-            self.cooling_rate = None
-            self.final_temperature = None
-            self.temperature_length = None
+            self.candidate = ""
+            self.temperature = 125.0
+            self.cooling_rate = 0.5
+            self.final_temperature = 0.0001
+            self.temperature_length = 3
             self.random_seed = None
-            self.acceptance_criterion = None
-            self.budget = None
-            self.__dict__ = data
+            self.acceptance_criterion = "mean"
+            self.budget = settings.execution["budget"]
+            self.__dict__.update(data)
 
     def __init__(self, candidate, temperature=125.00, cooling_rate=0.5,
                  final_temperature=0.0001, temperature_length=2,
@@ -98,10 +99,10 @@ class SimulatedAnnealing(object):
     def local_search(self, snap_freq=100):
         """
         """
-        self._get_candidate()
         stats.time.start_run()
-        log.info('SA Started at {}'.format(stats.time.start_time))
         stats.performance.prepare_score_files(filename=self._outname)
+        self._get_candidate()
+        log.info('SA Started at {}'.format(stats.time.start_time))
         self.best = copy.deepcopy(self.candidate)
         temperature_length = self.temperature_length
         current_temperature = self.temperature
@@ -185,6 +186,7 @@ class SimulatedAnnealing(object):
     def _get_candidate(self):
         """
         """
+        log.info('SA Getting candidate at {}'.format(stats.time.start_time))
         if "" == self.candidate or isinstance(self.candidate, str):
             self.candidate = lsutl.get_initial_controller()
             self.exe.evaluate_controller([self.candidate])
