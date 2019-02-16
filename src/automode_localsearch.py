@@ -8,12 +8,7 @@ import argparse
 import logging
 import json
 import subprocess
-<<<<<<< HEAD
-import numpy as np
-||||||| merged common ancestors
-=======
 from datetime import datetime
->>>>>>> msth-kubedaar
 
 import settings
 import configuration
@@ -98,28 +93,8 @@ def run_local(experiment_file):
                 "job_name": "{}_{}".format(setup_key, i),
                 "result_directory": setup["result_directory"],
             }
-<<<<<<< HEAD
-            if "SimulatedAnnealing" in experiment["sls"]:
-                execute_simulated_annealing(experiment)
-            elif "IterativeImprovement" in experiment["sls"]:
-                # execute localsearch
-                # execute_localsearch(experiment)
-                execute_iterative_improvement(experiment)
-            logging.warning("======== Repetition %d finished ========" % i)
-        logging.warning("======== Experiment %s finished ========" % setup_key)
-||||||| merged common ancestors
-            if "SimulatedAnnealing" in experiment["sls"]:
-                execute_simulated_annealing(experiment)
-            elif "IterativeImprovement" in experiment["sls"]:
-                # execute localsearch
-                #execute_localsearch(experiment)
-                execute_iterative_improvement(experiment)
-            logging.warning("======== Repetition %d finished ========" % i)
-        logging.warning("======== Experiment %s finished ========" % setup_key)
-=======
             # execute local search
             execute_localsearch(setup["configuration"], arguments)
->>>>>>> msth-kubedaar
 
 
 def submit(experiment_file):
@@ -145,13 +120,6 @@ def submit(experiment_file):
                 # create correct jobname
                 "job_name": "{}_{}".format(setup_key, i),
                 "result_directory": setup["result_directory"],
-<<<<<<< HEAD
-                "parallel": setup["parallel"],
-                "file": experiment_file
-||||||| merged common ancestors
-                "parallel": setup["parallel"],
-=======
->>>>>>> msth-kubedaar
             }
             submit_localsearch(arguments)
 
@@ -164,18 +132,11 @@ def submit_localsearch(args):
     """
     # TODO: Make the following blob a little bit more customizable
     # TODO: Also don't write it to a real file, or at least clean the file up after execution
-<<<<<<< HEAD
-    submit_cmd = """
-#!/bin/bash
-||||||| merged common ancestors
-    submit_cmd = """#!/bin/bash
-=======
 
     config_data = configuration.load_from_file(args["configuration"])
     execution_cmd = "python3" if not config_data["parallelization"]["mode"]=="MPI" else "mpiexec -n 1 python3 -m mpi4py.futures"
 
     submit_cmd = """#!/bin/bash
->>>>>>> msth-kubedaar
 #$ -N {job_name}
 #$ -l short
 #$ -m ase
@@ -184,13 +145,7 @@ def submit_localsearch(args):
 #      a     Mail is sent when the job is aborted or rescheduled.
 #      s     Mail is sent when the job is suspended.
 #$ -cwd
-<<<<<<< HEAD
-#$ -binding linear:256
-#$ -pe mpi {parallel}
-||||||| merged common ancestors
-=======
 {parallel}
->>>>>>> msth-kubedaar
 
 USERNAME=`whoami`
 TMPDIR=/tmp/${{USERNAME}}/localsearch_results_{job_name}
@@ -203,33 +158,17 @@ source /home/${{USERNAME}}/venv/bin/activate &> $TMPDIR/output_{job_name}.txt
 cd ${{SOURCEDIR}}
 export PYTHONPATH=${{PYTHONPATH}}:/home/${{USERNAME}}/masterthesis/localsearch/src/
 
-<<<<<<< HEAD
-/opt/openmpi/bin/mpiexec -n 1 python3 -m mpi4py.futures automode_localsearch.py local -e {filename} &>> ${{TMPDIR}}/output_{job_name}.txt
-#python3 automode_localsearch.py local -e {filename} &>> ${{TMPDIR}}/output_{job_name}.txt
-||||||| merged common ancestors
-mpiexec -n 1 python3 -m mpi4py /home/jkuckling/AutoMoDe-LocalSearch/src/automode_localsearch.py run -c {} -a {} -s {} -b {} -i {} -j {job_name} -r ${{TMPDIR}} &>> ${{TMPDIR}}/output_{job_name}.txt
-=======
 {} /home/${{USERNAME}}/masterthesis/localsearch/src/automode_localsearch.py run -c {} -a {} -s {} -i {} -j {job_name} -r ${{TMPDIR}} &>> ${{TMPDIR}}/output_{job_name}.txt
->>>>>>> msth-kubedaar
 
 RET=$?
 mv ${{TMPDIR}}/* ${{RESULTDIR}}
 cd ${{JOBDIR}}
 rmdir -p ${{TMPDIR}} &> /dev/null
-<<<<<<< HEAD
-""".format(job_name=args["job_name"] + str(np.random.randint(1, 1000)),
-           parallel=args["parallel"] + 1,
-           filename=args["file"])
-||||||| merged common ancestors
-""".format(args["config_file_name"], args["architecture"], args["path_to_scenario"], args["budget"],
-           args["initial_controller"], job_name=args["job_name"])
-=======
 """.format(execution_cmd, args["configuration"], args["architecture"], args["scenario_file"],
            args["initial_controller"], job_name=args["job_name"],
            parallel="""#$ -pe mpi {}
 #$ -binding linear:256""".format(config_data["parallelization"]["parallel"])
            if config_data["parallelization"]["mode"] == "MPI" else "")
->>>>>>> msth-kubedaar
     with open("submit_localsearch_{}.sh".format(args["job_name"]), "w") as submit_file:
         submit_file.write(submit_cmd)
     args = ["qsub", "submit_localsearch_{}.sh".format(args["job_name"])]
@@ -296,74 +235,6 @@ def execute_localsearch(configuration_file, experiment_arguments = {}):
 def execute_sls(data):
     """
     """
-<<<<<<< HEAD
-    configuration.load_from_file(args["config_file_name"])
-    configuration.load_from_arguments(args)
-    configuration.apply()
-    logging.info(args["job_name"])
-    localsearch.utilities.create_directory()
-    sa = SA.from_json(args["sls"]['SimulatedAnnealing'])
-    new_controller = sa.local_search()
-    logging.warning('Best controller score %s' % str(new_controller.agg_score))
-    new_controller.draw("final")
-    new_controller = new_controller.convert_to_commandline_args()
-    logging.debug(new_controller)
-    with open("best_controller_sa.txt", mode="w") as file:
-        file.write(" ".join(new_controller))
-    localsearch.utilities.return_to_src_directory()
-
-
-def execute_iterative_improvement(args):
-    """
-    """
-    configuration.load_from_file(args["config_file_name"])
-    configuration.load_from_arguments(args)
-    configuration.apply()
-    logging.info(args["job_name"])
-    localsearch.utilities.create_directory()
-    ii = II.from_json(args["sls"]['IterativeImprovement'])
-    new_controller = ii.local_search()
-    logging.warning('Best controller score %s' % str(new_controller.agg_score))
-    new_controller.draw("final")
-    new_controller = new_controller.convert_to_commandline_args()
-    logging.debug(new_controller)
-    with open("best_controller_ii.txt", mode="w") as file:
-        file.write(" ".join(new_controller))
-    localsearch.utilities.return_to_src_directory()
-||||||| merged common ancestors
-    configuration.load_from_file(args["config_file_name"])
-    configuration.load_from_arguments(args)
-    configuration.apply()
-    logging.info(args["job_name"])
-    localsearch.utilities.create_directory()
-    sa = SA.from_json(args["sls"]['SimulatedAnnealing'])
-    new_controller = sa.local_search()
-    logging.warning('Best controller score {}'.format(new_controller.agg_score))
-    new_controller.draw("final")
-    new_controller = new_controller.convert_to_commandline_args()
-    logging.debug(new_controller)
-    with open("best_controller_sa.txt", mode="w") as file:
-        file.write(" ".join(new_controller))
-    localsearch.utilities.return_to_src_directory()
-
-def execute_iterative_improvement(args):
-    """
-    """
-    configuration.load_from_file(args["config_file_name"])
-    configuration.load_from_arguments(args)
-    configuration.apply()
-    logging.info(args["job_name"])
-    localsearch.utilities.create_directory()
-    ii = II.from_json(args["sls"]['IterativeImprovement'])
-    new_controller = ii.local_search()
-    logging.warning('Best controller score {}'.format(new_controller.agg_score))
-    new_controller.draw("final")
-    new_controller = new_controller.convert_to_commandline_args()
-    logging.debug(new_controller)
-    with open("best_controller_ii.txt", mode="w") as file:
-        file.write(" ".join(new_controller))
-    localsearch.utilities.return_to_src_directory()
-=======
     for key in data:
         algorithm = localsearch.utilities.get_class("localsearch.%s" % key)
         instance = algorithm.from_json(data[key])
@@ -371,7 +242,6 @@ def execute_iterative_improvement(args):
         controller = instance.local_search()
         logging.info('Best controller score %s' % str(controller.agg_score))
     return controller
->>>>>>> msth-kubedaar
 
 
 def parse_arguments():
