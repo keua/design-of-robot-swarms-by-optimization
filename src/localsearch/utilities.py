@@ -4,7 +4,7 @@ import logging
 from automode.architecture import FSM, BT
 import settings
 
-src_directory = "/home/masterulb/masterthesis/localsearch/src/"  # TODO: Detect this?
+src_directory = "/home/kubedaar/masterthesis/localsearch/src/"  # TODO: Detect this?
 
 
 def return_to_src_directory():
