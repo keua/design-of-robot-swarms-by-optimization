@@ -22,7 +22,7 @@
   <controllers>
     <!-- TRANSMITTER -->
     <automode_controller_bt id="automode"
-                        library="AutoMoDe-BT/build/src/libautomode_bt.so">
+                        library="/home/kubedaar/AutoMoDe-BT/build/src/libautomode_bt.so">
       <actuators>
         <epuck_wheels implementation="default" noise_std_dev="0.05"/>
         <epuck_rgb_leds implementation="default" medium="leds"/>
