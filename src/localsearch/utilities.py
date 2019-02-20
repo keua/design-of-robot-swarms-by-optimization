@@ -4,16 +4,14 @@ import logging
 from automode.architecture import FSM, BT
 import settings
 
-src_directory = "/home/kubedaar/masterthesis/localsearch/src/"  # TODO: Detect this?
 
-
-def return_to_src_directory():
+def return_to_src_directory(dir):
     """
     Move the cwd back to the src directory (for the next run of the LS)
     TODO: Find better naming here
     :return:
     """
-    os.chdir(src_directory)
+    os.chdir(dir)
 
 
 def get_controller_class():
