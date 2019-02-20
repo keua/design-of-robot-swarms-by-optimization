@@ -14,5 +14,8 @@
   "BT": {
     "path_to_AutoMoDe": "/opt/AutoMoDe-BT/bin/automode_main_bt",
     "max_actions": 4
+  },
+  "cwd": {
+    "dir": "/home/kubedaar/masterthesis/localsearch/src/"
   }
 }

@@ -1,17 +1,17 @@
 {
     "configuration": "config/kubedaar/sa_median_20k_mpi.json",
     "FOR_SA_MIN_MEDIAN_BT_20k": {
-        "repetitions": 1,
-        "scenario": "/home/kubedaar/masterthesis/localsearch/scenarios/vanilla/foraging_bt.argos",
+        "repetitions": 2,
+        "scenario": "/home/kubedaar/masterthesis/localsearch/scenarios/kubedaar/vanilla/foraging_bt.argos",
         "architecture": "BT",
         "initial_controller": "minimal",
-        "result_directory": "/home/kubedaar/masterthesis/localsearch/result/"
+        "result_directory": "/home/kubedaar/masterthesis/result/budget_20k"
     },
     "FOR_SA_MIN_MEDIAN_FSM_20k": {
-        "repetitions": 1,
-        "scenario": "/home/kubedaar/masterthesis/localsearch/scenarios/vanilla/foraging.argos",
+        "repetitions": 2,
+        "scenario": "/home/kubedaar/masterthesis/localsearch/scenarios/kubedaar/vanilla/foraging.argos",
         "architecture": "FSM",
         "initial_controller": "minimal",
-        "result_directory": "/home/kubedaar/masterthesis/localsearch/result/"
+        "result_directory": "/home/kubedaar/masterthesis/result/budget_20k"
     }
 }

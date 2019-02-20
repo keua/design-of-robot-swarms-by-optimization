@@ -1,6 +1,7 @@
 {
   "include_files": [
-    "config/kubedaar/automode.json"
+    "config/kubedaar/automode.json",
+    "config/random.json"
   ],
   "execution": {
     "seed_window_size": 10,
@@ -18,10 +19,9 @@
   "sls": {
     "SimulatedAnnealing": {
       "temperature": 125.0,
-      "cooling_rate": 0.5,
-      "temperature_length": 2,
-      "acceptance_criterion": "mean",
-      "random_seed": 8463
+      "cooling_rate": 0.60,
+      "temperature_length": 3,
+      "acceptance_criterion": "mean"
     }
   }
 }
