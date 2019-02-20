@@ -151,7 +151,7 @@ USERNAME=`whoami`
 TMPDIR=/tmp/${{USERNAME}}/localsearch_results_{job_name}
 JOBDIR=/home/${{USERNAME}}/masterthesis/localsearch
 SOURCEDIR=${{JOBDIR}}/src
-RESULTDIR=${{JOBDIR}}/result
+RESULTDIR={result_dir}
 
 mkdir -p ${{TMPDIR}}
 source /home/${{USERNAME}}/venv/bin/activate &> $TMPDIR/output_{job_name}.txt
@@ -168,15 +168,20 @@ rmdir -p ${{TMPDIR}} &> /dev/null
            args["initial_controller"], job_name=args["job_name"],
            parallel="""#$ -pe mpi {}
 #$ -binding linear:256""".format(config_data["parallelization"]["parallel"])
-           if config_data["parallelization"]["mode"] == "MPI" else "")
-    with open("submit_localsearch_{}.sh".format(args["job_name"]), "w") as submit_file:
+           if config_data["parallelization"]["mode"] == "MPI" else "",
+           result_dir=args["result_directory"])
+    filename = "submit_localsearch_{}.sh".format(args["job_name"])
+    with open(filename, "w") as submit_file:
         submit_file.write(submit_cmd)
-    args = ["qsub", "submit_localsearch_{}.sh".format(args["job_name"])]
+    args = ["qsub", "-o", "/tmp/{}.{}".format(args["job_name"],".o"),
+            "-e" , "/tmp/{}.{}".format(args["job_name"],".e"),
+            filename]
     qsub_process = subprocess.Popen(
         args, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
     (stdout, stderr) = qsub_process.communicate()
     print(stdout.decode('utf-8'))
     print(stderr.decode('utf-8'))
+    os.remove(filename)
 
 
 def create_run_directory():
@@ -229,17 +234,23 @@ def execute_localsearch(configuration_file, experiment_arguments = {}):
     logging.info(best_controller)
     with open("best_controller.txt", mode="w") as file:
         file.write(" ".join(best_controller))
-    localsearch.utilities.return_to_src_directory()
+    localsearch.utilities.return_to_src_directory(settings.cwd["dir"])
 
 
 def execute_sls(data):
     """
     """
+    seed_idx = int(settings.experiment["job_name"].split("_")[-1])
+    snap_freq = settings.logging["snapshot_frequency"]
+    seed = settings.random["seed_pool"][seed_idx]
+    budget = settings.execution["budget"]
     for key in data:
+        data[key]["budget"] = budget
+        data[key]["random_seed"] = seed
         algorithm = localsearch.utilities.get_class("localsearch.%s" % key)
         instance = algorithm.from_json(data[key])
         logging.debug(instance.__dict__)
-        controller = instance.local_search()
+        controller = instance.local_search(snap_freq)
         logging.info('Best controller score %s' % str(controller.agg_score))
     return controller
 
