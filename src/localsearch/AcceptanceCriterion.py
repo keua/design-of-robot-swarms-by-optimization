@@ -8,16 +8,18 @@ class AcceptanceCriterion(object):
     """
     """
 
-    def __init__(self, accept=None, strict=False, maximize=True):
+    def __init__(self, accept=None, strict=False, maximize=True, improve=False):
         """
         """
+        self.accept = self.mean if accept is None else getattr(self, accept)
+        self.strict = strict
+        self.maximize = maximize
+        self.improve = improve
         self.current_scores = None
         self.new_scores = None
         self.current_outcome = None
         self.new_outcome = None
-        self.accept = self.mean if accept is None else getattr(self, accept)
-        self.strict = strict
-        self.maximize = maximize
+        self.outcomes = (None, None), (None, None)
         self.name = self.accept.__name__
 
     def mean(self):
@@ -77,16 +79,21 @@ class AcceptanceCriterion(object):
         accept = self.mean()
         self.name = '{}_{}'.format(self.t_student_test.__name__, confidence)
         test = p < confidence
-        return (accept and test) or (not accept and not test)
+        better = test and accept
+        not_worse = not test and not accept
+        return better if self.improve else better or not_worse
 
     def wilcoxon_test(self, confidence=0.05):
         """
         """
-        _, p = scistats.wilcoxon(self.current_scores, self.new_scores)
-        accept = self.mean()
+        _, p = scistats.wilcoxon(
+            self.current_scores, self.new_scores, zero_method="pratt")
+        accept = self.median()
         self.name = '{}_{}'.format(self.wilcoxon_test.__name__, confidence)
         test = p < confidence
-        return (accept and test) or (not accept and not test)
+        better = test and accept
+        not_worse = not test and not accept
+        return better if self.improve else better or not_worse
 
     def metropolis_condition(self, t, random_gen):
         """
@@ -127,3 +134,11 @@ class AcceptanceCriterion(object):
             self._op = np.greater
         elif not self.strict and not self._maximize:
             self._op = np.greater_equal
+
+    @property
+    def outcomes(self):
+        return (self.name, self.current_outcome), (self.name, self.new_outcome)
+
+    @outcomes.setter
+    def outcomes(self, outcomes):
+        self._outcomes = outcomes
