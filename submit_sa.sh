@@ -35,5 +35,5 @@ for i in "${files[@]}"
 do
    : 
    # Submit $i file
-    echo "python3 automode_localsearch.py submit -e $i"
+    python3 automode_localsearch.py submit -e $i
 done
