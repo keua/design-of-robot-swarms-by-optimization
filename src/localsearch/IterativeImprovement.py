@@ -26,11 +26,12 @@ class IterativeImprovement(object):
             self.initial_controller = ""
             self.random_seed = None
             self.acceptance_criterion = "mean"
-            self.budget = settings.execution["budget"]
+            self.budget = 5000
+            self.termination_criterion = None
             self.__dict__.update(data)
 
-    def __init__(self, candidate, acceptance_criterion="mean", budget=5000,
-                 termination_criterion=None):
+    def __init__(self, candidate, acceptance_criterion, budget, random_seed,
+                 termination_criterion):
         """
         The iterative improvement method, that improves upon the
         candidate controller.
@@ -40,10 +41,10 @@ class IterativeImprovement(object):
             The best controller after the iterative improvement
         """
         self.best = candidate
-        self.exe = execution.ExecutorFactory.get_executor()
-        self.acceptance = AC(accept=acceptance_criterion)
+        self.acceptance = AC(accept=acceptance_criterion, improve=True)
         self.budget = budget
-        self._outname = 'II_%d' % budget
+        self._exe = execution.ExecutorFactory.get_executor()
+        self._outname = 'II_{}'.format(random_seed)
         self._establish_termination_criterion(termination_criterion)
 
     @classmethod
@@ -51,7 +52,8 @@ class IterativeImprovement(object):
         """
         """
         iim = cls._IterativeImprovementModel(data)
-        return cls(iim.initial_controller, iim.acceptance_criterion, iim.budget)
+        return cls(iim.initial_controller, iim.acceptance_criterion, iim.budget,
+                   iim.random_seed, iim.termination_criterion)
 
     def local_search(self, snap_freq=100):
         """
@@ -62,15 +64,15 @@ class IterativeImprovement(object):
         stats.time.start_run()
         log.info("Started at {}".format(stats.time.start_time))
         stats.performance.prepare_score_files(filename=self._outname)
-        self.exe.evaluate_controller([self.best])
+        self._exe.evaluate_controller(self.best)
         log.debug("Initial best scores {}".format(self.best.scores))
         while True:
             # move the window
-            self.exe.advance_seeds()
+            self._exe.advance_seeds()
             # create a perturbed controller
             perturbed = self._perform_perturbation()
             # evaluate both controllers on the seed_window
-            self.exe.evaluate_controller([self.best, perturbed])
+            self._exe.evaluate_controllers([self.best, perturbed])
             # Evaluate criterion
             self.acceptance.set_scores(self.best.scores, perturbed.scores)
             accept = self.acceptance.accept()
@@ -78,7 +80,7 @@ class IterativeImprovement(object):
             self._update_agg_scores(perturbed)
             stats.performance.save_results(self.best, perturbed, self._outname)
             if accept:
-                log.debug(perturbed.perturb_history[-1].__name__)
+                log.debug(perturbed.perturb_history[-1])
                 perturbed.draw('{}'.format(self.tc.count))
                 log.info('New best {}, Old best {}'.format(
                     perturbed.agg_score, self.best.agg_score))
@@ -115,10 +117,7 @@ class IterativeImprovement(object):
         """
         log.debug("Best scores {} and perturbed scores {}".
                   format(self.best.scores, perturbed.scores))
-        self.best.agg_score = (
-            self.acceptance.name, self.acceptance.current_outcome)
-        perturbed.agg_score = (
-            self.acceptance.name, self.acceptance.new_outcome)
+        self.best.agg_score, perturbed.agg_scores = self.acceptance.outcomes
 
     def _establish_termination_criterion(self, termination_criterion):
         """
@@ -126,8 +125,8 @@ class IterativeImprovement(object):
         if termination_criterion is None:
             if self.budget is not None:
                 self.tc = ITC.from_budget(self.budget,
-                                          self.exe.seed_window_size,
-                                          self.exe.seed_window_move)
+                                          self._exe.seed_window_size,
+                                          self._exe.seed_window_move)
             else:
                 self.tc = ITC(0, 50)
         else:
