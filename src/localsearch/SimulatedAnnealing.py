@@ -62,13 +62,14 @@ class SimulatedAnnealing(object):
             self.temperature_length = 3
             self.random_seed = None
             self.acceptance_criterion = "mean"
-            self.budget = settings.execution["budget"]
+            self.budget = 5000
+            self.restart_temperature = self.temperature - self.temperature * 0.99999
+            self.termination_criterion = None
             self.__dict__.update(data)
 
-    def __init__(self, candidate, temperature=125.00, cooling_rate=0.5,
-                 final_temperature=0.0001, temperature_length=2,
-                 acceptance_criterion="mean", random_seed=None, budget=5000,
-                 termination_criterion=None):
+    def __init__(self, candidate, temperature, cooling_rate, final_temperature,
+                 temperature_length, acceptance_criterion, random_seed, budget,
+                 restart_temperature, termination_criterion):
         """
         """
         np.random.seed(random_seed)
@@ -80,11 +81,12 @@ class SimulatedAnnealing(object):
         self.temperature_length = temperature_length
         self.random_seed = random_seed
         self.random_gen = np.random
-        self.exe = execution.ExecutorFactory.get_executor()
         self.acceptance = AC(accept=acceptance_criterion)
-        self.mc = getattr(self.acceptance, "metropolis_condition")
+        self.restart_temperature = restart_temperature
         self.budget = budget
-        self._outname = 'SA_%d' % random_seed
+        self._exe = execution.ExecutorFactory.get_executor()
+        self._mc = getattr(self.acceptance, "metropolis_condition")
+        self._outname = 'SA_{}'.format(random_seed)
         self._establish_termination_criterion(termination_criterion)
 
     @classmethod
@@ -94,7 +96,8 @@ class SimulatedAnnealing(object):
         sam = cls._SimulatedAnnealingModel(data)
         return cls(sam.candidate, sam.temperature, sam.cooling_rate,
                    sam.final_temperature, sam.temperature_length,
-                   sam.acceptance_criterion, sam.random_seed, sam.budget)
+                   sam.acceptance_criterion, sam.random_seed, sam.budget,
+                   sam.restart_temperature, sam.termination_criterion)
 
     def local_search(self, snap_freq=100):
         """
@@ -111,20 +114,20 @@ class SimulatedAnnealing(object):
             # create a perturbed controller
             perturbed = self._perform_perturbation()
             # move the window
-            self.exe.advance_seeds()
+            self._exe.advance_seeds()
             # evaluate both controllers on the seed_window
-            self.exe.evaluate_controller([self.candidate, perturbed])
+            self._exe.evaluate_controllers([self.candidate, perturbed])
             # Evaluating metropolis condition
             self.acceptance.set_scores(self.candidate.scores, perturbed.scores)
-            mc_accept = self.mc(current_temperature, self.random_gen)
+            mc_accept = self._mc(current_temperature, self.random_gen)
             self._update_agg_scores(perturbed)
             stats.performance.save_results(
                 self.candidate, perturbed, self._outname)
             # If metropolis condition met select the new controller
             if mc_accept:
                 self.candidate = perturbed
-                # Evaluating acceptance criterion for global best controller
-                self._evaluate_best()
+                # Evaluating improvement for global best controller
+                self._evaluate_improvement()
             # Draw Best controller with certain frequency
             if self.tc.count % snap_freq == 0:
                 self.candidate.draw('{}'.format(self.tc.count))
@@ -136,6 +139,12 @@ class SimulatedAnnealing(object):
                 current_temperature *= self.cooling_rate
                 self.tc.discount = self.cooling_rate
                 temperature_length = self.temperature_length
+            # Check temperature percentage
+            if current_temperature < self.restart_temperature:
+                self.candidate = copy.deepcopy(self.best)
+                temperature_length = self.temperature_length
+                current_temperature = self.temperature
+                log.info("Restarting score %s" % str(self.candidate.agg_score))
 
             if self.tc.satisfied():  # While
                 break
@@ -164,24 +173,27 @@ class SimulatedAnnealing(object):
         """
         """
         log.debug('Candidate: {}, Perturbed: {}'.format(
-                  self.candidate.scores, perturbed.scores))
+            self.candidate.scores, perturbed.scores))
         # Updating controllers
-        self.candidate.agg_score = \
-            (self.acceptance.name, self.acceptance.current_outcome)
-        perturbed.agg_score = \
-            (self.acceptance.name, self.acceptance.new_outcome)
+        self.candidate.agg_score, perturbed.agg_score = self.acceptance.outcomes
 
-    def _evaluate_best(self):
+    def _evaluate_improvement(self):
         """
         """
         log.debug('Exploring controller {}, Old controller {}'.format(
             self.acceptance.new_outcome, self.acceptance.current_outcome))
+        # Evaluate the current best in the current seeds
+        self._exe.evaluate_controller(self.best)
+        self.acceptance.improve = True
         self.acceptance.set_scores(self.best.scores, self.candidate.scores)
-        if self.acceptance.accept():
+        accept = self.acceptance.accept()
+        self.best.agg_score, self.candidate.agg_score = self.acceptance.outcomes
+        if accept:
             self.candidate.draw('{}'.format(self.tc.count))
-            self.best = copy.deepcopy(self.candidate)
             log.info('New Best controller {}, Old controller {}'.format(
-                self.acceptance.new_outcome, self.acceptance.current_outcome))
+                self.candidate.agg_score, self.best.agg_score))
+            self.best = copy.deepcopy(self.candidate)
+        self.acceptance.improve = False
 
     def _get_candidate(self):
         """
@@ -189,7 +201,7 @@ class SimulatedAnnealing(object):
         log.info('SA Getting candidate at {}'.format(stats.time.start_time))
         if "" == self.candidate or isinstance(self.candidate, str):
             self.candidate = lsutl.get_initial_controller()
-            self.exe.evaluate_controller([self.candidate])
+            self._exe.evaluate_controller(self.candidate)
         else:
             for key in self.candidate:
                 algorithm = lsutl.get_class("localsearch.%s" % key)
@@ -204,8 +216,8 @@ class SimulatedAnnealing(object):
         if termination_criterion is None:
             if self.budget is not None:
                 self.tc = ITC.from_budget(self.budget,
-                                          self.exe.seed_window_size,
-                                          self.exe.seed_window_move)
+                                          self._exe.seed_window_size,
+                                          self._exe.seed_window_move)
             else:
                 self.tc = DTC(self.temperature, self.final_temperature, 1.0)
         else:
