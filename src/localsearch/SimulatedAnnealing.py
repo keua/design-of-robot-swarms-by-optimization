@@ -63,13 +63,14 @@ class SimulatedAnnealing(object):
             self.random_seed = None
             self.acceptance_criterion = "mean"
             self.budget = 5000
-            self.restart_temperature = self.temperature - self.temperature * 0.99999
+            self.restart_percentage = 0.1/100
             self.termination_criterion = None
             self.__dict__.update(data)
 
-    def __init__(self, candidate, temperature, cooling_rate, final_temperature,
-                 temperature_length, acceptance_criterion, random_seed, budget,
-                 restart_temperature, termination_criterion):
+    def __init__(self, candidate, temperature=125.0, cooling_rate=0.5,
+                 final_temperature=0.0001, temperature_length=3,
+                 acceptance_criterion="mean", random_seed=None, budget=5000,
+                 restart_percentage=0.1/100, termination_criterion=None):
         """
         """
         np.random.seed(random_seed)
@@ -82,11 +83,12 @@ class SimulatedAnnealing(object):
         self.random_seed = random_seed
         self.random_gen = np.random
         self.acceptance = AC(accept=acceptance_criterion)
-        self.restart_temperature = restart_temperature
+        self.restart_percentage = restart_percentage
         self.budget = budget
         self._exe = execution.ExecutorFactory.get_executor()
         self._mc = getattr(self.acceptance, "metropolis_condition")
-        self._outname = 'SA_{}'.format(random_seed)
+        self._f_best_cand = 'SA_BC_{}'.format(random_seed)
+        self._f_cand_pert = 'SA_CP_{}'.format(random_seed)
         self._establish_termination_criterion(termination_criterion)
 
     @classmethod
@@ -97,18 +99,20 @@ class SimulatedAnnealing(object):
         return cls(sam.candidate, sam.temperature, sam.cooling_rate,
                    sam.final_temperature, sam.temperature_length,
                    sam.acceptance_criterion, sam.random_seed, sam.budget,
-                   sam.restart_temperature, sam.termination_criterion)
+                   sam.restart_percentage, sam.termination_criterion)
 
     def local_search(self, snap_freq=100):
         """
         """
         stats.time.start_run()
-        stats.performance.prepare_score_files(filename=self._outname)
+        stats.performance.prepare_score_files(filename=self._f_best_cand)
+        stats.performance.prepare_score_files(filename=self._f_cand_pert)
         self._get_candidate()
         log.info('SA Started at {}'.format(stats.time.start_time))
         self.best = copy.deepcopy(self.candidate)
         temperature_length = self.temperature_length
         current_temperature = self.temperature
+        restart_temperature = self.restart_percentage * self.temperature
         while True:  # do
             log.debug('Current temperature {}'.format(current_temperature))
             # create a perturbed controller
@@ -121,13 +125,19 @@ class SimulatedAnnealing(object):
             self.acceptance.set_scores(self.candidate.scores, perturbed.scores)
             mc_accept = self._mc(current_temperature, self.random_gen)
             self._update_agg_scores(perturbed)
+            # Save candidate and perturbed controllers interaction
             stats.performance.save_results(
-                self.candidate, perturbed, self._outname)
+                self.candidate, perturbed, self._f_cand_pert)
+            # Save temporal variable for stats purposes
+            oldbest = self.best
             # If metropolis condition met select the new controller
             if mc_accept:
                 self.candidate = perturbed
                 # Evaluating improvement for global best controller
-                self._evaluate_improvement()
+                oldbest = self._evaluate_improvement()
+            # Save best and candidate controllers interaction
+            stats.performance.save_results(
+                oldbest, self.candidate, self._f_best_cand)
             # Draw Best controller with certain frequency
             if self.tc.count % snap_freq == 0:
                 self.candidate.draw('{}'.format(self.tc.count))
@@ -140,7 +150,7 @@ class SimulatedAnnealing(object):
                 self.tc.discount = self.cooling_rate
                 temperature_length = self.temperature_length
             # Check temperature percentage
-            if current_temperature < self.restart_temperature:
+            if current_temperature < restart_temperature:
                 self.candidate = copy.deepcopy(self.best)
                 temperature_length = self.temperature_length
                 current_temperature = self.temperature
@@ -184,6 +194,7 @@ class SimulatedAnnealing(object):
             self.acceptance.new_outcome, self.acceptance.current_outcome))
         # Evaluate the current best in the current seeds
         self._exe.evaluate_controller(self.best)
+        oldbest = self.best
         self.acceptance.improve = True
         self.acceptance.set_scores(self.best.scores, self.candidate.scores)
         accept = self.acceptance.accept()
@@ -194,6 +205,7 @@ class SimulatedAnnealing(object):
                 self.candidate.agg_score, self.best.agg_score))
             self.best = copy.deepcopy(self.candidate)
         self.acceptance.improve = False
+        return oldbest
 
     def _get_candidate(self):
         """
