@@ -22,7 +22,7 @@ case $budget in
             files=( "${files20k[@]}" )
             ;;
     "50k")
-            files=( "${files5k[@]}" )
+            files=( "${files50k[@]}" )
             ;;
 esac
 for i in "${files[@]}"
