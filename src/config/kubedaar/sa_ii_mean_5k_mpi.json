@@ -1,0 +1,32 @@
+{
+    "include_files": [
+        "config/kubedaar/automode.json",
+        "config/random.json"
+    ],
+    "execution": {
+        "seed_window_size": 10,
+        "seed_window_movement": 2,
+        "budget": 5000
+    },
+    "logging": {
+        "snapshot_frequency": 100,
+        "log_level": "INFO"
+    },
+    "parallelization": {
+        "parallel": 12,
+        "mode": "MPI"
+    },
+    "sls": {
+        "SimulatedAnnealing": {
+            "candidate": {
+                "IterativeImprovement": {
+                    "acceptance_criterion": "mean"
+                }
+            },
+            "temperature": 62.5,
+            "cooling_rate": 0.9,
+            "temperature_length": 5,
+            "acceptance_criterion": "mean"
+        }
+    }
+}

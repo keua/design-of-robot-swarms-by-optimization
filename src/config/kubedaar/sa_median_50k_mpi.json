@@ -9,7 +9,7 @@
     "budget": 50000
   },
   "logging": {
-    "snapshot_frequency": 500,
+    "snapshot_frequency": 800,
     "log_level": "INFO"
   },
   "parallelization": {
@@ -18,9 +18,9 @@
   },
   "sls": {
     "SimulatedAnnealing": {
-      "temperature": 125.0,
-      "cooling_rate": 0.60,
-      "temperature_length": 3,
+      "temperature": 62.5,
+      "cooling_rate": 0.9,
+      "temperature_length": 5,
       "acceptance_criterion": "median"
     }
   }
