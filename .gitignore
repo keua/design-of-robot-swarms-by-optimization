@@ -31,3 +31,7 @@ analysis/*
 
 # Visual studio code 
 .vscode/
+
+# Data
+data/*.csv
+data/*.res

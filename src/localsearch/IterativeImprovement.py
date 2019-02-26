@@ -30,8 +30,8 @@ class IterativeImprovement(object):
             self.termination_criterion = None
             self.__dict__.update(data)
 
-    def __init__(self, candidate, acceptance_criterion, budget, random_seed,
-                 termination_criterion):
+    def __init__(self, candidate, acceptance_criterion="mean", budget=5000,
+                 random_seed=None, termination_criterion=None):
         """
         The iterative improvement method, that improves upon the
         candidate controller.
@@ -117,7 +117,7 @@ class IterativeImprovement(object):
         """
         log.debug("Best scores {} and perturbed scores {}".
                   format(self.best.scores, perturbed.scores))
-        self.best.agg_score, perturbed.agg_scores = self.acceptance.outcomes
+        self.best.agg_score, perturbed.agg_score = self.acceptance.outcomes
 
     def _establish_termination_criterion(self, termination_criterion):
         """
