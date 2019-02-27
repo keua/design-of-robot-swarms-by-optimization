@@ -3,17 +3,17 @@
 # Arguments
 budget=$1
 
-files5k=( "experiments/kubedaar/for_sa_mean_5k.json"
-           "experiments/kubedaar/for_sa_median_5k.json"
-           "experiments/kubedaar/for_sa_wilcoxon_5k.json" )
+files5k=( "experiments/kubedaar/sa_mean_5k.json"
+           "experiments/kubedaar/sa_median_5k.json"
+           "experiments/kubedaar/sa_wilcoxon_5k.json" )
 
-files20k=( "experiments/kubedaar/for_sa_mean_20k.json"
-            "experiments/kubedaar/for_sa_median_20k.json"
-            "experiments/kubedaar/for_sa_wilcoxon_20k.json" )
+files20k=( "experiments/kubedaar/sa_mean_20k.json"
+            "experiments/kubedaar/sa_median_20k.json"
+            "experiments/kubedaar/sa_wilcoxon_20k.json" )
 
-files50k=( "experiments/kubedaar/for_sa_mean_50k.json"
-            "experiments/kubedaar/for_sa_median_50k.json"
-            "experiments/kubedaar/for_sa_wilcoxon_50k.json" )
+files50k=( "experiments/kubedaar/sa_mean_50k.json"
+            "experiments/kubedaar/sa_median_50k.json"
+            "experiments/kubedaar/sa_wilcoxon_50k.json" )
 
 # Activate virutal environment
 source /home/kubedaar/venv/bin/activate

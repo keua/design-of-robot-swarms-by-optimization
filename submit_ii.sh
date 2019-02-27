@@ -3,9 +3,9 @@
 # Arguments
 budget=$1
 
-files5k=( "experiments/kubedaar/for_ii_mean_5k.json" )
+files5k=( "experiments/kubedaar/ii_mean_5k.json" )
 
-files20k=( "experiments/kubedaar/for_ii_mean_20k.json" )
+files20k=( "experiments/kubedaar/ii_mean_20k.json" )
 
 files50k=(  )
 
