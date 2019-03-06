@@ -15,15 +15,15 @@ scenario=$1
 USERNAME=`whoami`
 TMPDIR=/tmp/$USERNAME/localsearch_results_summary
 JOBDIR=/home/$USERNAME/masterthesis/localsearch
-SOURCEDIR=$JOBDIR/data
-RESULTDIR=/home/$USERNAME/masterthesis/$scenario
+SOURCEDIR=$JOBDIR/analysis
+RESULTDIR=/home/$USERNAME/masterthesis/result/$scenario
 
 mkdir -p $TMPDIR
 source /home/$USERNAME/venv/bin/activate &> $TMPDIR/results_processing.txt
 cd $SOURCEDIR
-export PYTHONPATH=$PYTHONPATH:/home/$USERNAME/masterthesis/localsearch/data/
+export PYTHONPATH=$PYTHONPATH:/home/$USERNAME/masterthesis/localsearch/analysis/
 
-mpiexec -n 1 python3 -m mpi4py.futures /home/$USERNAME/masterthesis/localsearch/data/process.py -s $scenario -b 5k 20k &>> $TMPDIR/results_processing.txt
+mpiexec -n 1 python3 -m mpi4py.futures /home/$USERNAME/masterthesis/localsearch/analysis/process.py -s $scenario &>> $TMPDIR/results_processing.txt
 
 RET=$?
 mv $TMPDIR/* $RESULTDIR
