@@ -66,8 +66,9 @@ def boxplot(args):
     fig, axs = plt.subplots(ncols=cols, nrows=rows, sharey=True, sharex=True)
 
     # Plot boxplots per each architecture and budget
-    for i, df in enumerate(dfs):
-        sns.boxplot(data=df, ax=axs[int(i / rows), i % cols])
+    for i, budget in enumerate(args.budgets):
+        for j, arch in enumerate(args.architectures):
+            sns.boxplot(data=dfs[i*cols+j], ax=axs[i, j])
     # Set legend per each budget
     for i, budget in enumerate(args.budgets):
         for j, arch in enumerate(args.architectures):
