@@ -1,14 +1,14 @@
 {
     "configuration": "config/kubedaar/ii_mean_5k_mpi.json",
     "FOR_II_MIN_MEAN_BT_5k": {
-        "repetitions": 2,
+        "repetitions": 0,
         "scenario": "/home/kubedaar/masterthesis/localsearch/scenarios/kubedaar/vanilla/foraging_bt.argos",
         "architecture": "BT",
         "initial_controller": "minimal",
         "result_directory": "/home/kubedaar/masterthesis/result/budget_5k"
     },
     "FOR_II_MIN_MEAN_FSM_5k": {
-        "repetitions": 2,
+        "repetitions": 0,
         "scenario": "/home/kubedaar/masterthesis/localsearch/scenarios/kubedaar/vanilla/foraging.argos",
         "architecture": "FSM",
         "initial_controller": "minimal",

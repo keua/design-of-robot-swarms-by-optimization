@@ -1,59 +1,59 @@
 {
-    "configuration": "config/kubedaar/sa_wilcoxon_50k_mpi.json",
-    "FOR_SA_MIN_WILCOXON_BT_50k": {
+    "configuration": "config/kubedaar/sa_mean_25k_mpi.json",
+    "FOR_SA_MIN_MEAN_BT_25k": {
         "repetitions": 0,
         "scenario": "/home/kubedaar/masterthesis/localsearch/scenarios/kubedaar/vanilla/foraging_bt.argos",
         "architecture": "BT",
         "initial_controller": "minimal",
-        "result_directory": "/home/kubedaar/masterthesis/result/foraging/budget_50k"
+        "result_directory": "/home/kubedaar/masterthesis/result/foraging/budget_25k"
     },
-    "FOR_SA_MIN_WILCOXON_FSM_50k": {
+    "FOR_SA_MIN_MEAN_FSM_25k": {
         "repetitions": 0,
         "scenario": "/home/kubedaar/masterthesis/localsearch/scenarios/kubedaar/vanilla/foraging.argos",
         "architecture": "FSM",
         "initial_controller": "minimal",
-        "result_directory": "/home/kubedaar/masterthesis/result/foraging/budget_50k"
+        "result_directory": "/home/kubedaar/masterthesis/result/foraging/budget_25k"
     },
-    "AGG_SA_MIN_WILCOXON_BT_50k": {
+    "AGG_SA_MIN_MEAN_BT_25k": {
         "repetitions": 0,
         "scenario": "/home/kubedaar/masterthesis/localsearch/scenarios/kubedaar/vanilla/aggregation_bt.argos",
         "architecture": "BT",
         "initial_controller": "minimal",
-        "result_directory": "/home/kubedaar/masterthesis/result/aggregation/budget_50k"
+        "result_directory": "/home/kubedaar/masterthesis/result/aggregation/budget_25k"
     },
-    "AGG_SA_MIN_WILCOXON_FSM_50k": {
+    "AGG_SA_MIN_MEAN_FSM_25k": {
         "repetitions": 0,
         "scenario": "/home/kubedaar/masterthesis/localsearch/scenarios/kubedaar/vanilla/aggregation.argos",
         "architecture": "FSM",
         "initial_controller": "minimal",
-        "result_directory": "/home/kubedaar/masterthesis/result/aggregation/budget_50k"
+        "result_directory": "/home/kubedaar/masterthesis/result/aggregation/budget_25k"
     },
-    "AAC_SA_MIN_WILCOXON_BT_50k": {
+    "AAC_SA_MIN_MEAN_BT_25k": {
         "repetitions": 0,
         "scenario": "/home/kubedaar/masterthesis/localsearch/scenarios/kubedaar/vanilla/aac_bt.argos",
         "architecture": "BT",
         "initial_controller": "minimal",
-        "result_directory": "/home/kubedaar/masterthesis/result/aac/budget_50k"
+        "result_directory": "/home/kubedaar/masterthesis/result/aac/budget_25k"
     },
-    "AAC_SA_MIN_WILCOXON_FSM_50k": {
+    "AAC_SA_MIN_MEAN_FSM_25k": {
         "repetitions": 0,
         "scenario": "/home/kubedaar/masterthesis/localsearch/scenarios/kubedaar/vanilla/aac_fsm.argos",
         "architecture": "FSM",
         "initial_controller": "minimal",
-        "result_directory": "/home/kubedaar/masterthesis/result/aac/budget_50k"
+        "result_directory": "/home/kubedaar/masterthesis/result/aac/budget_25k"
     },
-    "SCA_SA_MIN_WILCOXON_BT_50k": {
+    "SCA_SA_MIN_MEAN_BT_25k": {
         "repetitions": 0,
         "scenario": "/home/kubedaar/masterthesis/localsearch/scenarios/kubedaar/vanilla/sca_bt.argos",
         "architecture": "BT",
         "initial_controller": "minimal",
-        "result_directory": "/home/kubedaar/masterthesis/result/sca/budget_50k"
+        "result_directory": "/home/kubedaar/masterthesis/result/sca/budget_25k"
     },
-    "SCA_SA_MIN_WILCOXON_FSM_50k": {
+    "SCA_SA_MIN_MEAN_FSM_25k": {
         "repetitions": 0,
         "scenario": "/home/kubedaar/masterthesis/localsearch/scenarios/kubedaar/vanilla/sca_fsm.argos",
         "architecture": "FSM",
         "initial_controller": "minimal",
-        "result_directory": "/home/kubedaar/masterthesis/result/sca/budget_50k"
+        "result_directory": "/home/kubedaar/masterthesis/result/sca/budget_25k"
     }
 }
