@@ -15,6 +15,12 @@ files50k=( "experiments/kubedaar/sa_mean_50k.json"
             "experiments/kubedaar/sa_median_50k.json"
             "experiments/kubedaar/sa_wilcoxon_50k.json" )
 
+files_all_mean=( "experiments/kubedaar/sa_mean_5k.json"
+                 "experiments/kubedaar/sa_mean_25k.json"
+                 "experiments/kubedaar/sa_mean_50k.json"
+                 "experiments/kubedaar/sa_mean_75k.json"
+                 "experiments/kubedaar/sa_mean_100k.json" )
+
 # Activate virutal environment
 source /home/kubedaar/venv/bin/activate
 # Go to source folder
@@ -29,6 +35,9 @@ case $budget in
             ;;
     "50k")
             files=( "${files50k[@]}" )
+            ;;
+    "allmean")
+            files=( "${files_all_mean[@]}" )
             ;;
 esac
 for i in "${files[@]}"
