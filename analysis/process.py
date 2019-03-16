@@ -10,7 +10,7 @@ import pandas
 home = "/home/kubedaar/"
 path_scenario = home + "masterthesis/localsearch/scenarios/kubedaar/vanilla/"
 agg_methods = {
-    "MEAN" : np.mean,
+    "MEAN": np.mean,
     "MEDIAN": np.median,
     "WILCOXON": np.median
 }
@@ -36,8 +36,10 @@ scenarios = {
         "FSM": path_scenario + "aac_fsm.argos"
     },
 }
-seeds = [845250, 895992, 965205, 238419, 968623,
-         345192, 757616, 3185512, 9216842, 9516551]
+seeds = [845250, 895992, 965205, 238419, 968623, 345192, 757616, 3185512,
+         9216842, 9516551, 123841, 463233, 4863422, 631815, 138453, 358488,
+         7894566, 8516982, 542344, 321893, 9043233, 838132, 654424, 746852,
+         6485222, 9999452, 741258, 214523, 789632, 5874552]
 cmd_base = "{} --seed {} -n -c {} {}"
 
 
@@ -49,7 +51,7 @@ def get_folders(rootdir, scenario, budget, architecture, acceptance):
     return sorted(folders)
 
 
-def get_controllers(bud, arch, accept, scenario, folders, rootdir):
+def get_controllers(bud, arch, accept, scenario, folders, rootdir, nseeds):
     controllers = []
     auto = automode[arch]
     scenario_file = scenarios[scenario][arch]
@@ -59,7 +61,7 @@ def get_controllers(bud, arch, accept, scenario, folders, rootdir):
         best_controller = "%s/best_controller.txt" % fold
         file = open(best_controller, "r")
         controller = file.read()
-        for seed in seeds:
+        for seed in seeds[0:nseeds]:
             cmd = cmd_base.format(auto, seed, scenario_file, controller)
             out.write("%s\n" % cmd)
             controllers.append((auto, str(seed), scenario_file, controller))
@@ -129,6 +131,11 @@ def initialize():
         "-sm", "--sample", required=False, help="experiment sample",
         nargs='?', const=int, type=int, default=10, dest="sample"
     )
+    ap.add_argument(
+        "-ns", "--nseeds", required=False,
+        help="Number of seeds to evaluatefor each controller",
+        nargs='?', const=int, type=int, default=10, dest="nseeds"
+    )
     args = ap.parse_args()
     return args
 
@@ -155,8 +162,12 @@ if __name__ == "__main__":
                 print(bud, arch, accept)
                 folders = get_folders(
                     rootdir, "%s/" % args.scenario, bud, arch, accept)
-                controllers.extend(get_controllers(
-                    bud, arch, accept, args.scenario, folders, rootdir))
+                controllers.extend(
+                    get_controllers(
+                        bud, arch, accept, args.scenario,
+                        folders, rootdir, args.nseeds
+                    )
+                )
 
     print(len(controllers))
     # Evaluate controller in simulations
@@ -171,7 +182,7 @@ if __name__ == "__main__":
                 row = []
                 for s in range(sample):
                     agg_scores = []
-                    for seed in seeds:
+                    for seed in seeds[:args.nseeds]:
                         if results[i].exception() is not None:
                             raise results[i].exception()
                         agg_scores.append(results[i].result())
