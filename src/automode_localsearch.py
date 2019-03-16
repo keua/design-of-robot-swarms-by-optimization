@@ -138,7 +138,7 @@ def submit_localsearch(args):
 
     submit_cmd = """#!/bin/bash
 #$ -N {job_name}
-#$ -l short
+#$ -l long
 #$ -m ase
 #      b     Mail is sent at the beginning of the job.
 #      e     Mail is sent at the end of the job.
