@@ -28,13 +28,6 @@ src/automode/modules/__pycache__/*
 # Ignore analysis folder, except for the scripts
 analysis/*
 !analysis/scripts/*
-!analysis/*.sh
-!analysis/*.ipynb
-!analysis/*.py
-!analysis/data
-!analysis/plots
-analysis/data/*.xlsx
-analysis/plots/*.pdf
 
 # Visual studio code 
 .vscode/
