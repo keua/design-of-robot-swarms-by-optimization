@@ -133,8 +133,8 @@ class SimulatedAnnealing(object):
             # If metropolis condition met select the new controller
             if mc_accept:
                 self.candidate = perturbed
-                # Evaluating improvement for global best controller
-                oldbest = self._evaluate_improvement()
+            # Evaluating improvement for global best controller
+            oldbest = self._evaluate_improvement()
             # Save best and candidate controllers interaction
             stats.performance.save_results(
                 oldbest, self.candidate, self._f_best_cand)
