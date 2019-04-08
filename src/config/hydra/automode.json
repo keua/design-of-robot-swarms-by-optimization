@@ -1,0 +1,25 @@
+{
+  "controller": {
+    "minimal_behavior": "Stop",
+    "minimal_condition": "FixedProbability",
+    "random_parameter_initialization": true
+  },
+  "FSM": {
+    "path_to_AutoMoDe": "/AutoMoDe-FSM/bin/automode_main",
+    "max_states": 4,
+    "max_transitions": 1000,
+    "max_transitions_per_state": 4,
+    "self_transition": false
+  },
+  "BT": {
+    "path_to_AutoMoDe": "/AutoMoDe-BT/bin/automode_main_bt",
+    "max_actions": 4
+  },
+  "cwd": {
+    "dir": "/localsearch/src/"
+  },
+  "dirs": {
+    "srcdir": "HOME",
+    "resdir": "VSC_SCRATCH"
+  }
+}
