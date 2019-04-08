@@ -4,6 +4,7 @@ This module provides functions for setting up the configuration of the local sea
 
 import logging
 import json
+import os
 
 from automode.architecture import FSM
 from automode.architecture import BT
@@ -61,3 +62,27 @@ def write_settings_to_file(file_name):
     for setting in settings_list:
         data[setting] = getattr(settings, setting)
     write_to_file(data, file_name)
+
+def update_dirs(data):
+    """
+    """
+    if 'dirs' in data:
+        data["dirs"]["resdir"] = os.environ[data["dirs"]["resdir"]]
+        data["dirs"]["srcdir"] = os.environ[data["dirs"]["srcdir"]]
+
+def update_path_automode(data):
+    """
+    """
+    if data["experiment"]["architecture"] == "BT":
+        data["BT"]["path_to_AutoMoDe"] = \
+            data["dirs"]["srcdir"] + data["BT"]["path_to_AutoMoDe"]
+    elif data["experiment"]["architecture"] == "FSM":
+        data["FSM"]["path_to_AutoMoDe"] = \
+            data["dirs"]["srcdir"] + data["FSM"]["path_to_AutoMoDe"]
+    data["cwd"]["dir"] = data["dirs"]["srcdir"] + data["cwd"]["dir"]
+
+def update_path_experiment(args, data):
+    """
+    """
+    args["result_directory"] = data["dirs"]["resdir"] + args["result_directory"]
+    args["scenario_file"] = data["dirs"]["srcdir"] + args["scenario_file"]
