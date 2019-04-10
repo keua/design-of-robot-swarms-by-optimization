@@ -203,15 +203,15 @@ def submit_localsearch_hydra(args):
     config_data = configuration.load_from_file(args["configuration"])
     configuration.update_dirs(config_data)
     configuration.update_path_experiment(args, config_data)
-    walltime = "00:45:00"
+    walltime = "01:00:00"
     if config_data["execution"]["budget"] >= 15000 \
     and config_data["execution"]["budget"]  < 25000:
         walltime = "02:00:00"
     elif config_data["execution"]["budget"]  >= 25000 \
     and config_data["execution"]["budget"]  <= 50000:
-        walltime = "04:00:00"
+        walltime = "06:00:00"
     elif config_data["execution"]["budget"] >= 75000:
-        walltime = "8:00:00"
+        walltime = "10:00:00"
     execution_cmd = "mpiexec -n 1 python3 -m mpi4py.futures"
 
     submit_cmd = \
