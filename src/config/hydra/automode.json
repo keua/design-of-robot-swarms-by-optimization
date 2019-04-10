@@ -21,5 +21,9 @@
   "dirs": {
     "srcdir": "HOME",
     "resdir": "VSC_SCRATCH"
+  },
+  "logging": {
+    "snapshot_frequency": 1000,
+    "log_level": "INFO"
   }
 }
