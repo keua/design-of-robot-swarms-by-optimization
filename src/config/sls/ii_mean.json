@@ -1,0 +1,7 @@
+{
+    "sls": {
+        "IterativeImprovement": {
+            "acceptance_criterion": "mean"
+        }
+    }
+}
