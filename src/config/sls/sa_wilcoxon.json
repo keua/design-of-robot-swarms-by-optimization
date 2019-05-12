@@ -4,7 +4,7 @@
       "temperature": 125,
       "cooling_rate": 0.9782,
       "temperature_length": 1,
-      "acceptance_criterion": "wilcoxon"
+      "acceptance_criterion": "wilcoxon_test"
     }
   }
 }
