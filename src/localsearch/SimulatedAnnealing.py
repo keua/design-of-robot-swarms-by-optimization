@@ -63,6 +63,7 @@ class SimulatedAnnealing(object):
             self.random_seed = None
             self.acceptance_criterion = "mean"
             self.budget = 5000
+            self.restart_mechanism = "temperature"
             self.restart_percentage = 0.01/100
             self.termination_criterion = None
             self.__dict__.update(data)
@@ -70,6 +71,7 @@ class SimulatedAnnealing(object):
     def __init__(self, candidate, temperature=125.0, cooling_rate=0.5,
                  final_temperature=0.0001, temperature_length=3,
                  acceptance_criterion="mean", random_seed=None, budget=5000,
+                 restart_mechanism="temperature",
                  restart_percentage=0.01/100, termination_criterion=None):
         """
         """
@@ -83,8 +85,11 @@ class SimulatedAnnealing(object):
         self.random_seed = random_seed
         self.random_gen = np.random
         self.acceptance = AC(accept=acceptance_criterion)
-        self.restart_percentage = restart_percentage
         self.budget = budget
+        self.restart_mechanism = restart_mechanism
+        self.restart_percentage = restart_percentage
+        self._current_temperature = self.temperature
+        self._best_temperature = self.temperature
         self._exe = execution.ExecutorFactory.get_executor()
         self._mc = getattr(self.acceptance, "metropolis_condition")
         self._f_best_cand = 'SA_BC_{}'.format(random_seed)
@@ -99,7 +104,8 @@ class SimulatedAnnealing(object):
         return cls(sam.candidate, sam.temperature, sam.cooling_rate,
                    sam.final_temperature, sam.temperature_length,
                    sam.acceptance_criterion, sam.random_seed, sam.budget,
-                   sam.restart_percentage, sam.termination_criterion)
+                   sam.restart_mechanism, sam.restart_percentage,
+                   sam.termination_criterion)
 
     def local_search(self, snap_freq=100):
         """
@@ -111,10 +117,9 @@ class SimulatedAnnealing(object):
         log.info('SA Started at {}'.format(stats.time.start_time))
         self.best = copy.deepcopy(self.candidate)
         temperature_length = self.temperature_length
-        current_temperature = self.temperature
-        restart_temperature = self.restart_percentage * self.temperature
         while True:  # do
-            log.debug('Current temperature {}'.format(current_temperature))
+            log.debug('Current temperature {}'.format(
+                self._current_temperature))
             # create a perturbed controller
             perturbed = self._perform_perturbation()
             # move the window
@@ -123,7 +128,7 @@ class SimulatedAnnealing(object):
             self._exe.evaluate_controllers([self.candidate, perturbed])
             # Evaluating metropolis condition
             self.acceptance.set_scores(self.candidate.scores, perturbed.scores)
-            mc_accept = self._mc(current_temperature, self.random_gen)
+            mc_accept = self._mc(self._current_temperature, self.random_gen)
             self._update_agg_scores(perturbed)
             # Save candidate and perturbed controllers interaction
             stats.performance.save_results(
@@ -134,26 +139,26 @@ class SimulatedAnnealing(object):
             if mc_accept:
                 self.candidate = perturbed
             # Evaluating improvement for global best controller
-            oldbest = self._evaluate_improvement()
+            oldbest = self._evaluate_improvement(mc_accept, snap_freq)
             # Save best and candidate controllers interaction
             stats.performance.save_results(
                 oldbest, self.candidate, self._f_best_cand)
             # Draw Best controller with certain frequency
-            if self.tc.count % snap_freq == 0:
+            if snap_freq is not None and self.tc.count % snap_freq == 0:
                 self.candidate.draw('{}'.format(self.tc.count))
             # Constant temperature
             temperature_length -= 1
             self.tc.discount = 1.0
             # Applying cooling_rate
             if temperature_length == 0:
-                current_temperature *= self.cooling_rate
+                self._current_temperature *= self.cooling_rate
                 self.tc.discount = self.cooling_rate
                 temperature_length = self.temperature_length
             # Check temperature percentage
-            if current_temperature < restart_temperature:
+            if self._restart():
                 self.candidate = copy.deepcopy(self.best)
                 temperature_length = self.temperature_length
-                current_temperature = self.temperature
+                self._current_temperature = self.temperature
                 log.info("Restarting score %s" % str(self.candidate.agg_score))
 
             if self.tc.satisfied():  # While
@@ -187,7 +192,7 @@ class SimulatedAnnealing(object):
         # Updating controllers
         self.candidate.agg_score, perturbed.agg_score = self.acceptance.outcomes
 
-    def _evaluate_improvement(self):
+    def _evaluate_improvement(self, mc_accept, snap_freq):
         """
         """
         log.debug('Exploring controller {}, Old controller {}'.format(
@@ -200,11 +205,13 @@ class SimulatedAnnealing(object):
         accept = self.acceptance.accept()
         self.best.agg_score, self.candidate.agg_score = self.acceptance.outcomes
         if accept:
-            self.candidate.draw('{}'.format(self.tc.count))
+            snap_freq is not None and self.candidate.draw('{}'.format(self.tc.count))
             log.info('New Best controller {}, Old controller {}'.format(
                 self.candidate.agg_score, self.best.agg_score))
             self.best = copy.deepcopy(self.candidate)
         self.acceptance.improve = False
+        if mc_accept:
+            self._best_temperature = self._current_temperature
         return oldbest
 
     def _get_candidate(self):
@@ -234,3 +241,20 @@ class SimulatedAnnealing(object):
                 self.tc = DTC(self.temperature, self.final_temperature, 1.0)
         else:
             self.tc = termination_criterion
+
+    def _restart(self):
+        """
+        """
+        if self.restart_mechanism == "temperature":
+            restart_temperature = self.temperature * self.restart_percentage
+            return False if self._current_temperature > restart_temperature else True
+        elif self.restart_mechanism == "run":
+            restart_step = int(self.tc.end * self.restart_percentage)
+            return True if self.tc.count + 1 == restart_step else False
+        elif self.restart_mechanism == "reheat":
+            restart_temperature = self.temperature * self.restart_percentage
+            print(self._best_temperature, self._current_temperature, self.restart_percentage, restart_temperature) 
+            if self._current_temperature <= restart_temperature:
+                self.temperature = self._best_temperature
+                return True
+        return False
