@@ -89,7 +89,7 @@ class SimulatedAnnealing(object):
         self.restart_mechanism = restart_mechanism
         self.restart_percentage = restart_percentage
         self._current_temperature = self.temperature
-        self._best_temperature = self.temperature
+        self._best_temperature = (self.temperature, 0)
         self._exe = execution.ExecutorFactory.get_executor()
         self._mc = getattr(self.acceptance, "metropolis_condition")
         self._f_best_cand = 'SA_BC_{}'.format(random_seed)
@@ -211,7 +211,9 @@ class SimulatedAnnealing(object):
             self.best = copy.deepcopy(self.candidate)
         self.acceptance.improve = False
         if mc_accept:
-            self._best_temperature = self._current_temperature
+            d = self.best.agg_score - oldbest.agg_score
+            if d > self._best_temperature[1]:
+                self._best_temperature = (self._current_temperature, d)
         return oldbest
 
     def _get_candidate(self):
