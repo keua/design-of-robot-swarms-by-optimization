@@ -253,7 +253,6 @@ export PYTHONPATH=${{PYTHONPATH}}:${{VSC_HOME}}/localsearch/src/
 
   # load the environment
 module purge
-module load intel
 module load Python/3.6.6-intel-2018b
 module load mpi4py/3.0.1-intel-2018b-Python-3.6.6
 
@@ -315,8 +314,8 @@ def execute_localsearch(configuration_file, experiment_arguments = {}):
 
     # apply the configuration
     configuration.apply(config_data)
-    configuration.update_dirs(config_data)
-    configuration.update_path_automode(config_data)
+    #configuration.update_dirs(config_data)
+    #configuration.update_path_automode(config_data)
 
     # create the run folder
     logging.info(config_data["experiment"]["job_name"])
