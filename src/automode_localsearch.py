@@ -314,8 +314,8 @@ def execute_localsearch(configuration_file, experiment_arguments = {}):
 
     # apply the configuration
     configuration.apply(config_data)
-    #configuration.update_dirs(config_data)
-    #configuration.update_path_automode(config_data)
+    configuration.update_dirs(config_data)
+    configuration.update_path_automode(config_data)
 
     # create the run folder
     logging.info(config_data["experiment"]["job_name"])
