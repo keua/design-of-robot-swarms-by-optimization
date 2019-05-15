@@ -211,7 +211,7 @@ class SimulatedAnnealing(object):
             self.best = copy.deepcopy(self.candidate)
         self.acceptance.improve = False
         if mc_accept:
-            d = self.best.agg_score - oldbest.agg_score
+            d = self.best.agg_score[1] - oldbest.agg_score[1]
             if d > self._best_temperature[1]:
                 self._best_temperature = (self._current_temperature, d)
         return oldbest
