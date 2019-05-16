@@ -257,6 +257,6 @@ class SimulatedAnnealing(object):
             restart_temperature = self.temperature * self.restart_percentage
             print(self._best_temperature, self._current_temperature, self.restart_percentage, restart_temperature) 
             if self._current_temperature <= restart_temperature:
-                self.temperature = self._best_temperature
+                self.temperature = self._best_temperature[0]
                 return True
         return False
