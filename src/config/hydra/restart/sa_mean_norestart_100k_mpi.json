@@ -1,0 +1,8 @@
+{
+  "include_files": [
+    "config/hydra/automode.json",
+    "config/random.json",
+    "config/execution/100k_w10.json",
+    "config/sls/sa_mean_tl20.json"
+  ]
+}

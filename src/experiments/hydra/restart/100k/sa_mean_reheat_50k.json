@@ -1,31 +1,31 @@
 {
-    "configuration": "config/hydra/acceptance/sa_rank_25k_mpi.json",
-    "FOR_SA_MIN_RANK_BT_25k": {
-        "repetitions": 1,
+    "configuration": "config/hydra/restart/sa_mean_reheat_100k_mpi.json",
+    "FOR_SA_MIN_MEAN_BT_100k_reheat": {
+        "repetitions": 19,
         "scenario": "/localsearch/scenarios/hydra/vanilla/foraging_bt.argos",
         "architecture": "BT",
         "initial_controller": "minimal",
-        "result_directory": "/acceptance/foraging/budget_25k"
+        "result_directory": "/restart/foraging/budget_100k"
     },
-    "FOR_SA_MIN_RANK_FSM_25k": {
-        "repetitions": 1,
+    "FOR_SA_MIN_MEAN_FSM_100k_reheat": {
+        "repetitions": 19,
         "scenario": "/localsearch/scenarios/hydra/vanilla/foraging.argos",
         "architecture": "FSM",
         "initial_controller": "minimal",
-        "result_directory": "/acceptance/foraging/budget_25k"
+        "result_directory": "/restart/foraging/budget_100k"
     },
-    "AAC_SA_MIN_RANK_BT_25k": {
-        "repetitions": 1,
+    "AAC_SA_MIN_MEAN_BT_100k_reheat": {
+        "repetitions": 19,
         "scenario": "/localsearch/scenarios/hydra/vanilla/aac_bt.argos",
         "architecture": "BT",
         "initial_controller": "minimal",
-        "result_directory": "/acceptance/aac/budget_25k"
+        "result_directory": "/restart/aac/budget_100k"
     },
-    "AAC_SA_MIN_RANK_FSM_25k": {
-        "repetitions": 1,
+    "AAC_SA_MIN_MEAN_FSM_100k_reheat": {
+        "repetitions": 19,
         "scenario": "/localsearch/scenarios/hydra/vanilla/aac_fsm.argos",
         "architecture": "FSM",
         "initial_controller": "minimal",
-        "result_directory": "/acceptance/aac/budget_25k"
+        "result_directory": "/restart/aac/budget_100k"
     }
 }

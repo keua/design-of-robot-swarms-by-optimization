@@ -1,0 +1,11 @@
+{
+    "execution": {
+    "seed_window_size": 15,
+    "seed_window_movement": 2,
+    "budget": 100000
+  },
+  "parallelization": {
+    "parallel": 17,
+    "mode": "MPI"
+  }
+}
