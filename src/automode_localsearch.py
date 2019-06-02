@@ -41,7 +41,6 @@ def load_experiment_file(experiment_file):
     # Handle required and optional parameters like when parsing from sys.argv
     for setup_key in data:
         experiment_setup = data[setup_key]
-        print(experiment_setup)
         if global_config_file:  # set the config file if there was a global definition
             experiment_setup["configuration"] = global_config_file
         if "repetitions" not in experiment_setup:  # default check for repetitions
@@ -97,7 +96,7 @@ def run_local(experiment_file):
             execute_localsearch(setup["configuration"], arguments)
 
 
-def submit(experiment_file):
+def submit(experiment_file, cluster="majorana"):
     """
     Reads the experiments_file and submits the experiment to the scheduling system
     """
@@ -118,10 +117,15 @@ def submit(experiment_file):
                 "scenario_file": setup["scenario"],
                 "initial_controller": initial_controller,
                 # create correct jobname
-                "job_name": "{}_{}".format(setup_key, i),
+                "job_name": "{}_{}".format(setup_key, i) if cluster == "majorana" else setup_key,
                 "result_directory": setup["result_directory"],
+                "repetitions" : setup["repetitions"]
             }
-            submit_localsearch(arguments)
+            if cluster == "majorana" :
+                submit_localsearch(arguments)
+            elif cluster == "hydra":
+                submit_localsearch_hydra(arguments)
+                break
 
 
 def submit_localsearch(args):
@@ -134,6 +138,8 @@ def submit_localsearch(args):
     # TODO: Also don't write it to a real file, or at least clean the file up after execution
 
     config_data = configuration.load_from_file(args["configuration"])
+    configuration.update_dirs(config_data)
+    configuration.update_path_experiment(args, config_data)
     execution_cmd = "python3" if not config_data["parallelization"]["mode"]=="MPI" else "mpiexec -n 1 python3 -m mpi4py.futures"
 
     submit_cmd = """#!/bin/bash
@@ -183,6 +189,100 @@ rmdir -p ${{TMPDIR}} &> /dev/null
     print(stderr.decode('utf-8'))
     os.remove(filename)
 
+def submit_localsearch_hydra(args):
+    """
+    Create a submission script for the cluster and submit it to the scheduling 
+    system
+    :param args: A dictionary with the following keys: "config_file_name",
+                 "architecture", "path_to_scenario", "budget",
+                  "initial_controller", "job_name", "result_directory",
+                  "parallel"
+    """
+    # TODO: Make the following blob a little bit more customizable
+    # TODO: Also don't write it to a real file, or at least clean the file up after execution
+    config_data = configuration.load_from_file(args["configuration"])
+    configuration.update_dirs(config_data)
+    configuration.update_path_experiment(args, config_data)
+    walltime = "00:45:00"
+    if config_data["execution"]["budget"] >= 15000 \
+    and config_data["execution"]["budget"]  < 25000:
+        walltime = "02:00:00"
+    elif config_data["execution"]["budget"]  >= 25000 \
+    and config_data["execution"]["budget"]  <= 50000:
+        walltime = "04:00:00"
+    elif config_data["execution"]["budget"] >= 75000:
+        walltime = "8:00:00"
+    execution_cmd = "mpiexec -n 1 python3 -m mpi4py.futures"
+
+    submit_cmd = \
+"""#!/bin/bash
+#PBS -t 0-{repetitions}
+#PBS -N {job_name}
+
+  # send mail notification (optional)
+  #   a        when job is aborted
+  #   b        when job begins
+  #   e        when job ends
+  #   M        your e-mail address (should always be specified)
+#PBS -m e
+#PBS -M kubedaar@ulb.ac.be
+
+  # requested running time (required!)
+#PBS -l walltime={walltime}
+  # specification (required!)
+  #   nodes=   number of nodes; 1 for serial; 1 or more for parallel
+  #   ppn=     number of processors per node; 1 for serial;
+  #   mem=     memory required
+  #   ib       request infiniband
+#PBS -l nodes=1:intel:ppn={parallel}
+#PBS -l mem=256Mb
+
+  # redirect standard output (-o) and error (-e) (optional)
+  # if omitted, the name of the job (specified by -N) or
+  # a generic name (name of the script followed by .o or .e and 
+  # job number) will be used
+#PBS -o {result_dir}/stdout_{job_name}_$PBS_ARRAYID.$PBS_JOBID
+#PBS -e {result_dir}/stderr_{job_name}_$PBS_ARRAYID.$PBS_JOBID
+
+
+  # go to the (current) working directory (optional, if this is the
+  # directory where you submitted the job)
+cd $PBS_O_WORKDIR
+
+export PYTHONPATH=${{PYTHONPATH}}:${{VSC_HOME}}/localsearch/src/
+
+  # load the environment
+module purge
+module load intel
+module load Python/3.6.6-intel-2018b
+module load mpi4py/3.0.1-intel-2018b-Python-3.6.6
+
+echo submit directory: $PWD
+echo jobid: $PBS_JOBID
+echo hostname: $HOSTNAME
+date
+echo ---Start Job ---
+{} ${{VSC_HOME}}/localsearch/src/automode_localsearch.py run -c {} -a {} -s {} -i {} -j {job_name}_${{PBS_ARRAYID}} -r {result_dir}
+echo ----End Job ----
+date
+
+""".format( execution_cmd, args["configuration"], args["architecture"],
+            args["scenario_file"], args["initial_controller"],
+            job_name=args["job_name"],
+            parallel=config_data["parallelization"]["parallel"],
+            result_dir=args["result_directory"],
+            walltime=walltime,
+            repetitions=args["repetitions"] )
+    filename = "submit_localsearch_{}.pbs".format(args["job_name"])
+    with open(filename, "w") as submit_file:
+        submit_file.write(submit_cmd)
+    args = ["qsub", filename]
+    qsub_process = subprocess.Popen(
+       args, stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+    (stdout, stderr) = qsub_process.communicate()
+    print(stdout.decode('utf-8'))
+    print(stderr.decode('utf-8'))
+    os.remove(filename)
 
 def create_run_directory():
     os.chdir(settings.experiment["result_directory"])
@@ -215,6 +315,8 @@ def execute_localsearch(configuration_file, experiment_arguments = {}):
 
     # apply the configuration
     configuration.apply(config_data)
+    configuration.update_dirs(config_data)
+    configuration.update_path_automode(config_data)
 
     # create the run folder
     logging.info(config_data["experiment"]["job_name"])
@@ -277,6 +379,16 @@ def parse_arguments():
         parser_submit.add_argument("-e", dest="experiment_file",
                                    help="(relative) path to the experiment file")
 
+    def create_subparser_submit_hydra():
+        """
+        Sets up the parser for the subcommand submit.
+        This subcommand will submit a whole experiment to the scheduler.
+        """
+        parser_submit = subparsers.add_parser('submit-hydra',
+                                              help='submit an experiment to a scheduling system')
+        parser_submit.add_argument("-e", dest="experiment_file",
+                                   help="(relative) path to the experiment file")
+
     def create_subparser_run():
         """
         Sets up the parser for the subcommand run.
@@ -315,6 +427,7 @@ def parse_arguments():
         title="execution", dest="execution_subcommand")
     create_subparser_local()
     create_subparser_submit()
+    create_subparser_submit_hydra()
     create_subparser_run()
     input_args = parser.parse_args()
     return input_args
@@ -326,6 +439,8 @@ def main():
         run_local(input_args.experiment_file)
     elif input_args.execution_subcommand == "submit":
         submit(input_args.experiment_file)
+    elif input_args.execution_subcommand == "submit-hydra":
+        submit(input_args.experiment_file, "hydra")
     elif input_args.execution_subcommand == "run":
         args = {}
         if input_args.job_name:

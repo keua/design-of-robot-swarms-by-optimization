@@ -63,14 +63,14 @@ class SimulatedAnnealing(object):
             self.random_seed = None
             self.acceptance_criterion = "mean"
             self.budget = 5000
-            self.restart_percentage = 0.1/100
+            self.restart_percentage = 0.01/100
             self.termination_criterion = None
             self.__dict__.update(data)
 
     def __init__(self, candidate, temperature=125.0, cooling_rate=0.5,
                  final_temperature=0.0001, temperature_length=3,
                  acceptance_criterion="mean", random_seed=None, budget=5000,
-                 restart_percentage=0.1/100, termination_criterion=None):
+                 restart_percentage=0.01/100, termination_criterion=None):
         """
         """
         np.random.seed(random_seed)
@@ -133,8 +133,8 @@ class SimulatedAnnealing(object):
             # If metropolis condition met select the new controller
             if mc_accept:
                 self.candidate = perturbed
-                # Evaluating improvement for global best controller
-                oldbest = self._evaluate_improvement()
+            # Evaluating improvement for global best controller
+            oldbest = self._evaluate_improvement()
             # Save best and candidate controllers interaction
             stats.performance.save_results(
                 oldbest, self.candidate, self._f_best_cand)
