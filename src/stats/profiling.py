@@ -1,3 +1,4 @@
+__author__ = "Jonas Kuckling, jonas.kuckling@ulb.ac.be"
 import cProfile
 import tracemalloc
 

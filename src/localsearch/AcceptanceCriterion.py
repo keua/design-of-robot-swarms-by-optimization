@@ -1,3 +1,4 @@
+__author__ = "Keneth Ubeda, k3n3th@gmail.com"
 from abc import ABCMeta, abstractmethod
 
 import numpy as np

@@ -1,3 +1,4 @@
+__author__ = "Jonas Kuckling, jonas.kuckling@ulb.ac.be"
 """
 Track different stats for the expenditure of time.
 """

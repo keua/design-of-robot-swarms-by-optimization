@@ -1,3 +1,4 @@
+__author__ = "Jonas Kuckling, jonas.kuckling@ulb.ac.be, Keneth Ubeda, k3n3th@gmail.com"
 import copy
 import logging
 import math

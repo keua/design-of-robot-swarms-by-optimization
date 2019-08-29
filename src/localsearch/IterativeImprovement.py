@@ -1,3 +1,4 @@
+__author__ = "Keneth Ubeda, k3n3th@gmail.com"
 import copy
 import logging as log
 import os

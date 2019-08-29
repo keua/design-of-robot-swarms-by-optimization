@@ -1,3 +1,4 @@
+__author__ = "Jonas Kuckling, jonas.kuckling@ulb.ac.be"
 """
 This module allows access to a number of variables that are read from the configuration.py module
 

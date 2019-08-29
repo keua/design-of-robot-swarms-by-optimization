@@ -1,3 +1,4 @@
+__author__ = "Jonas Kuckling, jonas.kuckling@ulb.ac.be"
 """
 This module provides functions for setting up the configuration of the local search
 """

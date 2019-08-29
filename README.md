@@ -1,4 +1,8 @@
 
+# Local search modules for AutoMoDe
+
+This package contains some stochastic local search algorithms for AutoMoDe.
+
 ## General idea
 
 "**localsearch.py**" file contains the current algorithm. The "**utilities.py**" file in the same directory just contains a number of functions that don't really fit into the localsearch.py file.
@@ -7,11 +11,9 @@ The "**controller**" referenced in the localsearch.py file is an instance of the
 
 Both classes make use of the modules (**behaviors and conditions**) defined in "**automode.modules.chocolate.py**" (here again I have abstract base classes (in "**modulesABC.py**") in case we are going to extend the set of modules to another version of AutoMoDe). These classes are representations of the data (type and parameters) of the modules of AutoMoDe.
 
-
 The general idea of the whole setup is as follows. The python program (the local search) creates a representation for a controller. It has no knowledge about the meaning/implementation of the individual modules and is working "blindly" on the design of the control software ("Blindly" in the sense that the local search has no insight in the workings of the modules, the mission or anything else. That is to say that we can simply import a different python file with modules or set a different mission and the local search will behave the same). However the local search needs some information on how good or bad a piece of control software is. For the evaluation it passes the control software (or again a representation thereof) to our implementation of AutoMoDe and AutoMoDe returns a single value (the performance measure/objective function). According to a number of these values, the local search decides to keep or discard the current solution.
 
-
-## A side note on how AutoMoDe works:
+## A side note on how AutoMoDe works
 
 We are always talking about AutoMoDe as if it is a single program, but it's not. AutoMoDe is our implementation of the modules and it uses the argos3 simulator to test the performance.
 
@@ -48,10 +50,6 @@ The important top-level implementations (also are refactored heavily at the mome
 - **submit_localsearch.py**: Was supposed to replace the localsearch_*.sh, automode_localsearch,sh and submit_localsearch.sh files. I never finished this file and it will be replaced in my current refactoring process.
 
 - **localsearch_\*.sh, automode_localsearch,sh and submit_localsearch.sh**: Scripts that I used to submit my jobs on the cluster. Not necessary for local testing
-
-## Running a local search
-
-
 
 ## Configuring the local search
 

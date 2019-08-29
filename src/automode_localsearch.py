@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+__author__ = "Jonas Kuckling, jonas.kuckling@ulb.ac.be, Keneth Ubeda, k3n3th@gmail.com"
 """
 Use this script to start the local search. Run start_localsearch.py -h for more help.
 """

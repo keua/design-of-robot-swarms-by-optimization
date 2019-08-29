@@ -1,3 +1,4 @@
+__author__ = "Jonas Kuckling, jonas.kuckling@ulb.ac.be"
 """
 This module provides the following functionality
 - execution.ExecutorFactory: a factory class that can be used to obtain an executor object

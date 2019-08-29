@@ -1,4 +1,4 @@
-
+__author__ = "Keneth Ubeda, k3n3th@gmail.com"
 import math
 import time as tm
 from abc import ABCMeta, abstractmethod
