@@ -198,20 +198,21 @@ def submit_localsearch_hydra(args):
                   "initial_controller", "job_name", "result_directory",
                   "parallel"
     """
-    # TODO: Make the following blob a little bit more customizable
-    # TODO: Also don't write it to a real file, or at least clean the file up after execution
     config_data = configuration.load_from_file(args["configuration"])
     configuration.update_dirs(config_data)
     configuration.update_path_experiment(args, config_data)
     walltime = "00:45:00"
-    if config_data["execution"]["budget"] >= 15000 \
-    and config_data["execution"]["budget"]  < 25000:
+    steps = config_data["execution"]["budget"] / \
+        (config_data["execution"]["seed_window_size"] +
+        config_data["execution"]["seed_window_movement"])
+    if steps >= 1250 and steps  < 2100:
         walltime = "02:00:00"
-    elif config_data["execution"]["budget"]  >= 25000 \
-    and config_data["execution"]["budget"]  <= 50000:
+    elif steps  >= 2100 and steps  < 4200:
         walltime = "04:00:00"
-    elif config_data["execution"]["budget"] >= 75000:
-        walltime = "8:00:00"
+    elif steps >= 4200 and steps < 8400:
+        walltime = "10:00:00"
+    elif steps >= 8400 :
+        walltime = "16:00:00"
     execution_cmd = "mpiexec -n 1 python3 -m mpi4py.futures"
 
     submit_cmd = \
@@ -235,7 +236,7 @@ def submit_localsearch_hydra(args):
   #   mem=     memory required
   #   ib       request infiniband
 #PBS -l nodes=1:intel:ppn={parallel}
-#PBS -l mem=256Mb
+
 
   # redirect standard output (-o) and error (-e) (optional)
   # if omitted, the name of the job (specified by -N) or
@@ -253,7 +254,6 @@ export PYTHONPATH=${{PYTHONPATH}}:${{VSC_HOME}}/localsearch/src/
 
   # load the environment
 module purge
-module load intel
 module load Python/3.6.6-intel-2018b
 module load mpi4py/3.0.1-intel-2018b-Python-3.6.6
 

@@ -23,7 +23,7 @@
     "resdir": "VSC_SCRATCH"
   },
   "logging": {
-    "snapshot_frequency": 1000,
+    "snapshot_frequency": null,
     "log_level": "INFO"
   }
 }

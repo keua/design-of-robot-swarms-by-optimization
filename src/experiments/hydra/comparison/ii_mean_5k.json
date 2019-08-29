@@ -1,28 +1,28 @@
 {
     "configuration": "config/hydra/comparison/ii_mean_5k_mpi.json",
     "FOR_II_MIN_MEAN_BT_5k": {
-        "repetitions": 1,
+        "repetitions": 19,
         "scenario": "/localsearch/scenarios/hydra/vanilla/foraging_bt.argos",
         "architecture": "BT",
         "initial_controller": "minimal",
         "result_directory": "/comparison/foraging/budget_5k"
     },
     "FOR_II_MIN_MEAN_FSM_5k": {
-        "repetitions": 0,
+        "repetitions": 19,
         "scenario": "/localsearch/scenarios/hydra/vanilla/foraging.argos",
         "architecture": "FSM",
         "initial_controller": "minimal",
         "result_directory": "/comparison/foraging/budget_5k"
     },
     "AAC_II_MIN_MEAN_BT_5k": {
-        "repetitions": 0,
+        "repetitions": 19,
         "scenario": "/localsearch/scenarios/hydra/vanilla/aac_bt.argos",
         "architecture": "BT",
         "initial_controller": "minimal",
         "result_directory": "/comparison/aac/budget_5k"
     },
     "AAC_II_MIN_MEAN_FSM_5k": {
-        "repetitions": 1,
+        "repetitions": 19,
         "scenario": "/localsearch/scenarios/hydra/vanilla/aac_fsm.argos",
         "architecture": "FSM",
         "initial_controller": "minimal",

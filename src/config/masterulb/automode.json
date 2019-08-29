@@ -16,6 +16,14 @@
     "max_actions": 4
   },
   "cwd": {
-    "dir": "/home/kubedaar/masterthesis/localsearch/src/"
+    "dir": "/home/masterulb/masterthesis/localsearch/src/"
+  },
+  "dirs": {
+    "srcdir": "HOME",
+    "resdir": "RES_DIR"
+  },
+  "logging": {
+    "snapshot_frequency": null,
+    "log_level": "INFO"
   }
 }

@@ -1,0 +1,10 @@
+{
+  "sls": {
+    "SimulatedAnnealing": {
+      "temperature": 125.0,
+      "cooling_rate": 0.9782,
+      "temperature_length": 20,
+      "acceptance_criterion": "mean"
+    }
+  }
+}
